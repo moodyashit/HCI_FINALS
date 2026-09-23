@@ -1,206 +1,94 @@
 body {
-    font-family: Monospace, sans-serif;
-    background-image: url('http://bit.ly/pokemonbg');
-    font-size: 20px;
-    text-align: center;
-    background-size: cover;
-    background-position: center;
-    height: 100vh;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .game {
-    position: relative;
-    background-size: cover;
-    background-repeat: no-repeat;
-    border-radius: 8px 8px 0 0;
-    height: 800px;
-    width: 1890px;
-  }
-  
-  .opponent, .player {
-    position: relative;
-    height: 300px;
-  }
-  
-  .opponent .stats, .player .stats {
-    position: absolute;
-    width: 320px;
-  }
-  
-  .opponent .stats {
-    top: 550px;
-    left: 1500px;
-  }
-  
-  .opponent .pokemon, .player .pokemon {
-    position: absolute;
-    width: 100px;
-  }
-  
-  .opponent .pokemon {
-    bottom: 0;
-    top: 380px;
-    left: 1380px;
-  }
-  
-  .player .pokemon {
-    left: 350px;
-    bottom: 50px;
-    top: 320px;
-    width: 160px;
-  }
-  
-  .box {
-    padding: 8px;
-    background: #333;
-    border: 3px solid black;
-    border-top: none;
-    border-radius: 0 0 8px 8px;
-    color: #fff;
-    height: 120px;
-    width: 1875px;
-  }
-  
-  .box .message {
-    position: relative;
-    float: left;
-    font-size: 24px;
-    width: 50%;
-  }
-  
-  .box .continue {
-    position: absolute;
-    margin-top: 30px;
-    float: left;
-    width: 25%;
-    height: 100%;
-  }
-  
-  .box .continue button, .box .actions button {
-    position: relative;
-    float: left;
-    background: #666;
-    border: 3px solid #888;
-    border-radius: 4px;
-    color: #fff;
-    font-family: monospace;
-    font-size: 20px;
-    line-height: 14px;
-    margin: 4px;
-    padding: 16px;
-    outline: none !important;
-  }
-  
-  .box .continue button:hover, .box .actions button:hover {
-    background: #777;
-    border-color: #999;
-  }
-  
-  .box .continue button:active, .box .actions button:active {
-    background: #555;
-    border-color: #666;
-  }
-  
-  .box .actions {
-    position: relative;
-    float: left;
-    width: 50%;
-    height: 100%;
-  }
-  
-  .box .actions button {
-    width: calc(50% - 8px);
-    height: calc(50% - 8px);
-  }
-  
-  .stats {
-    background: #111;
-    border: 2px solid black;
-    border-radius: 8px;
-    color: white;
-    padding: 12px;
-  }
-  
-  .stats .pokeballs, .stats .hp-count {
-    position: relative;
-    display: inline-block;
-    vertical-align: middle;
-  }
-  
-  .stats .pokeballs .pokeball {
-    position: relative;
-    float: left;
-    background-image: url('http://bit.ly/pokeballimg');
-    background-size: 100% 100%;
-    width: 25px;
-    height: 25px;
-  }
-  
-  .stats .hp-count:before {
-    content: 'HP: ';
-    float: right;
-  }
-  
-  .stats .name {
-    font-weight: bold;
-  }
-  
-  .stats .level:before {
-    content: "LVL";
-  }
-  
-  .background-image {
-    background-size: cover;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  h1 {
-    color: #e74c3c;
-  }
-  
-  #startButton {
-    background-color: #4CAF50;
-    border: 2px #000000;
-    color: black;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    transition-duration: 0.4s;
-    cursor: pointer;
-    border-radius: 12px;
-  }
-  
-  #startButton:hover {
-    background-color: #45a049;
-  }
-  
-  .pokemon-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-top: 20px;
-  }
-  
-  .pokemon {
-    width: 100px;
-    height: 100px;
-    margin: 10px;
-    cursor: pointer;
-  }
-  
-  .pokemon:hover {
-    transform: scale(1.1);
-  }
-  
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(#9bd3ff 0%, #9bd3ff 55%, #6fbf6f 55%, #4fa64f 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+}
+
+.crt {
+  position: relative;
+  width: min(900px, 95vw);
+  background: var(--panel-bg);
+  border: 6px solid #000;
+  border-radius: 10px;
+  box-shadow: 0 0 0 4px var(--accent-yellow), 0 10px 0 rgba(0, 0, 0, .3);
+  padding: clamp(20px, 4vw, 48px);
+  overflow: hidden;
+}
+
+.crt::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(rgba(0, 0, 0, 0) 0 2px, rgba(0, 0, 0, .08) 3px 4px);
+  pointer-events: none;
+}
+
+.screen { text-align: center; }
+
+.poke-logo { margin: 0 0 32px; line-height: 1.6; }
+
+.logo-yellow {
+  display: block;
+  font-size: clamp(20px, 5vw, 34px);
+  color: var(--accent-yellow);
+  -webkit-text-stroke: 2px #1a1a1a;
+  text-shadow: 3px 3px 0 var(--accent-blue);
+}
+
+.logo-sub {
+  display: block;
+  margin-top: 10px;
+  font-size: clamp(10px, 2vw, 14px);
+}
+
+.blink { animation: blink 1.2s steps(2, start) infinite; }
+@keyframes blink { to { visibility: hidden; } }
+
+.footnote { margin-top: 24px; font-size: 8px; opacity: .6; }
+
+.section-title {
+  font-size: clamp(12px, 2.5vw, 16px);
+  color: var(--accent-yellow);
+  margin-bottom: 24px;
+}
+
+.pokemon-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 16px;
+}
+
+.pokemon-card {
+  font-family: 'Press Start 2P', monospace;
+  background: #2b2b3d;
+  border: 3px solid #000;
+  border-radius: 8px;
+  box-shadow: 0 4px 0 #000;
+  color: var(--text-cream);
+  padding: 12px 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  transition: transform .1s ease, box-shadow .1s ease, border-color .1s ease;
+}
+
+.pokemon-card img { width: 64px; height: 64px; }
+.pokemon-card span { font-size: 9px; }
+
+.pokemon-card:hover { transform: translateY(-4px); }
+.pokemon-card[data-type="electric"]:hover { border-color: var(--accent-yellow); }
+.pokemon-card[data-type="grass"]:hover { border-color: #4fa64f; }
+.pokemon-card[data-type="fire"]:hover { border-color: var(--accent-red); }
+.pokemon-card[data-type="water"]:hover { border-color: #3b6cff; }
+
+.pokemon-card:active { transform: translateY(2px); box-shadow: 0 2px 0 #000; }
+
+@media (max-width: 480px) {
+  .pokemon-card img { width: 52px; height: 52px; }
+}

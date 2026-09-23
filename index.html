@@ -3,26 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pokémon Battle Arena</title>
+  <link rel="stylesheet" href="retro.css">
   <link rel="stylesheet" href="index.css">
-  <title>Pokémon Game</title>
 </head>
 <body>
-  <div class="container">
-    <h1>Welcome to the World of Pokémon!</h1>
-    <button id="startButton" onclick="window.location.href = 'selection.html'">START</button>
-  </div>
-  <div class="background-image" id="pokemonSelection" style="display: none;">
-    <h1>Select Your Pokémon</h1>
-    <div class="pokemon-container">
-      <img class="pokemon" src="https://projectpokemon.org/images/shiny-sprite/pikachu.gif" alt="Pikachu" onclick="startGame('Pikachu')">
-      <img class="pokemon" src="https://projectpokemon.org/images/shiny-sprite/bulbasaur.gif" alt="Bulbasaur" onclick="startGame('Bulbasaur')">
-      <img class="pokemon" src="https://projectpokemon.org/images/normal-sprite/charmander.gif" alt="Charmander" onclick="startGame('Charmander')">
-      <img class="pokemon" src="https://projectpokemon.org/images/normal-sprite/blastoise.gif" alt="Blastoise" onclick="startGame('Blastoise')">
-      <img class="pokemon" src="https://projectpokemon.org/images/normal-sprite/charizard.gif" alt="Charizard" onclick="startGame('Charizard')">
-    </div>
+  <div class="crt">
+    <section id="titleScreen" class="screen title-screen">
+      <h1 class="poke-logo">
+        <span class="logo-yellow">POKÉMON</span>
+        <span class="logo-sub">BATTLE ARENA</span>
+      </h1>
+      <button id="startButton" class="retro-btn blink">▶ PRESS START</button>
+      <p class="footnote">A Fan-Made Battle Demo</p>
+    </section>
+
+    <section id="pokemonSelection" class="screen select-screen" hidden>
+      <h2 class="section-title">CHOOSE YOUR POKÉMON</h2>
+      <div class="pokemon-container">
+        <button class="pokemon-card" data-name="Pikachu" data-type="electric">
+          <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/pikachu.gif" alt="Pikachu">
+          <span>Pikachu</span>
+        </button>
+        <button class="pokemon-card" data-name="Bulbasaur" data-type="grass">
+          <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/bulbasaur.gif" alt="Bulbasaur">
+          <span>Bulbasaur</span>
+        </button>
+        <button class="pokemon-card" data-name="Charmander" data-type="fire">
+          <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/charmander.gif" alt="Charmander">
+          <span>Charmander</span>
+        </button>
+        <button class="pokemon-card" data-name="Blastoise" data-type="water">
+          <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/blastoise.gif" alt="Blastoise">
+          <span>Blastoise</span>
+        </button>
+        <button class="pokemon-card" data-name="Charizard" data-type="fire">
+          <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/charizard.gif" alt="Charizard">
+          <span>Charizard</span>
+        </button>
+      </div>
+    </section>
   </div>
 
   <script src="index.js"></script>
 </body>
 </html>
-

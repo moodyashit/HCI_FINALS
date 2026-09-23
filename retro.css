@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+:root {
+  --panel-bg: #1f1f2e;
+  --accent-red: #e3350d;
+  --accent-yellow: #ffcb05;
+  --accent-blue: #3b4cca;
+  --text-cream: #f4f0d8;
+  --hp-green: #78c850;
+  --hp-yellow: #f8d030;
+  --hp-red: #f08030;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'Press Start 2P', monospace;
+  color: var(--text-cream);
+}
+
+img { image-rendering: pixelated; }
+
+button.retro-btn {
+  font-family: 'Press Start 2P', monospace;
+  background: var(--accent-blue);
+  color: #fff;
+  border: 3px solid #000;
+  border-radius: 6px;
+  box-shadow: 0 4px 0 #1a237e, inset 0 0 0 2px rgba(255, 255, 255, .2);
+  padding: 12px 18px;
+  cursor: pointer;
+  transition: transform .05s ease, box-shadow .05s ease;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+button.retro-btn:hover { background: #4e5fe0; }
+
+button.retro-btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 #1a237e, inset 0 0 0 2px rgba(255, 255, 255, .2);
+}
+
+button.retro-btn:disabled { opacity: .4; cursor: not-allowed; }
