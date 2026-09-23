@@ -4,6 +4,15 @@ A browser-based, retro-styled Pokémon battle game built for HCI Finals (FEU-A).
 
 ## Features
 
+**New in this update:**
+- **Dark, Steel and Fairy types** — 18 types total. Bite/Crunch are now Dark, Iron Tail/Metal Claw/Iron Head are Steel, and three new Pokémon (Umbreon, Steelix, Clefable) carry the new types, with a fleshed-out type chart to match.
+- **Deeper battles** — confusion (can make a Pokémon hurt itself instead of moving), flinch (Bite, Rock Slide, Air Slash, Iron Head, Stomp can stop a slower foe from moving), recoil (Slam, Body Slam, Close Combat hurt the user too), multi-hit moves (Double Slap, Fury Attack, Fury Swipes, Pin Missile hit 2-5 times), and a Recover move on a few bulky Pokémon (Snorlax, Chansey, Blastoise, Lapras, Slowbro) that heals 50% HP instead of attacking.
+- **Coins & shop** — every win earns coins (more from tougher fights, gyms and later Endless waves). Spend them on the Stats page shop for Potions, Super Potions, Full Heals, or a Rare Candy that instantly levels up any Pokémon you've used.
+- **Persistent item bag** — Potions/Super Potions/Full Heals bought in the shop (or earned from gyms) now carry over between every battle and mode, instead of resetting per campaign run.
+- **Endless draft** — after clearing an Endless wave, pick 1 of 3 random Pokémon to swap into your team, roguelike-style, or skip and keep your current team.
+- **Team presets** — save your current pick as a named team from the selection screen, then load it back in with one click instead of repicking every run.
+
+
 - **Title → Profile → Select → Battle → Stats** flow across four linked pages
 - **Trainer customization** — pick a trainer class (Youngster, Lass, Ace Trainer, Hiker, Swimmer, Rocket Grunt), each with a procedurally-drawn pixel silhouette avatar (no image assets needed)
 - **Optional GitHub avatar** — enter a GitHub username to pull in your real avatar via the public GitHub API; falls back gracefully if the username isn't found
@@ -60,12 +69,16 @@ index.css / main.css / stats.css — per-page layout styles
 
 All progress is stored client-side in `localStorage`:
 - `battleProfile` — trainer class + optional GitHub avatar/username
-- `battleStats` — total wins/losses and a win/loss count per opponent type
+- `battleStats` — total wins/losses, a win/loss count per opponent type, and your coin balance
 - `pokeProgress`, `campaign`, `shinies` — XP/levels, current gym/endless run, shinies used
 - `playerTeam` / `playerPokemon` — the team (and lead) selected for the current run
+- `inventory` — your Potions/Super Potions/Full Heals, shared across every battle and mode
+- `teamPresets` — named teams you've saved from the selection screen
 
 Reset your record anytime from the Stats page.
 
 ---
 
 UPDATE (09/23/26) — spiced up the only project I actually liked making from FEU-A: added type effectiveness, level-scaled HP/damage, sprite fallbacks, and a consistent CRT look across every screen.
+
+UPDATE (09/24/26) — added Dark/Steel/Fairy types, confusion/flinch/recoil/multi-hit/Recover, a coin economy with a shop, a persistent item bag, an Endless roguelike draft, and named team presets.

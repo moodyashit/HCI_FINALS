@@ -83,6 +83,9 @@ body {
 .pokemon-card[data-type="bug"]:hover { border-color: #a8b820; }
 .pokemon-card[data-type="ice"]:hover { border-color: #98d8d8; }
 .pokemon-card[data-type="dragon"]:hover { border-color: #7038f8; }
+.pokemon-card[data-type="dark"]:hover { border-color: #705848; }
+.pokemon-card[data-type="steel"]:hover { border-color: #b8b8d0; }
+.pokemon-card[data-type="fairy"]:hover { border-color: #ee99ac; }
 .pokemon-card:active { transform: translateY(2px); box-shadow: 0 2px 0 #000; }
 
 @media (max-width: 480px) {

@@ -31,9 +31,13 @@
       <h2 class="section-title">HOW TO PLAY</h2>
       <div class="tutorial">
         <p><b>BATTLE:</b> pick a move each turn. When a team is knocked out, the battle ends.</p>
-        <p><b>TYPES:</b> super effective hits deal double, "not very effective" hits deal half, and some types do nothing. Moves have their own type, and a move matching your Pokémon's type gets a 1.5x bonus (STAB).</p>
+        <p><b>TYPES:</b> 18 types (including Dark, Steel and Fairy). Super effective hits deal double, "not very effective" hits deal half, and some types do nothing. Moves have their own type, and a move matching your Pokémon's type gets a 1.5x bonus (STAB).</p>
         <p><b>PP:</b> each move can only be used a limited number of times (the number on the button). Strong moves have less PP.</p>
-        <p><b>STATUS:</b> BRN burns (half attack + damage each turn), PSN poisons, PAR can stop you from moving and halves Speed, SLP skips turns. Full Heal cures them.</p>
+        <p><b>STATUS:</b> BRN burns (half attack + damage each turn), PSN poisons, PAR can stop you from moving and halves Speed, SLP skips turns, CNF (confusion) can make you hurt yourself instead of moving. Full Heal cures them.</p>
+        <p><b>MORE MOVE EFFECTS:</b> some moves flinch the foe if you move first, some deal recoil to yourself, some (like Double Slap) hit 2-5 times, and a few bulky Pokémon know Recover to heal HP instead of attacking.</p>
+        <p><b>COINS & SHOP:</b> win battles to earn coins, then spend them on the Stats page shop for Potions, Full Heals, and Rare Candy (an instant level for any Pokémon you've used).</p>
+        <p><b>TEAM PRESETS:</b> save your current pick as a named team on the selection screen so you don't have to repick it every run.</p>
+        <p><b>ENDLESS DRAFT:</b> after clearing an Endless wave, pick 1 of 3 random Pokémon to swap into your team, roguelike-style.</p>
         <p><b>SPEED:</b> the faster Pokémon moves first. Quick Attack and Extreme Speed always go first. Switching and items happen before attacks.</p>
         <p><b>STAT MOVES:</b> Growl, Leer and Swords Dance raise or lower stats for the rest of that Pokémon's time in battle. Switching out resets them.</p>
         <p><b>WEATHER:</b> rain powers up Water and weakens Fire, sun does the opposite, and sandstorms hurt everyone except Rock and Ground for a few turns.</p>
@@ -87,6 +91,12 @@
         <p style="font-size:9px;margin:0 0 10px;">YOUR FIRST PICK LEADS THE BATTLE</p>
         <button id="teamBackBtn" class="retro-btn small" hidden>BACK</button>
         <button id="teamStartBtn" class="retro-btn" disabled>START BATTLE (0/3)</button>
+      </div>
+
+      <div id="presetBar" class="team-bar">
+        <p style="font-size:8px;margin:0 0 8px;opacity:.8;">TEAM PRESETS</p>
+        <div id="presetList" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:10px;"></div>
+        <button id="savePresetBtn" class="retro-btn small" disabled>SAVE CURRENT TEAM</button>
       </div>
     </section>
 

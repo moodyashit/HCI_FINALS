@@ -105,21 +105,24 @@ const POKEDEX = {
 
 // Attacker type -> { defenderType: multiplier }. Unlisted pairs default to 1x.
 const TYPE_CHART = {
-  normal:   { rock: 0.5, ghost: 0 },
-  fire:     { grass: 2, bug: 2, ice: 2, water: 0.5, fire: 0.5, rock: 0.5, dragon: 0.5 },
+  normal:   { rock: 0.5, ghost: 0, steel: 0.5 },
+  fire:     { grass: 2, bug: 2, ice: 2, steel: 2, water: 0.5, fire: 0.5, rock: 0.5, dragon: 0.5 },
   water:    { fire: 2, ground: 2, rock: 2, water: 0.5, grass: 0.5, dragon: 0.5 },
-  grass:    { water: 2, ground: 2, rock: 2, fire: 0.5, grass: 0.5, poison: 0.5, flying: 0.5, bug: 0.5, dragon: 0.5 },
+  grass:    { water: 2, ground: 2, rock: 2, fire: 0.5, grass: 0.5, poison: 0.5, flying: 0.5, bug: 0.5, dragon: 0.5, steel: 0.5 },
   electric: { water: 2, flying: 2, electric: 0.5, grass: 0.5, dragon: 0.5, ground: 0 },
-  ghost:    { psychic: 2, ghost: 2, normal: 0 },
-  fighting: { normal: 2, rock: 2, ice: 2, ghost: 0, psychic: 0.5, flying: 0.5, poison: 0.5, bug: 0.5 },
-  psychic:  { fighting: 2, poison: 2, psychic: 0.5 },
-  rock:     { fire: 2, flying: 2, bug: 2, ice: 2, fighting: 0.5, ground: 0.5 },
-  poison:   { grass: 2, poison: 0.5, ground: 0.5, rock: 0.5, ghost: 0.5 },
-  ground:   { fire: 2, electric: 2, poison: 2, rock: 2, grass: 0.5, bug: 0.5, flying: 0 },
-  flying:   { grass: 2, fighting: 2, bug: 2, electric: 0.5, rock: 0.5 },
-  bug:      { grass: 2, psychic: 2, fire: 0.5, fighting: 0.5, flying: 0.5, ghost: 0.5, poison: 0.5 },
-  ice:      { grass: 2, ground: 2, flying: 2, dragon: 2, fire: 0.5, water: 0.5, ice: 0.5 },
-  dragon:   { dragon: 2 }
+  ghost:    { psychic: 2, ghost: 2, normal: 0, dark: 0.5 },
+  fighting: { normal: 2, rock: 2, ice: 2, dark: 2, steel: 2, ghost: 0, psychic: 0.5, flying: 0.5, poison: 0.5, bug: 0.5, fairy: 0.5 },
+  psychic:  { fighting: 2, poison: 2, psychic: 0.5, dark: 0, steel: 0.5 },
+  rock:     { fire: 2, flying: 2, bug: 2, ice: 2, fighting: 0.5, ground: 0.5, steel: 0.5 },
+  poison:   { grass: 2, fairy: 2, poison: 0.5, ground: 0.5, rock: 0.5, ghost: 0.5, steel: 0 },
+  ground:   { fire: 2, electric: 2, poison: 2, rock: 2, steel: 2, grass: 0.5, bug: 0.5, flying: 0 },
+  flying:   { grass: 2, fighting: 2, bug: 2, electric: 0.5, rock: 0.5, steel: 0.5 },
+  bug:      { grass: 2, psychic: 2, fire: 0.5, fighting: 0.5, flying: 0.5, ghost: 0.5, poison: 0.5, steel: 0.5, fairy: 0.5 },
+  ice:      { grass: 2, ground: 2, flying: 2, dragon: 2, fire: 0.5, water: 0.5, ice: 0.5, steel: 0.5, fairy: 0.5 },
+  dragon:   { dragon: 2, steel: 0.5, fairy: 0 },
+  dark:     { psychic: 2, ghost: 2, dark: 0.5, fighting: 0.5, fairy: 0.5 },
+  steel:    { ice: 2, rock: 2, fairy: 2, steel: 0.5, fire: 0.5, water: 0.5, electric: 0.5 },
+  fairy:    { fighting: 2, dragon: 2, dark: 2, fire: 0.5, poison: 0.5, steel: 0.5 }
 };
 
 function typeEffectiveness(attackerType, defenderType) {
@@ -188,6 +191,9 @@ addMon('Cloyster','water',70,[['Ice Beam',12],['Surf',12],['Water Pulse',9],['Sl
 addMon('Seaking','water',68,[['Waterfall',11],['Water Pulse',9],['Horn Attack',8],['Peck',7]]);
 addMon('Lickitung','normal',30,[['Lick',6],['Slam',9],['Body Slam',10],['Headbutt',8]]);
 addMon('Horsea','water',60,[['Bubble',7],['Water Gun',8],['Twister',9],['Smog',6]]);
+addMon('Umbreon','dark',65,[['Bite',8],['Feint Attack',8],['Crunch',10],['Quick Attack',6]]);
+addMon('Steelix','steel',30,[['Iron Tail',10],['Iron Head',10],['Earthquake',13],['Rock Slide',11]]);
+addMon('Clefable','fairy',60,[['Moonblast',12],['Double Slap',8],['Body Slam',10],['Pound',6]]);
 
 const PRIORITY = { 'Quick Attack': 1, 'Extreme Speed': 2 };
 // Every move has its own type; anything not listed is Normal.
@@ -205,7 +211,10 @@ const MOVE_TYPE = {
   'Wing Attack':'flying','Gust':'flying','Air Slash':'flying','Air Cutter':'flying','Peck':'flying','Drill Peck':'flying',
   'X-Scissor':'bug','Fury Cutter':'bug','Bug Buzz':'bug','Silver Wind':'bug','Leech Life':'bug','Pin Missile':'bug','String Shot':'bug',
   'Ice Beam':'ice','Ice Punch':'ice','Powder Snow':'ice','Blizzard':'ice',
-  'Dragon Claw':'dragon','Dragon Rage':'dragon','Outrage':'dragon','Twister':'dragon'
+  'Dragon Claw':'dragon','Dragon Rage':'dragon','Outrage':'dragon','Twister':'dragon',
+  'Bite':'dark','Crunch':'dark','Feint Attack':'dark',
+  'Iron Tail':'steel','Metal Claw':'steel','Iron Head':'steel',
+  'Moonblast':'fairy'
 };
 const moveType = m => MOVE_TYPE[m.name] || 'normal';
 
@@ -247,8 +256,8 @@ const WEATHER = {
 const getShinies = () => { try { return JSON.parse(localStorage.getItem('shinies')) || []; } catch (e) { return []; } };
 function markShiny(n) { const l = getShinies(); if (!l.includes(n)) { l.push(n); localStorage.setItem('shinies', JSON.stringify(l)); } }
 
-const SAVE_KEYS = ['battleProfile','battleStats','pokeProgress','campaign','shinies','playerTeam','playerPokemon','difficulty','muted','teamSize','oppMode','campMode','seenTutorial'];
-const SAVE_JSON_KEYS = ['battleProfile','battleStats','pokeProgress','campaign','shinies','playerTeam'];
+const SAVE_KEYS = ['battleProfile','battleStats','pokeProgress','campaign','shinies','playerTeam','playerPokemon','difficulty','muted','teamSize','oppMode','campMode','seenTutorial','inventory','teamPresets'];
+const SAVE_JSON_KEYS = ['battleProfile','battleStats','pokeProgress','campaign','shinies','playerTeam','inventory','teamPresets'];
 function exportSave() {
   const data = {};
   SAVE_KEYS.forEach(k => { const v = localStorage.getItem(k); if (v !== null) data[k] = v; });
@@ -339,13 +348,23 @@ function recordResult(won, opponentType, info) {
 const TYPE_COLORS = {
   normal:'#a8a878', fire:'#e3350d', water:'#3b6cff', grass:'#4fa64f', electric:'#d4a800', ghost:'#705898',
   fighting:'#c03028', psychic:'#f85888', rock:'#b8a038', poison:'#a040a0', ground:'#c9a13f',
-  flying:'#8a70e0', bug:'#8a9a10', ice:'#5cbcbc', dragon:'#7038f8'
+  flying:'#8a70e0', bug:'#8a9a10', ice:'#5cbcbc', dragon:'#7038f8', dark:'#705848', steel:'#b8b8d0', fairy:'#ee99ac'
 };
 function typeBadge(type) {
   return `<span class="type-badge" style="background:${TYPE_COLORS[type] || '#666'}">${type}</span>`;
 }
-function moveAccuracy(m) { return m.stat ? 100 : m.power >= 13 ? 85 : m.power >= 11 ? 95 : 100; }
-function movePP(m) { return m.stat ? 20 : m.power >= 13 ? 5 : m.power >= 11 ? 10 : m.power >= 8 ? 15 : 25; }
+function moveAccuracy(m) { return (m.stat || m.heal) ? 100 : m.power >= 13 ? 85 : m.power >= 11 ? 95 : 100; }
+function movePP(m) { return m.heal ? 10 : m.stat ? 20 : m.power >= 13 ? 5 : m.power >= 11 ? 10 : m.power >= 8 ? 15 : 25; }
+
+// ---------- deeper battle mechanics: recover, flinch, recoil, multi-hit ----------
+const RECOVER_MOVE = { name: 'Recover', power: 0, heal: 0.5 };
+// Bulky Pokémon get a healing move in place of one of their filler moves.
+const HEAL_SWAPS = { Snorlax:[1,'Recover'], Chansey:[1,'Recover'], Blastoise:[2,'Recover'], Lapras:[3,'Recover'], Slowbro:[2,'Recover'] };
+Object.entries(HEAL_SWAPS).forEach(([n, [i]]) => { if (POKEDEX[n]) POKEDEX[n].moves[i] = { ...RECOVER_MOVE }; });
+
+const MULTI_HIT = new Set(['Double Slap', 'Fury Attack', 'Fury Swipes', 'Pin Missile']);
+const FLINCH_MOVES = new Set(['Bite', 'Rock Slide', 'Air Slash', 'Iron Head', 'Stomp']);
+const RECOIL_MOVES = { 'Slam': 0.2, 'Body Slam': 0.15, 'Close Combat': 0.25 };
 
 let muted = localStorage.getItem('muted') === '1';
 let audioCtx;
@@ -402,6 +421,17 @@ const GYM_LEADERS = [
 const BAG_START = { potion: 3, superpotion: 1, fullheal: 2 };
 function getCampaign() { try { return JSON.parse(localStorage.getItem('campaign')); } catch (e) { return null; } }
 function saveCampaign(c) { if (c) localStorage.setItem('campaign', JSON.stringify(c)); else localStorage.removeItem('campaign'); }
+
+// ---------- item bag (persistent across every battle/mode) + coins ----------
+function getInventory() { try { return JSON.parse(localStorage.getItem('inventory')) || { ...BAG_START }; } catch (e) { return { ...BAG_START }; } }
+function saveInventory(inv) { localStorage.setItem('inventory', JSON.stringify(inv)); }
+function getCoins() { const s = getStats(); return s.coins || 0; }
+function addCoins(n) { const s = getStats(); s.coins = (s.coins || 0) + n; saveStats(s); return s.coins; }
+function spendCoins(n) { const s = getStats(); if ((s.coins || 0) < n) return false; s.coins -= n; saveStats(s); return true; }
+
+// ---------- named team presets ----------
+function getPresets() { try { return JSON.parse(localStorage.getItem('teamPresets')) || {}; } catch (e) { return {}; } }
+function savePresets(p) { localStorage.setItem('teamPresets', JSON.stringify(p)); }
 
 const OPPONENT_POOL = Object.keys(POKEDEX);
 
@@ -515,6 +545,11 @@ function refreshTeamUI() {
   teamBtn.disabled = picks.length !== teamSize;
   document.getElementById('setupBars').hidden = phase === 'opp';
   document.getElementById('teamBackBtn').hidden = phase !== 'opp';
+  const presetBar = document.getElementById('presetBar');
+  if (presetBar) {
+    presetBar.hidden = phase !== 'player';
+    document.getElementById('savePresetBtn').disabled = team.length !== teamSize;
+  }
 }
 if (teamBtn) {
   teamBtn.addEventListener('click', () => {
@@ -522,7 +557,7 @@ if (teamBtn) {
     localStorage.setItem('playerTeam', JSON.stringify(team));
     localStorage.setItem('playerPokemon', team[0]);
     localStorage.setItem('vsMode', campMode === 'versus' ? '1' : '0');
-    saveCampaign(campMode === 'campaign' ? { stage: 0, badges: [], bag: { ...BAG_START } } : campMode === 'endless' ? { endless: true, stage: 0, badges: [], bag: { ...BAG_START } } : null);
+    saveCampaign(campMode === 'campaign' ? { stage: 0, badges: [] } : campMode === 'endless' ? { endless: true, stage: 0, badges: [] } : null);
     if (needOpp()) localStorage.setItem('oppTeam', JSON.stringify(oppPick));
     else localStorage.removeItem('oppTeam');
     window.location.href = 'main.html';
@@ -544,6 +579,46 @@ if (teamBtn) {
     localStorage.setItem('campMode', campMode);
     refreshTeamUI();
   }));
+
+  // ---------- named team presets: save the current pick, or load one back in ----------
+  function renderPresets() {
+    const list = document.getElementById('presetList');
+    const presets = getPresets();
+    list.innerHTML = '';
+    const names = Object.keys(presets);
+    if (!names.length) list.innerHTML = '<span style="font-size:8px;opacity:.6;">No saved teams yet.</span>';
+    names.forEach(name => {
+      const wrap = document.createElement('span');
+      wrap.style.display = 'inline-flex'; wrap.style.gap = '4px';
+      const b = document.createElement('button');
+      b.className = 'retro-btn small';
+      b.textContent = `${name} (${presets[name].names.length})`;
+      b.addEventListener('click', () => {
+        if (phase !== 'player') return;
+        teamSize = presets[name].names.length;
+        localStorage.setItem('teamSize', teamSize);
+        team.length = 0;
+        presets[name].names.forEach(n => { if (POKEDEX[n]) team.push(n); });
+        refreshTeamUI();
+      });
+      const del = document.createElement('button');
+      del.className = 'retro-btn small'; del.textContent = '×'; del.title = 'Delete preset';
+      del.addEventListener('click', e => { e.stopPropagation(); const p = getPresets(); delete p[name]; savePresets(p); renderPresets(); });
+      wrap.appendChild(b); wrap.appendChild(del);
+      list.appendChild(wrap);
+    });
+  }
+  document.getElementById('savePresetBtn').addEventListener('click', () => {
+    if (team.length !== teamSize) return;
+    const name = (prompt('Name this team preset:') || '').trim().slice(0, 20);
+    if (!name) return;
+    const presets = getPresets();
+    presets[name] = { names: [...team] };
+    savePresets(presets);
+    renderPresets();
+  });
+  renderPresets();
+
   refreshTeamUI();
 }
 document.querySelectorAll('.pokemon-card').forEach(card => {
@@ -630,7 +705,7 @@ if (trainerIntroEl) {
 function startBattle(playerTeam, oppTeam) {
   let player = playerTeam[0], opponent = oppTeam[0];
   const campState = getCampaign();
-  const bag = campState ? campState.bag : { ...BAG_START };
+  const bag = getInventory();
   let nextGym = false;
   const weatherEl = document.getElementById('weather');
   let weather = null, weatherTurns = 0, foeSwitchCooldown = 0, vsChoice = null, vsStage = null;
@@ -718,9 +793,8 @@ function startBattle(playerTeam, oppTeam) {
   function rollWeather() { weather = Object.keys(WEATHER)[Math.floor(Math.random() * 3)]; weatherTurns = 5; paintWeather(); return WEATHER[weather].start; }
   const weatherMult = t => { const w = weather && WEATHER[weather]; return !w ? 1 : t === w.boost ? w.up : t === w.cut ? 0.5 : 1; };
 
-  // Misses (by move accuracy), 1-in-12 crits, STAB, type effectiveness, stat stages, weather. Returns { dmg, eff, crit, miss }.
-  function computeDamage(move, attacker, defender) {
-    if (Math.random() * 100 >= moveAccuracy(move)) return { dmg: 0, eff: 1, miss: true };
+  // Single hit's damage, no accuracy check (used directly for each hit of a multi-hit move).
+  function calcHitDamage(move, attacker, defender) {
     const mt = moveType(move);
     const eff = typeEffectiveness(mt, defender.type);
     const crit = Math.random() < 1 / 12;
@@ -730,6 +804,11 @@ function startBattle(playerTeam, oppTeam) {
     const dmg = eff === 0 ? 0 : Math.max(1, Math.round(move.power * levelFactor * eff * stab * stages * weatherMult(mt) * (crit ? 1.5 : 1) * (attacker.status === 'brn' ? 0.5 : 1)));
     return { dmg, eff, crit };
   }
+  // Misses (by move accuracy), then a single hit's damage. Returns { dmg, eff, crit, miss }.
+  function computeDamage(move, attacker, defender) {
+    if (Math.random() * 100 >= moveAccuracy(move)) return { dmg: 0, eff: 1, miss: true };
+    return calcHitDamage(move, attacker, defender);
+  }
 
   function statMove(att, def, move) {
     const [k, n, self] = move.stat, t = self ? att : def, label = { atk: 'Attack', def: 'Defense', spd: 'Speed' }[k];
@@ -737,6 +816,16 @@ function startBattle(playerTeam, oppTeam) {
     t.stages[k] = Math.max(-6, Math.min(6, before + n));
     let msg = `${att.name} used ${move.name}! `;
     msg += t.stages[k] === before ? `${t.name}'s ${label} won't go any ${n > 0 ? 'higher' : 'lower'}!` : `${t.name}'s ${label} ${Math.abs(n) > 1 ? 'sharply ' : ''}${n > 0 ? 'rose' : 'fell'}!`;
+    if (att.hp > 0) msg += residual(att);
+    setTimeout(() => { SFX.stat(); updateHP('opp'); updateHP('player'); }, 250);
+    setMessage(msg);
+  }
+
+  function healMove(att, move) {
+    const before = att.hp;
+    att.hp = Math.min(att.maxHp, att.hp + Math.round(att.maxHp * move.heal));
+    let msg = `${att.name} used ${move.name}! `;
+    msg += att.hp === before ? `${att.name}'s HP is already full!` : `${att.name} recovered HP!`;
     if (att.hp > 0) msg += residual(att);
     setTimeout(() => { SFX.stat(); updateHP('opp'); updateHP('player'); }, 250);
     setMessage(msg);
@@ -754,19 +843,28 @@ function startBattle(playerTeam, oppTeam) {
 
   // ---------- status effects ----------
   // Damaging hits from these types have a 20% chance to inflict a status.
-  const INFLICTS = { fire: 'brn', ghost: 'brn', electric: 'par', poison: 'psn', grass: 'slp' };
+  const INFLICTS = { fire: 'brn', ghost: 'brn', electric: 'par', poison: 'psn', grass: 'slp', psychic: 'confuse' };
   const IMMUNE = { brn: 'fire', par: 'electric', psn: 'poison' };
-  const STATUS_INFO = { brn: ['BRN', '#e3350d'], par: ['PAR', '#d4a800'], psn: ['PSN', '#a040a0'], slp: ['SLP', '#777'] };
+  const STATUS_INFO = { brn: ['BRN', '#e3350d'], par: ['PAR', '#d4a800'], psn: ['PSN', '#a040a0'], slp: ['SLP', '#777'], confuse: ['CNF', '#8b5cf6'] };
   function statusTag(mon) {
     const i = STATUS_INFO[mon.status];
     return i ? `<span class="type-badge" style="background:${i[1]}">${i[0]}</span>` : '';
   }
   // Returns a message if the Pokémon can't act this turn (asleep / fully paralyzed).
   function cantMove(mon) {
+    if (mon.flinch) { mon.flinch = false; return `${mon.name} flinched and couldn't move!`; }
     if (mon.status === 'slp') {
       if (mon.sleepTurns-- > 0) return `${mon.name} is fast asleep.`;
       mon.status = null;
       return `${mon.name} woke up!`;
+    }
+    if (mon.status === 'confuse') {
+      if (--mon.confuseTurns <= 0) { mon.status = null; }
+      else if (Math.random() < 1 / 3) {
+        const dmg = Math.max(1, Math.round(mon.maxHp / 12));
+        mon.hp = Math.max(0, mon.hp - dmg);
+        return `${mon.name} is confused! It hurt itself in its confusion!`;
+      }
     }
     if (mon.status === 'par' && Math.random() < 0.25) return `${mon.name} is paralyzed! It can't move!`;
     return '';
@@ -776,7 +874,8 @@ function startBattle(playerTeam, oppTeam) {
     if (!st || def.status || IMMUNE[st] === def.type || Math.random() > 0.2) return '';
     def.status = st;
     if (st === 'slp') def.sleepTurns = 1 + Math.floor(Math.random() * 2);
-    return { brn: ` ${def.name} was burned!`, par: ` ${def.name} is paralyzed!`, psn: ` ${def.name} was poisoned!`, slp: ` ${def.name} fell asleep!` }[st];
+    if (st === 'confuse') def.confuseTurns = 2 + Math.floor(Math.random() * 3);
+    return { brn: ` ${def.name} was burned!`, par: ` ${def.name} is paralyzed!`, psn: ` ${def.name} was poisoned!`, slp: ` ${def.name} fell asleep!`, confuse: ` ${def.name} became confused!` }[st];
   }
   function residual(mon) {
     if (mon.status !== 'brn' && mon.status !== 'psn') return '';
@@ -784,23 +883,54 @@ function startBattle(playerTeam, oppTeam) {
     return ` ${mon.name} is hurt by its ${mon.status === 'brn' ? 'burn' : 'poison'}!`;
   }
 
-  // One attack: status check, lunge animation, sound, damage, hit flash, message.
-  function attack(att, def, move, attSprite, defSprite, atkClass) {
+  // One attack: status check, lunge animation, sound, damage (possibly multiple hits), hit flash, message.
+  // canFlinch is only true when this attacker is moving first this round (the defender hasn't acted yet).
+  function attack(att, def, move, attSprite, defSprite, atkClass, canFlinch) {
     const blocked = cantMove(att);
     if (blocked) { setMessage(blocked); setTimeout(() => { updateHP('opp'); updateHP('player'); }, 250); return; }
     if (move.stat) return statMove(att, def, move);
-    const r = computeDamage(move, att, def);
+    if (move.heal) return healMove(att, move);
+
     animate(attSprite, atkClass);
-    def.hp = Math.max(0, def.hp - r.dmg);
-    let msg = describe(att, move, def, r);
-    if (r.dmg > 0) msg += tryInflict(att, def, move);
+    if (Math.random() * 100 >= moveAccuracy(move)) {
+      setTimeout(() => { SFX.miss(); updateHP('opp'); updateHP('player'); }, 250);
+      return setMessage(`${att.name} used ${move.name}! But it missed!`);
+    }
+
+    const hitTable = [2, 2, 3, 3, 4, 5];
+    const hits = MULTI_HIT.has(move.name) ? hitTable[Math.floor(Math.random() * hitTable.length)] : 1;
+    let totalDmg = 0, lastEff = 1, anyCrit = false, landed = 0;
+    for (let h = 0; h < hits; h++) {
+      if (h > 0 && def.hp - totalDmg <= 0) break;
+      const r = calcHitDamage(move, att, def);
+      totalDmg += r.dmg; lastEff = r.eff; anyCrit = anyCrit || r.crit; landed++;
+      if (r.eff === 0) break;
+    }
+    def.hp = Math.max(0, def.hp - totalDmg);
+
+    let msg = `${att.name} used ${move.name}!`;
+    if (landed > 1) msg += ` Hit ${landed} times!`;
+    if (anyCrit) msg += ' A critical hit!';
+    if (lastEff === 0) msg += ` It had no effect on ${def.name}...`;
+    else if (lastEff > 1) msg += " It's super effective!";
+    else if (lastEff < 1) msg += " It's not very effective...";
+
+    if (totalDmg > 0) msg += tryInflict(att, def, move);
+
+    const recoilFrac = RECOIL_MOVES[move.name];
+    if (recoilFrac && totalDmg > 0) {
+      const recoilDmg = Math.max(1, Math.round(totalDmg * recoilFrac));
+      att.hp = Math.max(0, att.hp - recoilDmg);
+      msg += ` ${att.name} is hit with recoil!`;
+    }
+    if (canFlinch && totalDmg > 0 && FLINCH_MOVES.has(move.name) && Math.random() < 0.3) def.flinch = true;
+
     if (def.hp > 0) msg += residual(att);
     setTimeout(() => {
-      if (r.miss) SFX.miss();
-      else if (r.eff === 0) SFX.weak();
+      if (lastEff === 0) SFX.weak();
       else {
         animate(defSprite, 'anim-hit');
-        if (r.eff > 1) SFX.super(); else if (r.eff < 1) SFX.weak(); else if (r.crit) SFX.crit(); else SFX.hit();
+        if (lastEff > 1) SFX.super(); else if (lastEff < 1) SFX.weak(); else if (anyCrit) SFX.crit(); else SFX.hit();
       }
       updateHP('opp'); updateHP('player');
     }, 250);
@@ -861,7 +991,7 @@ function startBattle(playerTeam, oppTeam) {
     else playerAct(pm, () => foeAct(plan));
   }
   function playerAct(move, then) {
-    attack(player, opponent, move, els.playerSprite, els.oppSprite, 'anim-atk-p');
+    attack(player, opponent, move, els.playerSprite, els.oppSprite, 'anim-atk-p', !!then);
     if (opponent.hp <= 0) return foeFainted();
     if (player.hp <= 0) return playerFainted(VS ? null : then);
     if (then) setTimeout(then, 1300); else roundEnd();
@@ -877,7 +1007,7 @@ function startBattle(playerTeam, oppTeam) {
       setMessage(`The rival used a Potion on ${opponent.name}!`);
       return setTimeout(then || roundEnd, 1300);
     }
-    attack(opponent, player, plan.move, els.oppSprite, els.playerSprite, 'anim-atk-o');
+    attack(opponent, player, plan.move, els.oppSprite, els.playerSprite, 'anim-atk-o', !!then);
     if (player.hp <= 0) return playerFainted();
     if (opponent.hp <= 0) return foeFainted();
     if (then) setTimeout(then, 1300); else roundEnd();
@@ -908,6 +1038,7 @@ function startBattle(playerTeam, oppTeam) {
 
   function endGame(won, text) {
     if (won && !VS) text += ' ' + grantXP(playerTeam, oppTeam.length).join(' ');
+    if (won && !VS && !campState) { const coinsWon = 10 + oppTeam.length * 5; addCoins(coinsWon); text += ` +${coinsWon} coins!`; }
     if (!VS) text += campaignResult(won);
     setMessage(text);
     disableActions(true);
@@ -999,6 +1130,7 @@ function startBattle(playerTeam, oppTeam) {
   }
   function useItem(k) {
     bag[k]--;
+    saveInventory(bag);
     const msg = ITEMS[k].use(player);
     closeSwitch(); updateHP('opp'); updateHP('player');
     setMessage(msg); disableActions(true);
@@ -1014,20 +1146,27 @@ function startBattle(playerTeam, oppTeam) {
       const s = getStats(), cleared = won ? camp.stage + 1 : camp.stage;
       s.bestWave = Math.max(s.bestWave || 0, cleared); saveStats(s);
       if (!won) { saveCampaign(null); return ` Endless run over: ${cleared} wave${cleared === 1 ? '' : 's'} cleared (best ${s.bestWave}).`; }
-      camp.stage++; camp.bag = bag; camp.bag.potion = (camp.bag.potion || 0) + 1;
-      if (camp.stage % 5 === 0) camp.bag.superpotion = (camp.bag.superpotion || 0) + 1;
+      camp.stage++;
+      bag.potion = (bag.potion || 0) + 1;
+      if (camp.stage % 5 === 0) bag.superpotion = (bag.superpotion || 0) + 1;
+      saveInventory(bag);
+      const coinsWon = 15 + camp.stage * 3;
+      addCoins(coinsWon);
       saveCampaign(camp); nextGym = true; els.restartButton.textContent = 'NEXT WAVE';
-      return ` Wave ${camp.stage} cleared! +1 Potion${camp.stage % 5 === 0 ? ' and a Super Potion' : ''}.`;
+      return ` Wave ${camp.stage} cleared! +1 Potion${camp.stage % 5 === 0 ? ' and a Super Potion' : ''}. +${coinsWon} coins!`;
     }
     if (!won) { saveCampaign(null); return ' Your gym run is over.'; }
     const badge = GYM_LEADERS[camp.stage].badge;
     camp.badges.push(badge);
     camp.stage++;
-    camp.bag = bag; camp.bag.potion = (camp.bag.potion || 0) + 1;
-    if (camp.stage >= GYM_LEADERS.length) { saveCampaign(null); return ' You are the CHAMPION! Every badge is yours!'; }
+    bag.potion = (bag.potion || 0) + 1;
+    saveInventory(bag);
+    const coinsWon = 40;
+    addCoins(coinsWon);
+    if (camp.stage >= GYM_LEADERS.length) { saveCampaign(null); return ` You are the CHAMPION! Every badge is yours! +${coinsWon} coins!`; }
     saveCampaign(camp);
     nextGym = true; els.restartButton.textContent = 'NEXT GYM';
-    return ` You won the ${badge} Badge and a Potion!`;
+    return ` You won the ${badge} Badge, a Potion and ${coinsWon} coins!`;
   }
 
   // keyboard: 1-4 pick a move
@@ -1037,7 +1176,54 @@ function startBattle(playerTeam, oppTeam) {
     if (b && !b.disabled) b.click();
   });
 
-  els.restartButton.addEventListener('click', () => { if (nextGym) window.location.reload(); else window.location.href = 'index.html'; });
+  // ---------- Endless draft: pick 1 of 3 random Pokémon to swap into your team ----------
+  function showDraft() {
+    els.restartButton.hidden = true;
+    const pool = OPPONENT_POOL.filter(n => !playerTeam.some(p => p.name === n));
+    const picks = pool.sort(() => Math.random() - 0.5).slice(0, 3);
+    els.switchPanel.hidden = true; els.actions.hidden = false; els.actions.innerHTML = '';
+    setMessage('Draft time! Pick a Pokémon to add to your team, or skip.');
+    picks.forEach(name => {
+      const d = POKEDEX[name];
+      const btn = document.createElement('button');
+      btn.className = 'retro-btn';
+      btn.style.setProperty('--tc', TYPE_COLORS[d.type] || '');
+      btn.innerHTML = `${name} ${typeBadge(d.type)}`;
+      btn.addEventListener('click', () => chooseDraftSlot(name));
+      els.actions.appendChild(btn);
+    });
+    const skip = document.createElement('button');
+    skip.className = 'retro-btn'; skip.textContent = 'SKIP DRAFT';
+    skip.addEventListener('click', () => window.location.reload());
+    els.actions.appendChild(skip);
+  }
+  function chooseDraftSlot(name) {
+    els.actions.hidden = true; els.switchPanel.innerHTML = ''; els.switchPanel.hidden = false;
+    setMessage(`Choose a Pokémon to swap out for ${name}.`);
+    playerTeam.forEach((p, i) => {
+      const b = document.createElement('button');
+      b.className = 'retro-btn';
+      b.style.setProperty('--tc', TYPE_COLORS[p.type] || '');
+      b.textContent = `Swap out ${p.name}`;
+      b.addEventListener('click', () => {
+        const names = playerTeam.map(p => p.name);
+        names[i] = name;
+        localStorage.setItem('playerTeam', JSON.stringify(names));
+        localStorage.setItem('playerPokemon', names[0]);
+        window.location.reload();
+      });
+      els.switchPanel.appendChild(b);
+    });
+    const back = document.createElement('button');
+    back.className = 'retro-btn'; back.textContent = 'BACK';
+    back.addEventListener('click', showDraft);
+    els.switchPanel.appendChild(back);
+  }
+
+  els.restartButton.addEventListener('click', () => {
+    if (nextGym && campState && campState.endless) return showDraft();
+    if (nextGym) window.location.reload(); else window.location.href = 'index.html';
+  });
   init();
 }
 
@@ -1058,6 +1244,77 @@ if (totalWinsEl) {
 
   totalWinsEl.textContent = stats.wins;
   document.getElementById('bestWave').textContent = stats.bestWave || 0;
+  document.getElementById('coinCount').textContent = `${getCoins()} COINS`;
+
+  // ---------- shop: spend coins on items and a rare candy ----------
+  const SHOP_ITEMS = [
+    { key: 'potion', label: 'Potion', desc: '+50 HP in battle', cost: 20 },
+    { key: 'superpotion', label: 'Super Potion', desc: '+100 HP in battle', cost: 45 },
+    { key: 'fullheal', label: 'Full Heal', desc: 'Cures status in battle', cost: 30 }
+  ];
+  const RARE_CANDY_COST = 100;
+  function renderShop() {
+    const shopMsg = document.getElementById('shopMsg');
+    const list = document.getElementById('shopList');
+    list.innerHTML = '';
+    const inv = getInventory();
+    SHOP_ITEMS.forEach(it => {
+      const row = document.createElement('div');
+      row.className = 'stat-row';
+      row.innerHTML = `<span>${it.label} <span style="opacity:.7;">(${it.desc}) — have ${inv[it.key] || 0}</span></span>`;
+      const b = document.createElement('button');
+      b.className = 'retro-btn small';
+      b.textContent = `BUY (${it.cost}c)`;
+      b.disabled = getCoins() < it.cost;
+      b.addEventListener('click', () => {
+        if (!spendCoins(it.cost)) return;
+        const inv2 = getInventory();
+        inv2[it.key] = (inv2[it.key] || 0) + 1;
+        saveInventory(inv2);
+        shopMsg.textContent = `Bought a ${it.label}!`;
+        document.getElementById('coinCount').textContent = `${getCoins()} COINS`;
+        renderShop();
+      });
+      row.appendChild(b);
+      list.appendChild(row);
+    });
+    // Rare Candy: pick any Pokémon you've used and bump it a level.
+    const prog = getProgress();
+    const known = Object.keys(prog).length ? Object.keys(prog) : Object.keys(POKEDEX).slice(0, 1);
+    const row = document.createElement('div');
+    row.className = 'stat-row';
+    const sel = document.createElement('select');
+    sel.style.cssText = "font-family:'Press Start 2P',monospace;font-size:7px;padding:4px;";
+    known.forEach(n => {
+      const o = document.createElement('option');
+      const lvl = prog[n] ? prog[n].level : 40;
+      o.value = n; o.textContent = `${n} (Lv ${lvl})`;
+      sel.appendChild(o);
+    });
+    row.innerHTML = `<span>Rare Candy <span style="opacity:.7;">(+1 level to a Pokémon)</span></span>`;
+    const wrap = document.createElement('span');
+    wrap.style.display = 'flex'; wrap.style.gap = '6px'; wrap.style.alignItems = 'center';
+    const b = document.createElement('button');
+    b.className = 'retro-btn small';
+    b.textContent = `BUY (${RARE_CANDY_COST}c)`;
+    b.disabled = getCoins() < RARE_CANDY_COST;
+    b.addEventListener('click', () => {
+      if (!spendCoins(RARE_CANDY_COST)) return;
+      const p = getProgress();
+      const name = sel.value;
+      const cur = p[name] || { level: 40, xp: 0 };
+      cur.level = Math.min(MAX_LEVEL, cur.level + 1);
+      p[name] = cur;
+      localStorage.setItem('pokeProgress', JSON.stringify(p));
+      shopMsg.textContent = `${name} grew to Lv ${cur.level}!`;
+      document.getElementById('coinCount').textContent = `${getCoins()} COINS`;
+      renderShop();
+    });
+    wrap.appendChild(sel); wrap.appendChild(b);
+    row.appendChild(wrap);
+    list.appendChild(row);
+  }
+  renderShop();
   const saveMsg = document.getElementById('saveMsg'), fileIn = document.getElementById('importFile');
   document.getElementById('exportSaveBtn').addEventListener('click', () => { exportSave(); saveMsg.textContent = 'Save file downloaded.'; });
   document.getElementById('importSaveBtn').addEventListener('click', () => fileIn.click());
