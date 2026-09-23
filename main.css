@@ -22,7 +22,10 @@ body {
 
 /* ---------- Battle scene ---------- */
 .battle-frame {
-  width: min(1150px, 94vw);
+  /* battle-bg.png is natively 400x238. Capping the box at 2x that (800px)
+     instead of 1150px keeps the upscale modest so the art reads crisp
+     instead of smeared/blurry. */
+  width: min(800px, 94vw);
   border-radius: 8px;
   box-shadow: 0 0 0 4px var(--accent-yellow);
 }
@@ -32,14 +35,17 @@ body {
   background-image: url("battle-bg.png");
   background-size: cover;
   background-position: center;
+  image-rendering: pixelated;
   border: 4px solid #000;
   border-bottom: none;
   border-radius: 8px 8px 0 0;
   /* battle-bg.png is natively 400x238 (~1.68:1). Matching that ratio here means
-     background-size:cover never has to crop the art, at any viewport width. */
+     background-size:cover never has to crop the art, at any viewport width.
+     No min/max-height here on purpose: with a fixed aspect-ratio, an
+     independent height constraint would force the browser to break the
+     ratio (and crop) on very tall or very short viewports. Width alone
+     (via .battle-frame above) now fully controls the box's size. */
   aspect-ratio: 400 / 238;
-  min-height: 320px;
-  max-height: 68vh;
   overflow: visible;
 }
 
@@ -60,18 +66,18 @@ body {
 
 .pokemon {
   position: relative;
-  width: clamp(70px, 16vw, 150px);
-  filter: drop-shadow(4px 6px 0 rgba(0, 0, 0, .25));
+  width: clamp(50px, 16vw, 105px);
+  filter: drop-shadow(3px 4px 0 rgba(0, 0, 0, .25));
 }
-.player .pokemon { width: clamp(90px, 20vw, 190px); }
+.player .pokemon { width: clamp(65px, 20vw, 132px); }
 
 .stats {
   background: rgba(17, 17, 17, .92);
   border: 2px solid #000;
   border-radius: 8px;
-  padding: clamp(6px, 1.1vw, 8px) clamp(8px, 1.8vw, 12px);
-  min-width: clamp(115px, 18vw, 160px);
-  font-size: clamp(8px, 1.6vw, 10px);
+  padding: clamp(5px, 1.1vw, 7px) clamp(7px, 1.8vw, 10px);
+  min-width: clamp(90px, 18vw, 128px);
+  font-size: clamp(7px, 1.6vw, 9px);
 }
 .stats .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
 .stats .name { font-weight: bold; color: var(--text-cream); }
@@ -96,5 +102,4 @@ body {
 
 @media (max-width: 520px) {
   .actions { grid-template-columns: 1fr; }
-  .game { max-height: 50vh; }
 }
