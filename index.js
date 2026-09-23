@@ -128,6 +128,88 @@ function typeEffectiveness(attackerType, defenderType) {
   return row[defenderType];
 }
 
+// ---------- speed, real move types, stat moves, weather ----------
+const VS = localStorage.getItem('vsMode') === '1';   // 2-player hot-seat battle
+const SPEED = {Pikachu:90,Bulbasaur:45,Charmander:65,Squirtle:43,Blastoise:78,Charizard:100,Eevee:55,Jigglypuff:20,Gengar:110,Snorlax:30,Vulpix:65,Growlithe:60,Psyduck:55,Machop:35,Abra:90,Geodude:20,Meowth:90,Ekans:55,Sandshrew:40,Oddish:30,Poliwag:90,Ponyta:90,Magnemite:45,Doduo:75,Venusaur:80,Raichu:110,Arcanine:95,Alakazam:120,Machamp:55,Golem:45,Gyarados:81,Dragonite:80,Mewtwo:130,Lapras:60,Onix:70,Pidgeot:101,Scyther:105,Jynx:95,Electabuzz:105,Magmar:93,Haunter:95,Cubone:35,Dratini:50,Zubat:55,Butterfree:70,Nidoking:85,Vaporeon:65,Jolteon:130,Flareon:65,Lucario:90,Articuno:85};
+const PRIORITY = { 'Quick Attack': 1, 'Extreme Speed': 2 };
+// Every move has its own type; anything not listed is Normal.
+const MOVE_TYPE = {
+  'Thunder Shock':'electric','Thunderbolt':'electric','Thunder':'electric','Thunder Punch':'electric','Thunder Fang':'electric','Spark':'electric',
+  'Vine Whip':'grass','Razor Leaf':'grass','Seed Bomb':'grass','Absorb':'grass','Solar Beam':'grass',
+  'Ember':'fire','Flame Burst':'fire','Flamethrower':'fire','Fire Fang':'fire','Fire Spin':'fire','Flame Wheel':'fire','Fire Punch':'fire',
+  'Bubble':'water','Water Gun':'water','Water Cannon':'water','Water Pulse':'water','Surf':'water','Hydro Pump':'water','Waterfall':'water',
+  'Shadow Ball':'ghost','Lick':'ghost','Night Shade':'ghost',
+  'Sludge Bomb':'poison','Sludge':'poison','Poison Sting':'poison','Acid':'poison','Poison Jab':'poison','Smog':'poison','Poison Powder':'poison',
+  'Karate Chop':'fighting','Low Kick':'fighting','Seismic Toss':'fighting','Cross Chop':'fighting','Aura Sphere':'fighting','Close Combat':'fighting','Force Palm':'fighting',
+  'Confusion':'psychic','Psybeam':'psychic','Psyshock':'psychic','Psychic':'psychic','Dream Eater':'psychic',
+  'Rock Throw':'rock','Rock Slide':'rock','Rollout':'rock',
+  'Bone Club':'ground','Bonemerang':'ground','Earthquake':'ground','Sand Attack':'ground',
+  'Wing Attack':'flying','Gust':'flying','Air Slash':'flying','Air Cutter':'flying','Peck':'flying','Drill Peck':'flying',
+  'X-Scissor':'bug','Fury Cutter':'bug','Bug Buzz':'bug','Silver Wind':'bug','Leech Life':'bug','Pin Missile':'bug','String Shot':'bug',
+  'Ice Beam':'ice','Ice Punch':'ice','Powder Snow':'ice','Blizzard':'ice',
+  'Dragon Claw':'dragon','Dragon Rage':'dragon','Outrage':'dragon','Twister':'dragon'
+};
+const moveType = m => MOVE_TYPE[m.name] || 'normal';
+
+// Stat-changing moves: stat = [stat, stages, targetsSelf]. They replace one weak move on a few Pokémon.
+const STAT_MOVES = {
+  'Swords Dance': { name:'Swords Dance', power:0, stat:['atk', 2, true] },
+  'Growl':        { name:'Growl',        power:0, stat:['atk', -1, false] },
+  'Leer':         { name:'Leer',         power:0, stat:['def', -1, false] },
+  'Harden':       { name:'Harden',       power:0, stat:['def', 1, true] },
+  'Agility':      { name:'Agility',      power:0, stat:['spd', 2, true] },
+  'String Shot':  { name:'String Shot',  power:0, stat:['spd', -1, false] }
+};
+const MOVE_SWAPS = { Charmander:[1,'Growl'], Squirtle:[1,'Leer'], Bulbasaur:[1,'Growl'], Machop:[1,'Swords Dance'], Scyther:[2,'Swords Dance'],
+  Onix:[2,'Harden'], Golem:[3,'Harden'], Pikachu:[3,'Agility'], Butterfree:[1,'String Shot'], Dragonite:[2,'Swords Dance'], Lucario:[3,'Swords Dance'],
+  Meowth:[0,'Growl'], Eevee:[1,'Growl'], Zubat:[1,'Leer'], Gyarados:[3,'Swords Dance'], Ekans:[0,'Leer'], Jolteon:[1,'Agility'] };
+Object.entries(MOVE_SWAPS).forEach(([n, [i, m]]) => { POKEDEX[n].moves[i] = { ...STAT_MOVES[m] }; });
+
+const stageMult = s => (s >= 0 ? (2 + s) / 2 : 2 / (2 - s));
+const freshStages = () => ({ atk: 0, def: 0, spd: 0 });
+const stageTag = m => Object.entries(m.stages || {}).filter(([, v]) => v)
+  .map(([k, v]) => `<span class="type-badge" style="background:${v > 0 ? '#2e8b57' : '#8b2e2e'}">${k.toUpperCase()}${v > 0 ? '+' : ''}${v}</span>`).join('');
+function effSpeed(m) { return (m.speed || 60) * stageMult((m.stages || {}).spd || 0) * (m.status === 'par' ? 0.5 : 1); }
+// true if attacker `a` (using move am) acts before `b` (using bm): priority first, then speed, ties are a coin flip
+function moveFirst(a, am, b, bm) {
+  const pa = PRIORITY[am.name] || 0, pb = PRIORITY[bm.name] || 0;
+  if (pa !== pb) return pa > pb;
+  const sa = effSpeed(a), sb = effSpeed(b);
+  return sa === sb ? Math.random() < 0.5 : sa > sb;
+}
+
+const WEATHER = {
+  rain: { label:'RAIN',      icon:'🌧', boost:'water', cut:'fire',  up:1.5, start:'It started to rain!' },
+  sun:  { label:'HARSH SUN', icon:'☀',  boost:'fire',  cut:'water', up:1.5, start:'The sunlight turned harsh!' },
+  sand: { label:'SANDSTORM', icon:'🌪', boost:'rock',  cut:null,    up:1.3, start:'A sandstorm kicked up!' }
+};
+
+// ---------- shinies + export/import save ----------
+const getShinies = () => { try { return JSON.parse(localStorage.getItem('shinies')) || []; } catch (e) { return []; } };
+function markShiny(n) { const l = getShinies(); if (!l.includes(n)) { l.push(n); localStorage.setItem('shinies', JSON.stringify(l)); } }
+
+const SAVE_KEYS = ['battleProfile','battleStats','pokeProgress','campaign','shinies','playerTeam','playerPokemon','difficulty','muted','teamSize','oppMode','campMode','seenTutorial'];
+const SAVE_JSON_KEYS = ['battleProfile','battleStats','pokeProgress','campaign','shinies','playerTeam'];
+function exportSave() {
+  const data = {};
+  SAVE_KEYS.forEach(k => { const v = localStorage.getItem(k); if (v !== null) data[k] = v; });
+  const blob = new Blob([JSON.stringify({ app:'pokemon-battle-arena', version:1, savedAt:new Date().toISOString(), data }, null, 2)], { type:'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'pokemon-battle-save.json'; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+// Validates everything first, so a bad file never half-overwrites a good save.
+function importSave(text) {
+  const obj = JSON.parse(text);
+  if (!obj || obj.app !== 'pokemon-battle-arena' || !obj.data || typeof obj.data !== 'object') throw new Error('This is not a Battle Arena save file.');
+  const entries = Object.entries(obj.data).filter(([k, v]) => SAVE_KEYS.includes(k) && typeof v === 'string');
+  entries.forEach(([k, v]) => { if (SAVE_JSON_KEYS.includes(k)) JSON.parse(v); });
+  const st = obj.data.battleStats && JSON.parse(obj.data.battleStats);
+  if (st && (typeof st.wins !== 'number' || typeof st.losses !== 'number')) throw new Error('Save file stats look corrupted.');
+  entries.forEach(([k, v]) => localStorage.setItem(k, v));
+  return entries.length;
+}
+
 // Small pixel pokeball used whenever a remote sprite/avatar fails to load.
 const FALLBACK_SPRITE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' shape-rendering='crispEdges'%3E%3Ccircle cx='32' cy='32' r='28' fill='%23f4f0d8' stroke='%23000' stroke-width='4'/%3E%3Cpath d='M4 32a28 28 0 0 1 56 0z' fill='%23e3350d' stroke='%23000' stroke-width='4'/%3E%3Crect x='4' y='30' width='56' height='4' fill='%23000'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%23f4f0d8' stroke='%23000' stroke-width='4'/%3E%3Ccircle cx='32' cy='32' r='3' fill='%23000'/%3E%3C/svg%3E";
 
@@ -203,8 +285,8 @@ const TYPE_COLORS = {
 function typeBadge(type) {
   return `<span class="type-badge" style="background:${TYPE_COLORS[type] || '#666'}">${type}</span>`;
 }
-function moveAccuracy(m) { return m.power >= 13 ? 85 : m.power >= 11 ? 95 : 100; }
-function movePP(m) { return m.power >= 13 ? 5 : m.power >= 11 ? 10 : m.power >= 8 ? 15 : 25; }
+function moveAccuracy(m) { return m.stat ? 100 : m.power >= 13 ? 85 : m.power >= 11 ? 95 : 100; }
+function movePP(m) { return m.stat ? 20 : m.power >= 13 ? 5 : m.power >= 11 ? 10 : m.power >= 8 ? 15 : 25; }
 
 let muted = localStorage.getItem('muted') === '1';
 let audioCtx;
@@ -225,6 +307,7 @@ const SFX = {
   miss:  () => beep(400, .15, 'sine', .04, -200),
   super: () => { beep(330, .1); setTimeout(() => beep(660, .18), 90); },
   crit:  () => { beep(600, .08); setTimeout(() => beep(300, .18, 'square', .07, -100), 80); },
+  stat:  () => beep(420, .18, 'triangle', .06, 260),
   faint: () => beep(300, .7, 'sawtooth', .05, -250),
   win:   () => [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => beep(f, .15), i * 140))
 };
@@ -266,10 +349,14 @@ const OPPONENT_POOL = Object.keys(POKEDEX);
 // ---------- TITLE SCREEN ----------
 const startButton = document.getElementById('startButton');
 if (startButton) {
+  let after = 'profileScreen';
+  const show = id => ['titleScreen', 'profileScreen', 'tutorialScreen'].forEach(x => { document.getElementById(x).hidden = x !== id; });
   startButton.addEventListener('click', () => {
-    document.getElementById('titleScreen').hidden = true;
-    document.getElementById('profileScreen').hidden = false;
+    if (localStorage.getItem('seenTutorial')) return show('profileScreen');
+    after = 'profileScreen'; show('tutorialScreen');   // first launch shows the tutorial once
   });
+  document.getElementById('howToLink').addEventListener('click', e => { e.preventDefault(); after = 'titleScreen'; show('tutorialScreen'); });
+  document.getElementById('tutorialDoneBtn').addEventListener('click', () => { localStorage.setItem('seenTutorial', '1'); show(after); });
 }
 
 // ---------- PROFILE / TRAINER SELECT SCREEN ----------
@@ -350,24 +437,21 @@ let campMode = localStorage.getItem('campMode') || 'single';
 let phase = 'player';            // 'player' = pick your team, 'opp' = pick the opponent's team
 const team = [], oppPick = [];
 const teamBtn = document.getElementById('teamStartBtn');
+// 2-player always needs a second pick screen; "choose foe" only applies to single battles
+const needOpp = () => campMode === 'versus' || (oppMode === 'choose' && campMode === 'single');
 function refreshTeamUI() {
   const picks = phase === 'player' ? team : oppPick;
   document.getElementById('pickCount').textContent = teamSize;
-  document.getElementById('pickWho').textContent = phase === 'player' ? '' : 'OPPONENT ';
+  document.getElementById('pickWho').textContent = campMode === 'versus' ? (phase === 'player' ? 'PLAYER 1 ' : 'PLAYER 2 ') : (phase === 'player' ? '' : 'OPPONENT ');
   document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('selected', +b.dataset.size === teamSize));
-  document.querySelectorAll('.camp-btn').forEach(b => b.addEventListener('click', () => {
-    campMode = b.dataset.camp;
-    localStorage.setItem('campMode', campMode);
-    refreshTeamUI();
-  }));
   document.querySelectorAll('.opp-btn').forEach(b => b.classList.toggle('selected', b.dataset.mode === oppMode));
   document.querySelectorAll('.pokemon-card').forEach(c => {
     c.classList.toggle('picked', picks.includes(c.dataset.name));
     c.disabled = phase === 'opp' && team.includes(c.dataset.name);
   });
   document.querySelectorAll('.camp-btn').forEach(b => b.classList.toggle('selected', b.dataset.camp === campMode));
-  document.getElementById('oppRow').hidden = campMode === 'campaign';
-  const last = phase === 'opp' || oppMode === 'random' || campMode === 'campaign';
+  document.getElementById('oppRow').hidden = campMode !== 'single';
+  const last = phase === 'opp' || !needOpp();
   teamBtn.textContent = `${last ? 'START BATTLE' : 'NEXT: PICK OPPONENT'} (${picks.length}/${teamSize})`;
   teamBtn.disabled = picks.length !== teamSize;
   document.getElementById('setupBars').hidden = phase === 'opp';
@@ -375,11 +459,12 @@ function refreshTeamUI() {
 }
 if (teamBtn) {
   teamBtn.addEventListener('click', () => {
-    if (phase === 'player' && oppMode === 'choose' && campMode !== 'campaign') { phase = 'opp'; refreshTeamUI(); return; }
+    if (phase === 'player' && needOpp()) { phase = 'opp'; refreshTeamUI(); return; }
     localStorage.setItem('playerTeam', JSON.stringify(team));
     localStorage.setItem('playerPokemon', team[0]);
-    saveCampaign(campMode === 'campaign' ? { stage: 0, badges: [], bag: { ...BAG_START } } : null);
-    if (oppMode === 'choose' && campMode !== 'campaign') localStorage.setItem('oppTeam', JSON.stringify(oppPick));
+    localStorage.setItem('vsMode', campMode === 'versus' ? '1' : '0');
+    saveCampaign(campMode === 'campaign' ? { stage: 0, badges: [], bag: { ...BAG_START } } : campMode === 'endless' ? { endless: true, stage: 0, badges: [], bag: { ...BAG_START } } : null);
+    if (needOpp()) localStorage.setItem('oppTeam', JSON.stringify(oppPick));
     else localStorage.removeItem('oppTeam');
     window.location.href = 'main.html';
   });
@@ -393,6 +478,11 @@ if (teamBtn) {
   document.querySelectorAll('.opp-btn').forEach(b => b.addEventListener('click', () => {
     oppMode = b.dataset.mode;
     localStorage.setItem('oppMode', oppMode);
+    refreshTeamUI();
+  }));
+  document.querySelectorAll('.camp-btn').forEach(b => b.addEventListener('click', () => {
+    campMode = b.dataset.camp;
+    localStorage.setItem('campMode', campMode);
     refreshTeamUI();
   }));
   refreshTeamUI();
@@ -413,19 +503,22 @@ const trainerIntroEl = document.getElementById('trainerIntro');
 if (trainerIntroEl) {
   const profile = getProfile();
   const teamNames = JSON.parse(localStorage.getItem('playerTeam') || 'null') || [localStorage.getItem('playerPokemon') || 'Blastoise'];
-  const camp = getCampaign(), gym = camp && GYM_LEADERS[camp.stage];
-  const trainer = gym || OPPONENT_TRAINERS[Math.floor(Math.random() * OPPONENT_TRAINERS.length)];
+  const camp = getCampaign(), gym = camp && !camp.endless && GYM_LEADERS[camp.stage];
+  const trainer = VS ? { name: 'Player 2', accent: '#e3350d', hat: 'cap' } : gym || OPPONENT_TRAINERS[Math.floor(Math.random() * OPPONENT_TRAINERS.length)];
 
   function levelToMaxHp(level) { return Math.round(80 + level * 1.6); }
   function makeMon(name, level) {
     const maxHp = levelToMaxHp(level);
-    return { name, level, hp: maxHp, maxHp, ...POKEDEX[name] };
+    const d = POKEDEX[name], shiny = Math.random() < 1 / 64;   // 1-in-64 recolored sprite
+    return { name, level, hp: maxHp, maxHp, ...d, shiny, speed: SPEED[name] || 60, stages: freshStages(),
+      front: shiny ? d.front.replace('/anim/normal/', '/anim/shiny/') : d.front,
+      back:  shiny ? d.back.replace('/anim/back-normal/', '/anim/back-shiny/') : d.back };
   }
   const prog = getProgress();
-  const playerTeam = teamNames.map(n => makeMon(n, prog[n] ? prog[n].level : 40));
+  const playerTeam = teamNames.map(n => makeMon(n, VS ? 50 : prog[n] ? prog[n].level : 40));
   const avgLv = Math.round(playerTeam.reduce((a, p) => a + p.level, 0) / playerTeam.length);
   // gym leaders scale with the stage; other opponents track your team's level (±3)
-  const foeLevel = () => (gym ? 40 + camp.stage * 2 : Math.max(5, avgLv + Math.floor(Math.random() * 7) - 3));
+  const foeLevel = () => (VS ? 50 : camp && camp.endless ? Math.min(100, Math.max(5, avgLv - 2 + camp.stage * 2)) : gym ? 40 + camp.stage * 2 : Math.max(5, avgLv + Math.floor(Math.random() * 7) - 3));
   const chosen = JSON.parse(localStorage.getItem('oppTeam') || 'null');
   const oppNames = gym
     ? gym.team.slice(0, teamNames.length)
@@ -439,7 +532,11 @@ if (trainerIntroEl) {
   const trainerAvatarEl = document.getElementById('trainerAvatar');
   trainerAvatarEl.src = trainerSilhouette(trainer.accent, trainer.hat);
   trainerAvatarEl.addEventListener('error', () => handleSpriteError(trainerAvatarEl));
-  document.getElementById('trainerText').textContent = `${trainer.name} wants to battle! They sent out ${opponent.name}!${camp ? ` [GYM ${camp.stage + 1}/${GYM_LEADERS.length}]` : ''}`;
+  const campTag = !camp ? '' : camp.endless ? ` [ENDLESS WAVE ${camp.stage + 1}]` : ` [GYM ${camp.stage + 1}/${GYM_LEADERS.length}]`;
+  const shinyNote = [...playerTeam, ...oppTeam].filter(m => m.shiny).map(m => ` ★ Shiny ${m.name}!`).join('');
+  document.getElementById('trainerText').textContent = VS
+    ? `HOT-SEAT BATTLE! Player 1 picks a move, then hands the device to Player 2.${shinyNote}`
+    : `${trainer.name} wants to battle! They sent out ${opponent.name}!${campTag}${shinyNote}`;
 
   const playerBadge = document.getElementById('playerBadge');
   const playerClass = TRAINER_CLASSES.find(tc => tc.id === profile.trainerClassId) || TRAINER_CLASSES[0];
@@ -463,9 +560,10 @@ if (trainerIntroEl) {
   const diffSel = document.getElementById('difficulty');
   diffSel.value = localStorage.getItem('difficulty') || 'normal';
   diffSel.addEventListener('change', () => localStorage.setItem('difficulty', diffSel.value));
+  diffSel.hidden = VS;
   document.getElementById('forfeitBtn').addEventListener('click', () => {
     saveCampaign(null);
-    recordResult(false, opponent.type, { me: player.name, foe: opponent.name });
+    if (!VS) recordResult(false, opponent.type, { me: player.name, foe: opponent.name });
     window.location.href = 'index.html';
   });
 }
@@ -475,6 +573,9 @@ function startBattle(playerTeam, oppTeam) {
   const campState = getCampaign();
   const bag = campState ? campState.bag : { ...BAG_START };
   let nextGym = false;
+  const weatherEl = document.getElementById('weather');
+  let weather = null, weatherTurns = 0, foeSwitchCooldown = 0, vsChoice = null, vsStage = null;
+  let foePotions = (localStorage.getItem('difficulty') || 'normal') === 'hard' && !VS ? 2 : 0;
   const els = {
     oppName: document.getElementById('oppName'), oppLevel: document.getElementById('oppLevel'),
     oppSprite: document.getElementById('oppSprite'), oppHPBar: document.getElementById('oppHPBar'), oppHPText: document.getElementById('oppHPText'),
@@ -482,7 +583,7 @@ function startBattle(playerTeam, oppTeam) {
     playerSprite: document.getElementById('playerSprite'), playerHPBar: document.getElementById('playerHPBar'), playerHPText: document.getElementById('playerHPText'),
     message: document.getElementById('message'), actions: document.getElementById('actions'), restartButton: document.getElementById('restartButton'),
     switchBtn: document.getElementById('switchBtn'), itemBtn: document.getElementById('itemBtn'), switchPanel: document.getElementById('switchPanel'),
-    oppDots: document.getElementById('oppDots'), playerDots: document.getElementById('playerDots')
+    oppDots: document.getElementById('oppDots'), playerDots: document.getElementById('playerDots'), handoffBtn: document.getElementById('handoffBtn')
   };
 
   function showOpp() {
@@ -495,6 +596,7 @@ function startBattle(playerTeam, oppTeam) {
   }
   function showPlayer() {
     player.fought = true;
+    if (player.shiny && !VS) markShiny(player.name);
     els.playerName.innerHTML = player.name + typeBadge(player.type);
     els.playerLevel.textContent = player.level;
     els.playerSprite.classList.remove('anim-faint');
@@ -509,9 +611,12 @@ function startBattle(playerTeam, oppTeam) {
   function init() {
     els.oppSprite.addEventListener('error', () => handleSpriteError(els.oppSprite));
     els.playerSprite.addEventListener('error', () => handleSpriteError(els.playerSprite));
-    playerTeam.forEach(p => (p.pp = p.moves.map(movePP)));
+    (VS ? [...playerTeam, ...oppTeam] : playerTeam).forEach(p => (p.pp = p.moves.map(movePP)));
     els.oppDots.hidden = els.playerDots.hidden = els.switchBtn.hidden = playerTeam.length < 2;
     showOpp(); showPlayer();
+    if (VS) els.switchBtn.hidden = els.itemBtn.hidden = true;   // hot-seat: moves + forced switches only
+    const w0 = Math.random() < 0.5 ? rollWeather() : '';
+    setMessage((w0 ? w0 + ' ' : '') + (VS ? 'Player 1: choose a move.' : 'What will you do?'));
   }
 
   function updateHP(who) {
@@ -522,25 +627,25 @@ function startBattle(playerTeam, oppTeam) {
     bar.style.width = pct + '%';
     bar.style.background = pct > 50 ? 'var(--hp-green)' : pct > 20 ? 'var(--hp-yellow)' : 'var(--hp-red)';
     text.textContent = `${Math.max(0, mob.hp)}/${mob.maxHp}`;
-    (who === 'opp' ? els.oppName : els.playerName).innerHTML = mob.name + typeBadge(mob.type) + statusTag(mob);
+    (who === 'opp' ? els.oppName : els.playerName).innerHTML = (mob.shiny ? '★ ' : '') + mob.name + typeBadge(mob.type) + statusTag(mob) + stageTag(mob);
     renderTeamDots();
   }
 
-  function renderMoves() {
+  function renderMoves(mon = player) {
     els.actions.innerHTML = '';
-    player.moves.forEach((move, i) => {
+    mon.moves.forEach((move, i) => {
       const btn = document.createElement('button');
       btn.className = 'retro-btn'; btn.dataset.idx = i;
-      btn.style.setProperty('--tc', TYPE_COLORS[player.type] || '');
-      btn.textContent = `${i + 1}. ${move.name} ${player.pp[i]}/${movePP(move)}`;
-      btn.addEventListener('click', () => playerTurn(move, i));
+      btn.style.setProperty('--tc', TYPE_COLORS[moveType(move)] || '');
+      btn.textContent = `${i + 1}. ${move.name} ${mon.pp[i]}/${movePP(move)}`;
+      btn.addEventListener('click', () => (vsStage === 'p2' ? foeChoose(move, i) : playerTurn(move, i)));
       els.actions.appendChild(btn);
     });
   }
 
   function setMessage(t) { els.message.textContent = t; }
   function disableActions(d) {
-    els.actions.querySelectorAll('button').forEach(b => (b.disabled = d || player.pp[b.dataset.idx] <= 0));
+    els.actions.querySelectorAll('button').forEach(b => (b.disabled = d || (vsStage === 'p2' ? opponent : player).pp[b.dataset.idx] <= 0));
     els.switchBtn.disabled = d || playerTeam.filter(p => p.hp > 0).length < 2;
     els.itemBtn.disabled = d;
   }
@@ -549,14 +654,33 @@ function startBattle(playerTeam, oppTeam) {
     if (cls !== 'anim-faint') el.addEventListener('animationend', () => el.classList.remove(cls), { once: true });
   }
 
-  // Misses (by move accuracy), 1-in-12 crits, and type effectiveness. Returns { dmg, eff, crit, miss }.
+  // ---------- weather ----------
+  function paintWeather() { weatherEl.textContent = weather ? `${WEATHER[weather].icon} ${WEATHER[weather].label} (${weatherTurns})` : ''; }
+  function rollWeather() { weather = Object.keys(WEATHER)[Math.floor(Math.random() * 3)]; weatherTurns = 5; paintWeather(); return WEATHER[weather].start; }
+  const weatherMult = t => { const w = weather && WEATHER[weather]; return !w ? 1 : t === w.boost ? w.up : t === w.cut ? 0.5 : 1; };
+
+  // Misses (by move accuracy), 1-in-12 crits, STAB, type effectiveness, stat stages, weather. Returns { dmg, eff, crit, miss }.
   function computeDamage(move, attacker, defender) {
     if (Math.random() * 100 >= moveAccuracy(move)) return { dmg: 0, eff: 1, miss: true };
-    const eff = typeEffectiveness(attacker.type, defender.type);
+    const mt = moveType(move);
+    const eff = typeEffectiveness(mt, defender.type);
     const crit = Math.random() < 1 / 12;
     const levelFactor = 0.6 + attacker.level / 100;
-    const dmg = eff === 0 ? 0 : Math.max(1, Math.round(move.power * levelFactor * eff * (crit ? 1.5 : 1) * (attacker.status === 'brn' ? 0.5 : 1)));
+    const stab = mt === attacker.type ? 1.5 : 1;
+    const stages = stageMult(attacker.stages.atk) / stageMult(defender.stages.def);
+    const dmg = eff === 0 ? 0 : Math.max(1, Math.round(move.power * levelFactor * eff * stab * stages * weatherMult(mt) * (crit ? 1.5 : 1) * (attacker.status === 'brn' ? 0.5 : 1)));
     return { dmg, eff, crit };
+  }
+
+  function statMove(att, def, move) {
+    const [k, n, self] = move.stat, t = self ? att : def, label = { atk: 'Attack', def: 'Defense', spd: 'Speed' }[k];
+    const before = t.stages[k];
+    t.stages[k] = Math.max(-6, Math.min(6, before + n));
+    let msg = `${att.name} used ${move.name}! `;
+    msg += t.stages[k] === before ? `${t.name}'s ${label} won't go any ${n > 0 ? 'higher' : 'lower'}!` : `${t.name}'s ${label} ${Math.abs(n) > 1 ? 'sharply ' : ''}${n > 0 ? 'rose' : 'fell'}!`;
+    if (att.hp > 0) msg += residual(att);
+    setTimeout(() => { SFX.stat(); updateHP('opp'); updateHP('player'); }, 250);
+    setMessage(msg);
   }
 
   function describe(att, move, def, r) {
@@ -588,8 +712,8 @@ function startBattle(playerTeam, oppTeam) {
     if (mon.status === 'par' && Math.random() < 0.25) return `${mon.name} is paralyzed! It can't move!`;
     return '';
   }
-  function tryInflict(att, def) {
-    const st = INFLICTS[att.type];
+  function tryInflict(att, def, move) {
+    const st = INFLICTS[moveType(move)];
     if (!st || def.status || IMMUNE[st] === def.type || Math.random() > 0.2) return '';
     def.status = st;
     if (st === 'slp') def.sleepTurns = 1 + Math.floor(Math.random() * 2);
@@ -605,11 +729,12 @@ function startBattle(playerTeam, oppTeam) {
   function attack(att, def, move, attSprite, defSprite, atkClass) {
     const blocked = cantMove(att);
     if (blocked) { setMessage(blocked); setTimeout(() => { updateHP('opp'); updateHP('player'); }, 250); return; }
+    if (move.stat) return statMove(att, def, move);
     const r = computeDamage(move, att, def);
     animate(attSprite, atkClass);
     def.hp = Math.max(0, def.hp - r.dmg);
     let msg = describe(att, move, def, r);
-    if (r.dmg > 0) msg += tryInflict(att, def);
+    if (r.dmg > 0) msg += tryInflict(att, def, move);
     if (def.hp > 0) msg += residual(att);
     setTimeout(() => {
       if (r.miss) SFX.miss();
@@ -623,36 +748,111 @@ function startBattle(playerTeam, oppTeam) {
     setMessage(msg);
   }
 
+  // ---------- opponent AI ----------
+  const diff = () => localStorage.getItem('difficulty') || 'normal';
+  const expDmg = (m, a, d) => (m.power ? m.power * typeEffectiveness(moveType(m), d.type) * (moveType(m) === a.type ? 1.5 : 1) : 0);
+  const bestScore = (a, d) => Math.max(...a.moves.map(m => expDmg(m, a, d)));
+
+  // easy = random, normal = 50% best move, hard = best move (+ buffs/debuffs when it is safe)
+  function pickMove() {
+    const best = opponent.moves.filter(m => m.power).reduce((a, b) => (expDmg(b, opponent, player) > expDmg(a, opponent, player) ? b : a));
+    const rnd = opponent.moves[Math.floor(Math.random() * opponent.moves.length)];
+    const d = diff();
+    if (d === 'hard') {
+      const setup = opponent.moves.find(m => m.stat && (m.stat[2] ? opponent.stages[m.stat[0]] < 2 : player.stages[m.stat[0]] > -2));
+      return setup && opponent.hp > opponent.maxHp * 0.5 && Math.random() < 0.3 ? setup : best;
+    }
+    return d === 'normal' && Math.random() < 0.5 ? best : rnd;
+  }
+  // Hard: heal at low HP (2 potions) and switch out of bad type matchups (3-turn cooldown).
+  function aiPlan() {
+    if (VS || diff() !== 'hard') return { kind: 'move', move: pickMove() };
+    if (foeSwitchCooldown > 0) foeSwitchCooldown--;
+    if (foePotions > 0 && opponent.hp < opponent.maxHp * 0.3 && Math.random() < 0.7) return { kind: 'potion' };
+    const bench = oppTeam.filter(p => p !== opponent && p.hp > 0);
+    const now = bestScore(opponent, player) - bestScore(player, opponent);
+    if (bench.length && !foeSwitchCooldown && now < -6) {
+      const pick = bench.map(p => ({ p, s: bestScore(p, player) - bestScore(player, p) })).sort((a, b) => b.s - a.s)[0];
+      if (pick.s > now + 6 && Math.random() < 0.6) { foeSwitchCooldown = 3; return { kind: 'switch', i: oppTeam.indexOf(pick.p) }; }
+    }
+    return { kind: 'move', move: pickMove() };
+  }
+
+  // ---------- turn order ----------
   function playerTurn(move, i) {
     player.pp[i]--;
-    attack(player, opponent, move, els.playerSprite, els.oppSprite, 'anim-atk-p', 'opp');
     renderMoves(); disableActions(true);
+    if (VS) {   // hot-seat: hide P1's moves and wait for P2
+      vsChoice = { move };
+      els.actions.hidden = true; els.handoffBtn.hidden = false;
+      setMessage('Player 1 is locked in! Hand the device to Player 2, then press READY.');
+      return;
+    }
+    runRound(move, aiPlan());
+  }
+  function foeChoose(move, i) {
+    opponent.pp[i]--; vsStage = null;
+    renderMoves(); disableActions(true);
+    runRound(vsChoice.move, { kind: 'move', move });
+  }
+  // Switches and potions go first; otherwise higher priority, then higher Speed, acts first.
+  function runRound(pm, plan) {
+    const foeFirst = plan.kind !== 'move' || moveFirst(opponent, plan.move, player, pm);
+    if (foeFirst) foeAct(plan, () => playerAct(pm));
+    else playerAct(pm, () => foeAct(plan));
+  }
+  function playerAct(move, then) {
+    attack(player, opponent, move, els.playerSprite, els.oppSprite, 'anim-atk-p');
     if (opponent.hp <= 0) return foeFainted();
-    if (player.hp <= 0) return playerFainted(opponentTurn);
-    setTimeout(opponentTurn, 1300);
+    if (player.hp <= 0) return playerFainted(VS ? null : then);
+    if (then) setTimeout(then, 1300); else roundEnd();
   }
-
-  // easy = random, normal = 50% strongest move, hard = always strongest move
-  function pickMove() {
-    const best = opponent.moves.reduce((a, b) => (b.power > a.power ? b : a));
-    const rnd = opponent.moves[Math.floor(Math.random() * opponent.moves.length)];
-    const d = localStorage.getItem('difficulty') || 'normal';
-    return d === 'hard' || (d === 'normal' && Math.random() < 0.5) ? best : rnd;
-  }
-
-  function opponentTurn() {
-    attack(opponent, player, pickMove(), els.oppSprite, els.playerSprite, 'anim-atk-o', 'player');
+  function foeAct(plan, then) {
+    if (plan.kind === 'switch') {
+      opponent.stages = freshStages(); opponent = oppTeam[plan.i]; showOpp();
+      setMessage(`The rival withdrew and sent out ${opponent.name}!`);
+      return setTimeout(then || roundEnd, 1300);
+    }
+    if (plan.kind === 'potion') {
+      foePotions--; opponent.hp = Math.min(opponent.maxHp, opponent.hp + 50); updateHP('opp');
+      setMessage(`The rival used a Potion on ${opponent.name}!`);
+      return setTimeout(then || roundEnd, 1300);
+    }
+    attack(opponent, player, plan.move, els.oppSprite, els.playerSprite, 'anim-atk-o');
     if (player.hp <= 0) return playerFainted();
     if (opponent.hp <= 0) return foeFainted();
+    if (then) setTimeout(then, 1300); else roundEnd();
+  }
+  const opponentTurn = () => foeAct(aiPlan());
+
+  // End of a full round: weather ticks, sandstorm chip damage, then the next turn begins.
+  function roundEnd() {
+    let msg = '';
+    if (weather) {
+      if (weather === 'sand') [player, opponent].forEach(m => { if (m.type !== 'rock' && m.type !== 'ground') m.hp = Math.max(0, m.hp - Math.max(1, Math.floor(m.maxHp / 16))); });
+      msg = weather === 'sand' ? ' The sandstorm rages.' : '';
+      if (--weatherTurns <= 0) { msg += ` The ${WEATHER[weather].label.toLowerCase()} subsided.`; weather = null; }
+      paintWeather();
+    } else if (Math.random() < 0.06) msg = ' ' + rollWeather();
+    updateHP('opp'); updateHP('player');
+    if (msg) els.message.textContent += msg;
+    if (player.hp <= 0) return playerFainted();
+    if (opponent.hp <= 0) return foeFainted();
+    if (VS) { vsStage = null; vsChoice = null; renderMoves(); els.message.textContent += ' Player 1: choose a move.'; }
     disableActions(false);
   }
+  els.handoffBtn.addEventListener('click', () => {
+    els.handoffBtn.hidden = true; vsStage = 'p2';
+    renderMoves(opponent); els.actions.hidden = false; disableActions(false);
+    setMessage('Player 2: choose a move.');
+  });
 
   function endGame(won, text) {
-    if (won) text += ' ' + grantXP(playerTeam, oppTeam.length).join(' ');
-    text += campaignResult(won);
+    if (won && !VS) text += ' ' + grantXP(playerTeam, oppTeam.length).join(' ');
+    if (!VS) text += campaignResult(won);
     setMessage(text);
     disableActions(true);
-    recordResult(won, opponent.type, { me: playerTeam[0].name, foe: oppTeam[0].name, used: playerTeam.filter(p => p.fought).map(p => p.name) });
+    if (!VS) recordResult(won, opponent.type, { me: playerTeam[0].name, foe: oppTeam[0].name, used: playerTeam.filter(p => p.fought).map(p => p.name) });
     setTimeout(() => {
       animate(won ? els.oppSprite : els.playerSprite, 'anim-faint');
       if (won) SFX.win(); else SFX.faint();
@@ -662,9 +862,10 @@ function startBattle(playerTeam, oppTeam) {
 
   // ---------- team logic: fainting and switching ----------
   function foeFainted() {
-    if (oppTeam.every(p => p.hp <= 0)) return endGame(true, `${opponent.name} fainted. You win!`);
+    if (oppTeam.every(p => p.hp <= 0)) return endGame(true, `${opponent.name} fainted. ${VS ? 'Player 1 wins!' : 'You win!'}`);
     setTimeout(() => { animate(els.oppSprite, 'anim-faint'); SFX.faint(); setMessage(`${opponent.name} fainted!`); }, 700);
     setTimeout(() => {
+      if (VS) { setMessage(`${opponent.name} fainted! Player 2, pick your next Pokémon.`); return openSwitch(true, true); }
       opponent = oppTeam.find(p => p.hp > 0);
       showOpp(); setMessage(`The rival sent out ${opponent.name}!`); disableActions(false);
     }, 2000);
@@ -672,19 +873,19 @@ function startBattle(playerTeam, oppTeam) {
   let afterForced = null;   // what happens after a forced switch (e.g. the foe's turn)
   function playerFainted(next) {
     afterForced = next || null;
-    if (playerTeam.every(p => p.hp <= 0)) return endGame(false, `${player.name} fainted. You lose!`);
+    if (playerTeam.every(p => p.hp <= 0)) return endGame(false, `${player.name} fainted. ${VS ? 'Player 2 wins!' : 'You lose!'}`);
     setTimeout(() => { animate(els.playerSprite, 'anim-faint'); SFX.faint(); setMessage(`${player.name} fainted! Pick your next Pokémon.`); }, 700);
     setTimeout(() => openSwitch(true), 1700);
   }
-  function openSwitch(forced) {
+  function openSwitch(forced, foe) {
     els.switchPanel.innerHTML = '';
-    playerTeam.forEach((p, i) => {
+    (foe ? oppTeam : playerTeam).forEach((p, i) => {
       const b = document.createElement('button');
       b.className = 'retro-btn';
       b.style.setProperty('--tc', TYPE_COLORS[p.type] || '');
       b.textContent = `${p.name} ${p.hp}/${p.maxHp}`;
-      b.disabled = p.hp <= 0 || p === player;
-      b.addEventListener('click', () => switchTo(i, forced));
+      b.disabled = p.hp <= 0 || p === (foe ? opponent : player);
+      b.addEventListener('click', () => (foe ? foeSwitchTo(i) : switchTo(i, forced)));
       els.switchPanel.appendChild(b);
     });
     if (!forced) {
@@ -695,18 +896,24 @@ function startBattle(playerTeam, oppTeam) {
     }
     els.switchPanel.hidden = false; els.actions.hidden = true; els.switchBtn.hidden = true; els.itemBtn.hidden = true;
   }
-  function closeSwitch() { els.switchPanel.hidden = true; els.actions.hidden = false; els.switchBtn.hidden = playerTeam.length < 2; els.itemBtn.hidden = false; }
+  function closeSwitch() { els.switchPanel.hidden = true; els.actions.hidden = false; els.switchBtn.hidden = VS || playerTeam.length < 2; els.itemBtn.hidden = VS; }
   function switchTo(i, forced) {
-    player = playerTeam[i];
+    player.stages = freshStages(); player = playerTeam[i];
     closeSwitch(); showPlayer();
     setMessage(`Go, ${player.name}!`);
     if (forced) {
       disableActions(true);
       if (afterForced) { const f = afterForced; afterForced = null; return setTimeout(f, 1000); }
+      if (VS) { vsChoice = null; vsStage = null; setMessage(`Go, ${player.name}! Player 1: choose a move.`); }
       return disableActions(false);
     }
     disableActions(true);
     setTimeout(opponentTurn, 1000);
+  }
+  function foeSwitchTo(i) {   // hot-seat: Player 2's forced switch
+    opponent.stages = freshStages(); opponent = oppTeam[i];
+    closeSwitch(); showOpp(); vsStage = null; vsChoice = null; renderMoves();
+    setMessage(`Player 2 sent out ${opponent.name}! Player 1: choose a move.`); disableActions(false);
   }
   els.switchBtn.addEventListener('click', () => openSwitch(false));
 
@@ -744,6 +951,15 @@ function startBattle(playerTeam, oppTeam) {
   function campaignResult(won) {
     const camp = getCampaign();
     if (!camp) return '';
+    if (camp.endless) {   // endless: fight stronger waves until you lose; best wave is saved in stats
+      const s = getStats(), cleared = won ? camp.stage + 1 : camp.stage;
+      s.bestWave = Math.max(s.bestWave || 0, cleared); saveStats(s);
+      if (!won) { saveCampaign(null); return ` Endless run over: ${cleared} wave${cleared === 1 ? '' : 's'} cleared (best ${s.bestWave}).`; }
+      camp.stage++; camp.bag = bag; camp.bag.potion = (camp.bag.potion || 0) + 1;
+      if (camp.stage % 5 === 0) camp.bag.superpotion = (camp.bag.superpotion || 0) + 1;
+      saveCampaign(camp); nextGym = true; els.restartButton.textContent = 'NEXT WAVE';
+      return ` Wave ${camp.stage} cleared! +1 Potion${camp.stage % 5 === 0 ? ' and a Super Potion' : ''}.`;
+    }
     if (!won) { saveCampaign(null); return ' Your gym run is over.'; }
     const badge = GYM_LEADERS[camp.stage].badge;
     camp.badges.push(badge);
@@ -782,6 +998,16 @@ if (totalWinsEl) {
   }
 
   totalWinsEl.textContent = stats.wins;
+  document.getElementById('bestWave').textContent = stats.bestWave || 0;
+  const saveMsg = document.getElementById('saveMsg'), fileIn = document.getElementById('importFile');
+  document.getElementById('exportSaveBtn').addEventListener('click', () => { exportSave(); saveMsg.textContent = 'Save file downloaded.'; });
+  document.getElementById('importSaveBtn').addEventListener('click', () => fileIn.click());
+  fileIn.addEventListener('change', () => {
+    const f = fileIn.files[0]; if (!f) return;
+    f.text().then(t => { const n = importSave(t); saveMsg.textContent = `Imported ${n} items. Reloading...`; setTimeout(() => location.reload(), 700); })
+      .catch(e => { saveMsg.textContent = 'Import failed: ' + (e.message || 'invalid file'); });
+    fileIn.value = '';
+  });
   document.getElementById('totalLosses').textContent = stats.losses;
   document.getElementById('winRate').textContent = total ? Math.round((stats.wins / total) * 100) + '%' : '0%';
   document.getElementById('streak').textContent = stats.streak || 0;
@@ -820,7 +1046,7 @@ if (totalWinsEl) {
 // ---------- POKEDEX PAGE ----------
 const dexGrid = document.getElementById('dexGrid');
 if (dexGrid) {
-  const prog = getProgress(), byMon = getStats().byMon || {};
+  const prog = getProgress(), byMon = getStats().byMon || {}, shinySet = new Set(getShinies());
   const search = document.getElementById('dexSearch'), typeSel = document.getElementById('dexType');
   const types = [...new Set(Object.values(POKEDEX).map(p => p.type))].sort();
   typeSel.innerHTML = '<option value="">All types</option>' + types.map(t => `<option>${t}</option>`).join('');
@@ -830,14 +1056,19 @@ if (dexGrid) {
     dexGrid.innerHTML = list.map(([n, p]) => {
       const rec = byMon[n] || { wins: 0, losses: 0 }, tot = rec.wins + rec.losses;
       return `<div class="dex-card"><img src="${p.front}" alt="${n}" onerror="handleSpriteError(this)">
-        <div class="dex-name">${n}${typeBadge(p.type)}</div>
+        <div class="dex-name">${n}${shinySet.has(n) ? ' ★' : ''}${typeBadge(p.type)}</div>
         <div>Lv ${prog[n] ? prog[n].level : '40 (base)'}</div>
         <div>${tot ? `${rec.wins}W / ${rec.losses}L (${Math.round((rec.wins / tot) * 100)}%)` : 'No battles yet'}</div>
-        <ul class="dex-moves">${p.moves.map(m => `<li>${m.name}<span>${m.power}</span></li>`).join('')}</ul></div>`;
+        <ul class="dex-moves">${p.moves.map(m => `<li>${m.name} ${typeBadge(moveType(m))}<span>${m.power || 'STAT'}</span></li>`).join('')}</ul></div>`;
     }).join('') || '<p style="font-size:9px;">No Pokémon match.</p>';
     document.getElementById('dexCount').textContent = `${list.length}/${Object.keys(POKEDEX).length} SHOWN`;
   }
   search.addEventListener('input', renderDex);
   typeSel.addEventListener('change', renderDex);
   renderDex();
+}
+
+// ---------- install as an app (offline support) ----------
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 }

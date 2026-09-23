@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pokémon Battle Arena</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#1f1f2e">
+  <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="stylesheet" href="retro.css">
   <link rel="stylesheet" href="index.css">
 </head>
@@ -20,7 +23,24 @@
       <p class="footnote">
         <a href="stats.html" style="color:var(--accent-yellow)">VIEW BATTLE STATS</a>
         &nbsp;|&nbsp; <a href="pokedex.html" style="color:var(--accent-yellow)">POKÉDEX</a>
+        &nbsp;|&nbsp; <a href="#" id="howToLink" style="color:var(--accent-yellow)">HOW TO PLAY</a>
       </p>
+    </section>
+
+    <section id="tutorialScreen" class="screen" hidden>
+      <h2 class="section-title">HOW TO PLAY</h2>
+      <div class="tutorial">
+        <p><b>BATTLE:</b> pick a move each turn. When a team is knocked out, the battle ends.</p>
+        <p><b>TYPES:</b> super effective hits deal double, "not very effective" hits deal half, and some types do nothing. Moves have their own type, and a move matching your Pokémon's type gets a 1.5x bonus (STAB).</p>
+        <p><b>PP:</b> each move can only be used a limited number of times (the number on the button). Strong moves have less PP.</p>
+        <p><b>STATUS:</b> BRN burns (half attack + damage each turn), PSN poisons, PAR can stop you from moving and halves Speed, SLP skips turns. Full Heal cures them.</p>
+        <p><b>SPEED:</b> the faster Pokémon moves first. Quick Attack and Extreme Speed always go first. Switching and items happen before attacks.</p>
+        <p><b>STAT MOVES:</b> Growl, Leer and Swords Dance raise or lower stats for the rest of that Pokémon's time in battle. Switching out resets them.</p>
+        <p><b>WEATHER:</b> rain powers up Water and weakens Fire, sun does the opposite, and sandstorms hurt everyone except Rock and Ground for a few turns.</p>
+        <p><b>SHINY:</b> 1 in 64 Pokémon are shiny. Shinies you use are marked ★ in the Pokédex.</p>
+        <p><b>MODES:</b> single battle, 8-gym campaign, endless waves (survive as long as you can), or 2-player hot-seat on one screen.</p>
+      </div>
+      <button id="tutorialDoneBtn" class="retro-btn">GOT IT</button>
     </section>
 
     <section id="profileScreen" class="screen" hidden>
@@ -58,6 +78,8 @@
         <div class="mode-bar">
           <button class="retro-btn small camp-btn" data-camp="single">SINGLE BATTLE</button>
           <button class="retro-btn small camp-btn" data-camp="campaign">GYM CAMPAIGN</button>
+          <button class="retro-btn small camp-btn" data-camp="endless">ENDLESS</button>
+          <button class="retro-btn small camp-btn" data-camp="versus">2-PLAYER</button>
         </div>
       </div>
       <div class="pokemon-container" id="pokemonContainer"></div>

@@ -21,6 +21,17 @@ A browser-based, retro-styled Pokémon battle game built for HCI Finals (FEU-A).
 - **Mobile layout** — smaller, squarer battle arena, 2-column moves, and a scrolling picker that fits phone screens
 - **Difficulty** — Easy / Normal / Hard opponent AI, chosen on the trainer intro screen
 - **Stats extras** — win streak, best streak, and the last 10 battles
+- **Speed and turn order** — every Pokémon has a Speed stat; the faster one moves first (Quick Attack / Extreme Speed have priority, paralysis halves Speed, switches and items go before attacks)
+- **Real move types** — each move has its own type (Thunderbolt = electric, Ice Beam = ice), with a 1.5x same-type bonus (STAB), so Lapras, Gyarados and Charizard can hit outside their own type
+- **Stat-changing moves** — Swords Dance, Growl, Leer, Harden, Agility and String Shot change attack/defense/speed stages (-6 to +6, reset on switch-out)
+- **Smarter opponent** — on Hard the AI picks moves by expected damage, switches out of bad type matchups, uses 2 Potions when low, and sets up with buffs
+- **Weather** — rain, harsh sun and sandstorm (boosts/weakens types, sand chips non-Rock/Ground) last 5 turns
+- **Shiny Pokémon** — 1-in-64 recolored sprite; shinies you use are starred in the Pokédex
+- **Export / import save** — buttons on the Stats page download and restore your progress as a JSON file (validated before anything is overwritten)
+- **Endless mode** — stronger waves until you lose; best wave is saved in stats
+- **2-player hot-seat** — two players pick teams and take turns on one screen (moves + forced switches; no items, no stat saving)
+- **Tutorial screen** — shown on first launch and from "HOW TO PLAY" on the title screen
+- **Installable app** — `manifest.webmanifest` + `sw.js` make it installable and playable offline once loaded (serve over http/https; service workers do not run from `file://`)
 - **Turn-based battle** with animated HP bars (green → yellow → red) and battle-log messaging
 - **Persistent battle stats** — wins, losses, win rate, and a per-type breakdown, saved to `localStorage` and viewable/resettable on the Stats page
 - **Sprite fallback** — if a Pokémon/avatar sprite fails to load (e.g. no network), a pixel Poké Ball placeholder is shown instead of a broken image
@@ -39,6 +50,7 @@ index.html   — title screen, trainer/profile setup, Pokémon selection
 main.html    — trainer intro + turn-based battle
 stats.html   — battle record, streaks, history and per-type breakdown
 pokedex.html — browsable Pokédex with per-Pokémon records
+sw.js / manifest.webmanifest / icon-*.png — installable-app files
 index.js     — all game logic (Pokédex data, screens, battle engine, stats)
 retro.css    — shared design tokens and components (buttons, panels, avatars)
 index.css / main.css / stats.css — per-page layout styles
@@ -49,6 +61,7 @@ index.css / main.css / stats.css — per-page layout styles
 All progress is stored client-side in `localStorage`:
 - `battleProfile` — trainer class + optional GitHub avatar/username
 - `battleStats` — total wins/losses and a win/loss count per opponent type
+- `pokeProgress`, `campaign`, `shinies` — XP/levels, current gym/endless run, shinies used
 - `playerTeam` / `playerPokemon` — the team (and lead) selected for the current run
 
 Reset your record anytime from the Stats page.

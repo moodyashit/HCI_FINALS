@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pokémon Battle</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#1f1f2e">
+  <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="stylesheet" href="retro.css">
   <link rel="stylesheet" href="main.css">
 </head>
@@ -29,6 +32,8 @@
           <a href="index.html">🏠 Main Menu</a>
         </div>
       </div>
+
+      <div id="weather" class="weather"></div>
 
       <div class="opponent">
         <div class="stats">
@@ -66,6 +71,7 @@
       <div id="switchPanel" class="actions" hidden></div>
       <button id="switchBtn" class="retro-btn small" style="margin-top:10px;">SWITCH POKÉMON</button>
       <button id="itemBtn" class="retro-btn small" style="margin:10px 0 0 10px;">ITEMS</button>
+      <button id="handoffBtn" class="retro-btn" style="width:100%;margin-top:10px;" hidden>READY - PLAYER 2</button>
       <button id="restartButton" class="retro-btn" hidden>PLAY AGAIN</button>
     </div>
   </div>

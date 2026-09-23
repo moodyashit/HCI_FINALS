@@ -93,7 +93,7 @@ body {
 /* the grid scrolls on its own so the start bar never moves */
 .pokemon-container { max-height: calc(92vh - 450px); min-height: 180px; overflow-y: auto; padding: 8px; }
 .team-bar { margin-top: 14px; text-align: center; }
-.mode-bar { display: flex; gap: 10px; justify-content: center; margin-bottom: 14px; }
+.mode-bar { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 14px; }
 button.retro-btn.mode-btn.selected, button.retro-btn.opp-btn.selected, button.retro-btn.camp-btn.selected { background: var(--accent-yellow); color: #000; }
 
 .pokemon-card:disabled { opacity: .3; cursor: not-allowed; }
@@ -109,3 +109,8 @@ button.retro-btn.mode-btn.selected, button.retro-btn.opp-btn.selected, button.re
   .section-title { margin-bottom: 10px; }
 }
 @media (hover: none) { .pokemon-card:hover { transform: none; } }
+
+/* ---------- tutorial ---------- */
+.tutorial { text-align: left; font-size: 9px; line-height: 2; max-height: 50vh; overflow-y: auto; margin-bottom: 18px; padding-right: 6px; }
+.tutorial p { margin: 0 0 10px; }
+.tutorial b { color: var(--accent-yellow); }

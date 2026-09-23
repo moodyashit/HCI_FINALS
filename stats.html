@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Battle Stats</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#1f1f2e">
+  <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="stylesheet" href="retro.css">
   <link rel="stylesheet" href="stats.css">
 </head>
@@ -21,6 +24,7 @@
     <div class="stat-row"><span>Win Rate</span><span id="winRate">0%</span></div>
     <div class="stat-row"><span>Win Streak</span><span id="streak">0</span></div>
     <div class="stat-row"><span>Best Streak</span><span id="bestStreak">0</span></div>
+    <div class="stat-row"><span>Best Endless Wave</span><span id="bestWave">0</span></div>
 
     <h3 style="font-size:11px;color:var(--accent-yellow);margin:20px 0 12px;">VS EACH TYPE</h3>
     <div id="typeBreakdown"></div>
@@ -29,10 +33,14 @@
     <div id="history"></div>
 
     <div style="margin-top:24px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+      <button id="exportSaveBtn" class="retro-btn small">EXPORT SAVE</button>
+      <button id="importSaveBtn" class="retro-btn small">IMPORT SAVE</button>
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
       <button id="resetStatsBtn" class="retro-btn small">RESET STATS</button>
       <button onclick="window.location.href='pokedex.html'" class="retro-btn small">POKÉDEX</button>
       <button onclick="window.location.href='index.html'" class="retro-btn small">BACK TO TITLE</button>
     </div>
+    <p id="saveMsg" style="font-size:8px;margin:14px 0 0;min-height:10px;"></p>
   </div>
 
   <script src="index.js"></script>
