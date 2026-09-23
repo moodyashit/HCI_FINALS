@@ -98,8 +98,9 @@ button.retro-btn.small { font-size: 9px; padding: 8px 10px; }
   color: var(--text-cream);
   border: 2px solid #000;
   border-radius: 6px;
-  padding: 8px 10px;
-  font-size: 14px;
+  padding: 10px 12px;
+  font-size: 9px;
+  letter-spacing: 1px;
   cursor: pointer;
 }
 .menu-dropdown {

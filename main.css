@@ -44,7 +44,7 @@ body {
   align-items: center;
 }
 .opponent { top: 32%; right: 10%; }
-.player { bottom: 3%; left: 4%; flex-direction: column-reverse; }
+.player { bottom: 14%; left: 16%; flex-direction: column-reverse; }
 
 .pokemon {
   position: relative;
