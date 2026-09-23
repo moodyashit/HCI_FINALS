@@ -56,7 +56,7 @@ body {
    translateX(-50%) keeps the sprite centered on it regardless of its
    own responsive width. */
 .opponent { top: 42%; left: 75.5%; }
-.player { bottom: 4%; left: 20.5%; flex-direction: column-reverse; }
+.player { bottom: 2%; left: 22%; flex-direction: column-reverse; }
 
 .pokemon {
   position: relative;
