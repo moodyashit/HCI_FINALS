@@ -60,11 +60,11 @@ button.retro-btn.small { font-size: 9px; padding: 8px 10px; }
   border: 3px solid #000;
   border-radius: 8px;
   background-color: #2b2b3d;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
+  object-fit: contain;
+  image-rendering: pixelated;
+  display: inline-block;
 }
-.pixel-avatar.round { border-radius: 50%; }
+.pixel-avatar.round { border-radius: 50%; object-fit: cover; }
 
 /* ---- trainer class grid ---- */
 .trainer-grid {

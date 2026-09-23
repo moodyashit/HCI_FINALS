@@ -115,7 +115,7 @@ if (trainerGrid) {
 
   const githubAvatar = document.getElementById('githubAvatar');
   const githubStatus = document.getElementById('githubStatus');
-  if (profile.avatarUrl) githubAvatar.style.backgroundImage = `url("${profile.avatarUrl}")`;
+  if (profile.avatarUrl) githubAvatar.src = profile.avatarUrl;
   if (profile.githubUsername) document.getElementById('githubInput').value = profile.githubUsername;
 
   document.getElementById('githubConnectBtn').addEventListener('click', async () => {
@@ -126,7 +126,7 @@ if (trainerGrid) {
       const res = await fetch(`https://api.github.com/users/${encodeURIComponent(username)}`);
       if (!res.ok) throw new Error('not found');
       const data = await res.json();
-      githubAvatar.style.backgroundImage = `url("${data.avatar_url}")`;
+      githubAvatar.src = data.avatar_url;
       githubStatus.textContent = `Connected as ${data.login}`;
       const p = getProfile();
       p.githubUsername = data.login;
@@ -166,14 +166,12 @@ if (trainerIntroEl) {
   const player = { name: playerName, level: Math.floor(Math.random()*15)+40, hp:100, maxHp:100, ...POKEDEX[playerName] };
   const opponent = { name: opponentName, level: Math.floor(Math.random()*15)+40, hp:100, maxHp:100, ...POKEDEX[opponentName] };
 
-  document.getElementById('trainerAvatar').style.backgroundImage = `url("${trainerSilhouette(trainer.accent, trainer.hat)}")`;
+  document.getElementById('trainerAvatar').src = trainerSilhouette(trainer.accent, trainer.hat);
   document.getElementById('trainerText').textContent = `${trainer.name} wants to battle! They sent out ${opponent.name}!`;
 
   const playerBadge = document.getElementById('playerBadge');
   const playerClass = TRAINER_CLASSES.find(tc => tc.id === profile.trainerClassId) || TRAINER_CLASSES[0];
-  playerBadge.style.backgroundImage = profile.avatarUrl
-    ? `url("${profile.avatarUrl}")`
-    : `url("${trainerSilhouette(playerClass.accent, playerClass.hat)}")`;
+  playerBadge.src = profile.avatarUrl || trainerSilhouette(playerClass.accent, playerClass.hat);
 
   document.getElementById('battleStartBtn').addEventListener('click', () => {
     trainerIntroEl.hidden = true;
@@ -269,7 +267,7 @@ if (totalWinsEl) {
   if (profile.avatarUrl || profile.trainerClassId) {
     const cls = TRAINER_CLASSES.find(tc => tc.id === profile.trainerClassId);
     const img = profile.avatarUrl || (cls ? trainerSilhouette(cls.accent, cls.hat) : '');
-    summary.innerHTML = `<div class="pixel-avatar round" style="width:48px;height:48px;background-image:url('${img}')"></div>
+    summary.innerHTML = `<img class="pixel-avatar round" style="width:48px;height:48px;" src="${img}" alt="Trainer">
       <span style="font-size:11px;">${profile.githubUsername || (cls ? cls.name : 'Trainer')}</span>`;
   }
 
