@@ -29,6 +29,16 @@ const POKEDEX = {
       { name: 'Metal Claw', power: 9 }
     ]
   },
+  Squirtle: {
+    front: 'https://img.pokemondb.net/sprites/black-white/anim/normal/squirtle.gif',
+    back: 'https://img.pokemondb.net/sprites/black-white/anim/back-normal/squirtle.gif',
+    moves: [
+      { name: 'Bubble', power: 7 },
+      { name: 'Tackle', power: 6 },
+      { name: 'Water Gun', power: 9 },
+      { name: 'Bite', power: 8 }
+    ]
+  },
   Blastoise: {
     front: 'https://img.pokemondb.net/sprites/black-white/anim/normal/blastoise.gif',
     back: 'https://img.pokemondb.net/sprites/black-white/anim/back-normal/blastoise.gif',
@@ -48,8 +58,62 @@ const POKEDEX = {
       { name: 'Wing Attack', power: 8 },
       { name: 'Fire Fang', power: 9 }
     ]
+  },
+  Eevee: {
+    front: 'https://img.pokemondb.net/sprites/black-white/anim/normal/eevee.gif',
+    back: 'https://img.pokemondb.net/sprites/black-white/anim/back-normal/eevee.gif',
+    moves: [
+      { name: 'Quick Attack', power: 7 },
+      { name: 'Tackle', power: 6 },
+      { name: 'Swift', power: 9 },
+      { name: 'Bite', power: 8 }
+    ]
+  },
+  Jigglypuff: {
+    front: 'https://img.pokemondb.net/sprites/black-white/anim/normal/jigglypuff.gif',
+    back: 'https://img.pokemondb.net/sprites/black-white/anim/back-normal/jigglypuff.gif',
+    moves: [
+      { name: 'Double Slap', power: 8 },
+      { name: 'Pound', power: 6 },
+      { name: 'Rollout', power: 9 },
+      { name: 'Body Slam', power: 10 }
+    ]
+  },
+  Gengar: {
+    front: 'https://img.pokemondb.net/sprites/black-white/anim/normal/gengar.gif',
+    back: 'https://img.pokemondb.net/sprites/black-white/anim/back-normal/gengar.gif',
+    moves: [
+      { name: 'Shadow Ball', power: 11 },
+      { name: 'Lick', power: 6 },
+      { name: 'Sludge Bomb', power: 12 },
+      { name: 'Night Shade', power: 9 }
+    ]
+  },
+  Snorlax: {
+    front: 'https://img.pokemondb.net/sprites/black-white/anim/normal/snorlax.gif',
+    back: 'https://img.pokemondb.net/sprites/black-white/anim/back-normal/snorlax.gif',
+    moves: [
+      { name: 'Body Slam', power: 11 },
+      { name: 'Tackle', power: 6 },
+      { name: 'Hyper Beam', power: 14 },
+      { name: 'Crunch', power: 10 }
+    ]
   }
 };
+
+const TRAINERS = [
+  { name: 'Rival Gary', accent: '#e3350d' },
+  { name: 'Bug Catcher Sam', accent: '#78c850' },
+  { name: 'Ace Trainer Mia', accent: '#3b4cca' },
+  { name: 'Gym Leader Koa', accent: '#f8d030' },
+  { name: 'Hiker Brock', accent: '#a8a878' },
+  { name: 'Psychic Naomi', accent: '#705898' }
+];
+
+function trainerSilhouette(accent) {
+  const hex = accent.replace('#', '%23');
+  return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='20' r='14' fill='" + hex + "'/%3E%3Crect x='12' y='36' width='40' height='26' rx='10' fill='" + hex + "'/%3E%3C/svg%3E";
+}
 
 const OPPONENT_POOL = Object.keys(POKEDEX);
 
@@ -70,15 +134,27 @@ document.querySelectorAll('.pokemon-card').forEach(card => {
 });
 
 // ---------- BATTLE SCREEN (main.html) ----------
-const gameEl = document.querySelector('.game');
-if (gameEl) {
+const trainerIntroEl = document.getElementById('trainerIntro');
+if (trainerIntroEl) {
   const playerName = localStorage.getItem('playerPokemon') || 'Blastoise';
   const opponentPool = OPPONENT_POOL.filter(name => name !== playerName);
   const opponentName = opponentPool[Math.floor(Math.random() * opponentPool.length)];
+  const trainer = TRAINERS[Math.floor(Math.random() * TRAINERS.length)];
 
   const player = { name: playerName, level: Math.floor(Math.random() * 15) + 40, hp: 100, maxHp: 100, ...POKEDEX[playerName] };
   const opponent = { name: opponentName, level: Math.floor(Math.random() * 15) + 40, hp: 100, maxHp: 100, ...POKEDEX[opponentName] };
 
+  document.getElementById('trainerAvatar').style.backgroundImage = `url("${trainerSilhouette(trainer.accent)}")`;
+  document.getElementById('trainerText').textContent = `${trainer.name} wants to battle! They sent out ${opponent.name}!`;
+
+  document.getElementById('battleStartBtn').addEventListener('click', () => {
+    trainerIntroEl.hidden = true;
+    document.getElementById('battleFrame').hidden = false;
+    startBattle(player, opponent);
+  });
+}
+
+function startBattle(player, opponent) {
   const els = {
     oppName: document.getElementById('oppName'),
     oppLevel: document.getElementById('oppLevel'),

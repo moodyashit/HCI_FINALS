@@ -8,7 +8,13 @@
   <link rel="stylesheet" href="main.css">
 </head>
 <body>
-  <div class="battle-frame">
+  <div id="trainerIntro" class="trainer-intro">
+    <div id="trainerAvatar" class="trainer-avatar"></div>
+    <p id="trainerText" class="trainer-text">A trainer wants to battle!</p>
+    <button id="battleStartBtn" class="retro-btn">BATTLE!</button>
+  </div>
+
+  <div id="battleFrame" class="battle-frame" hidden>
     <div class="game">
       <div class="opponent">
         <div class="stats">
@@ -19,10 +25,12 @@
           <div class="hp-bar"><div id="oppHPBar" class="hp-fill"></div></div>
           <div id="oppHPText" class="hp-count">100/100</div>
         </div>
+        <div class="ground-shadow"></div>
         <img id="oppSprite" class="pokemon" src="" alt="Opponent sprite">
       </div>
 
       <div class="player">
+        <div class="ground-shadow"></div>
         <img id="playerSprite" class="pokemon" src="" alt="Your sprite">
         <div class="stats">
           <div class="top">

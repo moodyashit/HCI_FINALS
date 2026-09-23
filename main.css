@@ -8,15 +8,47 @@ body {
   padding: 12px;
 }
 
-.battle-frame { width: min(960px, 96vw); }
+/* ---------- Trainer intro ---------- */
+.trainer-intro {
+  width: min(500px, 92vw);
+  background: var(--panel-bg);
+  border: 6px solid #000;
+  border-radius: 10px;
+  box-shadow: 0 0 0 4px var(--accent-yellow), 0 10px 0 rgba(0, 0, 0, .3);
+  padding: clamp(24px, 5vw, 40px);
+  text-align: center;
+}
+
+.trainer-avatar {
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 20px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  filter: drop-shadow(0 4px 0 rgba(0, 0, 0, .4));
+}
+
+.trainer-text {
+  font-size: clamp(10px, 2.4vw, 13px);
+  line-height: 1.8;
+  margin-bottom: 24px;
+}
+
+/* ---------- Battle scene ---------- */
+.battle-frame { width: min(1150px, 94vw); }
 
 .game {
   position: relative;
-  background: linear-gradient(#bfe6ff 0%, #bfe6ff 55%, #7bc47b 55%, #5aa85a 100%);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 450'%3E%3Cdefs%3E%3ClinearGradient id='sky' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%2387CEEB'/%3E%3Cstop offset='1' stop-color='%23C7ECFF'/%3E%3C/linearGradient%3E%3ClinearGradient id='grnd' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%237BC47B'/%3E%3Cstop offset='1' stop-color='%234A9B4A'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='800' height='260' fill='url(%23sky)'/%3E%3Ccircle cx='680' cy='70' r='45' fill='%23FFF6B0' opacity='0.9'/%3E%3Cellipse cx='140' cy='90' rx='60' ry='18' fill='%23ffffff' opacity='0.8'/%3E%3Cellipse cx='230' cy='105' rx='45' ry='14' fill='%23ffffff' opacity='0.7'/%3E%3Cpath d='M0 260 Q200 220 400 250 T800 235 V260 H0 Z' fill='%235FAE5F'/%3E%3Crect y='260' width='800' height='190' fill='url(%23grnd)'/%3E%3Ccircle cx='90' cy='300' r='55' fill='%233F8F3F' opacity='0.5'/%3E%3Ccircle cx='720' cy='330' r='70' fill='%233F8F3F' opacity='0.5'/%3E%3C/svg%3E");
+  background-size: cover;
+  background-position: center;
   border: 4px solid #000;
   border-radius: 8px 8px 0 0;
   box-shadow: 0 0 0 4px var(--accent-yellow);
   aspect-ratio: 16 / 9;
+  min-height: 320px;
+  max-height: 68vh;
   overflow: hidden;
 }
 
@@ -30,11 +62,24 @@ body {
 .opponent { top: 6%; right: 6%; }
 .player { bottom: 8%; left: 6%; flex-direction: column-reverse; }
 
+.ground-shadow {
+  position: absolute;
+  bottom: -6px;
+  width: 70%;
+  height: 16px;
+  background: rgba(0, 0, 0, .28);
+  border-radius: 50%;
+  filter: blur(1px);
+}
+.opponent .ground-shadow { bottom: 6%; }
+.player .ground-shadow { bottom: 12%; }
+
 .pokemon {
-  width: clamp(70px, 16vw, 140px);
+  position: relative;
+  width: clamp(70px, 16vw, 150px);
   filter: drop-shadow(4px 6px 0 rgba(0, 0, 0, .25));
 }
-.player .pokemon { width: clamp(90px, 20vw, 170px); }
+.player .pokemon { width: clamp(90px, 20vw, 190px); }
 
 .stats {
   background: rgba(17, 17, 17, .92);
@@ -95,4 +140,5 @@ body {
 @media (max-width: 520px) {
   .stats { min-width: 110px; font-size: 8px; }
   .actions { grid-template-columns: 1fr; }
+  .game { max-height: 50vh; }
 }
