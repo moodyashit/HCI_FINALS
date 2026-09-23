@@ -21,7 +21,11 @@ body {
 .trainer-text { font-size: clamp(10px, 2.4vw, 13px); line-height: 1.8; margin-bottom: 24px; }
 
 /* ---------- Battle scene ---------- */
-.battle-frame { width: min(1150px, 94vw); }
+.battle-frame {
+  width: min(1150px, 94vw);
+  border-radius: 8px;
+  box-shadow: 0 0 0 4px var(--accent-yellow);
+}
 
 .game {
   position: relative;
@@ -29,8 +33,8 @@ body {
   background-size: cover;
   background-position: center;
   border: 4px solid #000;
+  border-bottom: none;
   border-radius: 8px 8px 0 0;
-  box-shadow: 0 0 0 4px var(--accent-yellow);
   aspect-ratio: 16 / 9;
   min-height: 320px;
   max-height: 68vh;
@@ -75,7 +79,6 @@ body {
   border: 4px solid #000;
   border-top: none;
   border-radius: 0 0 8px 8px;
-  box-shadow: 0 0 0 4px var(--accent-yellow);
   padding: 16px;
 }
 .message { font-size: clamp(10px, 2vw, 13px); min-height: 32px; margin-bottom: 12px; line-height: 1.6; }
