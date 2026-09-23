@@ -306,33 +306,54 @@ if (pokemonContainer) {
 }
 
 let teamSize = +localStorage.getItem('teamSize') || 3;
-const team = [];
+let oppMode = localStorage.getItem('oppMode') || 'random';
+let phase = 'player';            // 'player' = pick your team, 'opp' = pick the opponent's team
+const team = [], oppPick = [];
 const teamBtn = document.getElementById('teamStartBtn');
 function refreshTeamUI() {
+  const picks = phase === 'player' ? team : oppPick;
   document.getElementById('pickCount').textContent = teamSize;
+  document.getElementById('pickWho').textContent = phase === 'player' ? '' : 'OPPONENT ';
   document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('selected', +b.dataset.size === teamSize));
-  document.querySelectorAll('.pokemon-card').forEach(c => c.classList.toggle('picked', team.includes(c.dataset.name)));
-  teamBtn.textContent = `START BATTLE (${team.length}/${teamSize})`;
-  teamBtn.disabled = team.length !== teamSize;
+  document.querySelectorAll('.opp-btn').forEach(b => b.classList.toggle('selected', b.dataset.mode === oppMode));
+  document.querySelectorAll('.pokemon-card').forEach(c => {
+    c.classList.toggle('picked', picks.includes(c.dataset.name));
+    c.disabled = phase === 'opp' && team.includes(c.dataset.name);
+  });
+  const last = phase === 'opp' || oppMode === 'random';
+  teamBtn.textContent = `${last ? 'START BATTLE' : 'NEXT: PICK OPPONENT'} (${picks.length}/${teamSize})`;
+  teamBtn.disabled = picks.length !== teamSize;
+  document.getElementById('setupBars').hidden = phase === 'opp';
+  document.getElementById('teamBackBtn').hidden = phase !== 'opp';
 }
 if (teamBtn) {
   teamBtn.addEventListener('click', () => {
+    if (phase === 'player' && oppMode === 'choose') { phase = 'opp'; refreshTeamUI(); return; }
     localStorage.setItem('playerTeam', JSON.stringify(team));
     localStorage.setItem('playerPokemon', team[0]);
+    if (oppMode === 'choose') localStorage.setItem('oppTeam', JSON.stringify(oppPick));
+    else localStorage.removeItem('oppTeam');
     window.location.href = 'main.html';
   });
+  document.getElementById('teamBackBtn').addEventListener('click', () => { phase = 'player'; oppPick.length = 0; refreshTeamUI(); });
   document.querySelectorAll('.mode-btn').forEach(b => b.addEventListener('click', () => {
     teamSize = +b.dataset.size;
     localStorage.setItem('teamSize', teamSize);
     team.splice(teamSize);
     refreshTeamUI();
   }));
+  document.querySelectorAll('.opp-btn').forEach(b => b.addEventListener('click', () => {
+    oppMode = b.dataset.mode;
+    localStorage.setItem('oppMode', oppMode);
+    refreshTeamUI();
+  }));
   refreshTeamUI();
 }
 document.querySelectorAll('.pokemon-card').forEach(card => {
   card.addEventListener('click', () => {
-    const name = card.dataset.name, i = team.indexOf(name);
-    if (i >= 0) team.splice(i, 1); else if (team.length < teamSize) team.push(name); else return;
+    const picks = phase === 'player' ? team : oppPick;
+    const name = card.dataset.name, i = picks.indexOf(name);
+    if (i >= 0) picks.splice(i, 1); else if (picks.length < teamSize) picks.push(name); else return;
     refreshTeamUI();
   });
   const img = card.querySelector('img');
@@ -352,7 +373,11 @@ if (trainerIntroEl) {
     return { name, level, hp: maxHp, maxHp, ...POKEDEX[name] };
   }
   const playerTeam = teamNames.map(makeMon);
-  const oppTeam = OPPONENT_POOL.filter(n => !teamNames.includes(n)).sort(() => Math.random() - 0.5).slice(0, teamNames.length).map(makeMon);
+  const chosen = JSON.parse(localStorage.getItem('oppTeam') || 'null');
+  const oppNames = chosen && chosen.length === teamNames.length && chosen.every(n => POKEDEX[n])
+    ? chosen
+    : OPPONENT_POOL.filter(n => !teamNames.includes(n)).sort(() => Math.random() - 0.5).slice(0, teamNames.length);
+  const oppTeam = oppNames.map(makeMon);
   const player = playerTeam[0];
   const opponent = oppTeam[0];
 
@@ -437,6 +462,7 @@ function startBattle(playerTeam, oppTeam) {
     bar.style.width = pct + '%';
     bar.style.background = pct > 50 ? 'var(--hp-green)' : pct > 20 ? 'var(--hp-yellow)' : 'var(--hp-red)';
     text.textContent = `${Math.max(0, mob.hp)}/${mob.maxHp}`;
+    (who === 'opp' ? els.oppName : els.playerName).innerHTML = mob.name + typeBadge(mob.type) + statusTag(mob);
     renderTeamDots();
   }
 
@@ -468,7 +494,7 @@ function startBattle(playerTeam, oppTeam) {
     const eff = typeEffectiveness(attacker.type, defender.type);
     const crit = Math.random() < 1 / 12;
     const levelFactor = 0.6 + attacker.level / 100;
-    const dmg = eff === 0 ? 0 : Math.max(1, Math.round(move.power * levelFactor * eff * (crit ? 1.5 : 1)));
+    const dmg = eff === 0 ? 0 : Math.max(1, Math.round(move.power * levelFactor * eff * (crit ? 1.5 : 1) * (attacker.status === 'brn' ? 0.5 : 1)));
     return { dmg, eff, crit };
   }
 
@@ -482,11 +508,48 @@ function startBattle(playerTeam, oppTeam) {
     return msg;
   }
 
-  // One attack: lunge animation, sound, damage, hit flash, message.
-  function attack(att, def, move, attSprite, defSprite, atkClass, who) {
+  // ---------- status effects ----------
+  // Damaging hits from these types have a 20% chance to inflict a status.
+  const INFLICTS = { fire: 'brn', ghost: 'brn', electric: 'par', poison: 'psn', grass: 'slp' };
+  const IMMUNE = { brn: 'fire', par: 'electric', psn: 'poison' };
+  const STATUS_INFO = { brn: ['BRN', '#e3350d'], par: ['PAR', '#d4a800'], psn: ['PSN', '#a040a0'], slp: ['SLP', '#777'] };
+  function statusTag(mon) {
+    const i = STATUS_INFO[mon.status];
+    return i ? `<span class="type-badge" style="background:${i[1]}">${i[0]}</span>` : '';
+  }
+  // Returns a message if the Pokémon can't act this turn (asleep / fully paralyzed).
+  function cantMove(mon) {
+    if (mon.status === 'slp') {
+      if (mon.sleepTurns-- > 0) return `${mon.name} is fast asleep.`;
+      mon.status = null;
+      return `${mon.name} woke up!`;
+    }
+    if (mon.status === 'par' && Math.random() < 0.25) return `${mon.name} is paralyzed! It can't move!`;
+    return '';
+  }
+  function tryInflict(att, def) {
+    const st = INFLICTS[att.type];
+    if (!st || def.status || IMMUNE[st] === def.type || Math.random() > 0.2) return '';
+    def.status = st;
+    if (st === 'slp') def.sleepTurns = 1 + Math.floor(Math.random() * 2);
+    return { brn: ` ${def.name} was burned!`, par: ` ${def.name} is paralyzed!`, psn: ` ${def.name} was poisoned!`, slp: ` ${def.name} fell asleep!` }[st];
+  }
+  function residual(mon) {
+    if (mon.status !== 'brn' && mon.status !== 'psn') return '';
+    mon.hp = Math.max(0, mon.hp - Math.max(1, Math.floor(mon.maxHp / (mon.status === 'brn' ? 16 : 8))));
+    return ` ${mon.name} is hurt by its ${mon.status === 'brn' ? 'burn' : 'poison'}!`;
+  }
+
+  // One attack: status check, lunge animation, sound, damage, hit flash, message.
+  function attack(att, def, move, attSprite, defSprite, atkClass) {
+    const blocked = cantMove(att);
+    if (blocked) { setMessage(blocked); setTimeout(() => { updateHP('opp'); updateHP('player'); }, 250); return; }
     const r = computeDamage(move, att, def);
     animate(attSprite, atkClass);
     def.hp = Math.max(0, def.hp - r.dmg);
+    let msg = describe(att, move, def, r);
+    if (r.dmg > 0) msg += tryInflict(att, def);
+    if (def.hp > 0) msg += residual(att);
     setTimeout(() => {
       if (r.miss) SFX.miss();
       else if (r.eff === 0) SFX.weak();
@@ -494,9 +557,9 @@ function startBattle(playerTeam, oppTeam) {
         animate(defSprite, 'anim-hit');
         if (r.eff > 1) SFX.super(); else if (r.eff < 1) SFX.weak(); else if (r.crit) SFX.crit(); else SFX.hit();
       }
-      updateHP(who);
+      updateHP('opp'); updateHP('player');
     }, 250);
-    setMessage(describe(att, move, def, r));
+    setMessage(msg);
   }
 
   function playerTurn(move, i) {
@@ -504,6 +567,7 @@ function startBattle(playerTeam, oppTeam) {
     attack(player, opponent, move, els.playerSprite, els.oppSprite, 'anim-atk-p', 'opp');
     renderMoves(); disableActions(true);
     if (opponent.hp <= 0) return foeFainted();
+    if (player.hp <= 0) return playerFainted(opponentTurn);
     setTimeout(opponentTurn, 1300);
   }
 
@@ -518,6 +582,7 @@ function startBattle(playerTeam, oppTeam) {
   function opponentTurn() {
     attack(opponent, player, pickMove(), els.oppSprite, els.playerSprite, 'anim-atk-o', 'player');
     if (player.hp <= 0) return playerFainted();
+    if (opponent.hp <= 0) return foeFainted();
     disableActions(false);
   }
 
@@ -541,7 +606,9 @@ function startBattle(playerTeam, oppTeam) {
       showOpp(); setMessage(`The rival sent out ${opponent.name}!`); disableActions(false);
     }, 2000);
   }
-  function playerFainted() {
+  let afterForced = null;   // what happens after a forced switch (e.g. the foe's turn)
+  function playerFainted(next) {
+    afterForced = next || null;
     if (playerTeam.every(p => p.hp <= 0)) return endGame(false, `${player.name} fainted. You lose!`);
     setTimeout(() => { animate(els.playerSprite, 'anim-faint'); SFX.faint(); setMessage(`${player.name} fainted! Pick your next Pokémon.`); }, 700);
     setTimeout(() => openSwitch(true), 1700);
@@ -570,7 +637,11 @@ function startBattle(playerTeam, oppTeam) {
     player = playerTeam[i];
     closeSwitch(); showPlayer();
     setMessage(`Go, ${player.name}!`);
-    if (forced) return disableActions(false);
+    if (forced) {
+      disableActions(true);
+      if (afterForced) { const f = afterForced; afterForced = null; return setTimeout(f, 1000); }
+      return disableActions(false);
+    }
     disableActions(true);
     setTimeout(opponentTurn, 1000);
   }
