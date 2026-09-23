@@ -119,3 +119,18 @@ body {
 @media (max-width: 520px) {
   .actions { grid-template-columns: 1fr; }
 }
+
+/* ---------- type badges, move colours, animations ---------- */
+.type-badge { font-size: .65em; padding: 2px 4px; border-radius: 3px; margin-left: 4px; color: #fff; text-transform: uppercase; vertical-align: middle; }
+.actions button { background: var(--tc, var(--accent-blue)); text-shadow: 1px 1px 0 #000; }
+.actions button:hover:not(:disabled) { filter: brightness(1.2); }
+
+@keyframes atkP { 50% { transform: translate(30px, -20px); } }
+@keyframes atkO { 50% { transform: translate(-30px, 20px); } }
+@keyframes hitFlash { 0%, 100% { opacity: 1; } 20%, 60% { opacity: .2; transform: translateX(-6px); } 40%, 80% { opacity: 1; transform: translateX(6px); } }
+@keyframes faintOut { to { transform: translateY(40px); opacity: 0; } }
+.anim-atk-p { animation: atkP .35s ease; }
+.anim-atk-o { animation: atkO .35s ease; }
+.anim-hit   { animation: hitFlash .5s steps(2, end); }
+.anim-faint { animation: faintOut .6s ease forwards; }
+@media (prefers-reduced-motion: reduce) { .anim-atk-p, .anim-atk-o, .anim-hit { animation: none; } }

@@ -11,6 +11,9 @@
   <div id="trainerIntro" class="crt trainer-intro">
     <img id="trainerAvatar" class="pixel-avatar" style="width:96px;height:96px;margin:0 auto 20px;" alt="Trainer">
     <p id="trainerText" class="trainer-text">A trainer wants to battle!</p>
+    <select id="difficulty" style="font-family:'Press Start 2P',monospace;font-size:10px;padding:10px;margin-bottom:20px;border:2px solid #000;border-radius:6px;">
+      <option value="easy">Easy</option><option value="normal">Normal</option><option value="hard">Hard</option>
+    </select><br>
     <button id="battleStartBtn" class="retro-btn">BATTLE!</button>
   </div>
 
@@ -19,6 +22,7 @@
       <div class="menu-wrap">
         <button id="menuBtn" class="menu-btn">MENU</button>
         <div id="menuDropdown" class="menu-dropdown" hidden>
+          <button id="muteBtn">🔊 Sound: On</button>
           <button id="forfeitBtn">🏳 Forfeit Battle</button>
           <a href="stats.html">📊 View Stats</a>
           <a href="index.html">🏠 Main Menu</a>

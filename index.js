@@ -177,13 +177,52 @@ function getStats() {
   } catch (e) { return { wins: 0, losses: 0, byType: {} }; }
 }
 function saveStats(s) { localStorage.setItem('battleStats', JSON.stringify(s)); }
-function recordResult(won, opponentType) {
+function recordResult(won, opponentType, info) {
   const s = getStats();
+  s.history = s.history || []; s.streak = s.streak || 0; s.best = s.best || 0;
   if (won) s.wins++; else s.losses++;
   if (!s.byType[opponentType]) s.byType[opponentType] = { wins: 0, losses: 0 };
   if (won) s.byType[opponentType].wins++; else s.byType[opponentType].losses++;
+  s.streak = won ? s.streak + 1 : 0;
+  s.best = Math.max(s.best, s.streak);
+  if (info) s.history = [{ won, ...info }, ...s.history].slice(0, 10);
   saveStats(s);
 }
+
+// ---------- type badges, move accuracy/PP, sound ----------
+const TYPE_COLORS = {
+  normal:'#a8a878', fire:'#e3350d', water:'#3b6cff', grass:'#4fa64f', electric:'#d4a800', ghost:'#705898',
+  fighting:'#c03028', psychic:'#f85888', rock:'#b8a038', poison:'#a040a0', ground:'#c9a13f',
+  flying:'#8a70e0', bug:'#8a9a10', ice:'#5cbcbc', dragon:'#7038f8'
+};
+function typeBadge(type) {
+  return `<span class="type-badge" style="background:${TYPE_COLORS[type] || '#666'}">${type}</span>`;
+}
+function moveAccuracy(m) { return m.power >= 13 ? 85 : m.power >= 11 ? 95 : 100; }
+function movePP(m) { return m.power >= 13 ? 5 : m.power >= 11 ? 10 : m.power >= 8 ? 15 : 25; }
+
+let muted = localStorage.getItem('muted') === '1';
+let audioCtx;
+function beep(freq, dur, type = 'square', vol = 0.05, slide = 0) {
+  if (muted) return;
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const t = audioCtx.currentTime, o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type = type; o.frequency.setValueAtTime(freq, t);
+    if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(40, freq + slide), t + dur);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    o.connect(g); g.connect(audioCtx.destination); o.start(t); o.stop(t + dur);
+  } catch (e) {}
+}
+const SFX = {
+  hit:   () => beep(220, .15, 'square', .06, -120),
+  weak:  () => beep(150, .2, 'triangle', .06),
+  miss:  () => beep(400, .15, 'sine', .04, -200),
+  super: () => { beep(330, .1); setTimeout(() => beep(660, .18), 90); },
+  crit:  () => { beep(600, .08); setTimeout(() => beep(300, .18, 'square', .07, -100), 80); },
+  faint: () => beep(300, .7, 'sawtooth', .05, -250),
+  win:   () => [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => beep(f, .15), i * 140))
+};
 
 const OPPONENT_POOL = Object.keys(POKEDEX);
 
@@ -313,8 +352,15 @@ if (trainerIntroEl) {
   const menuBtn = document.getElementById('menuBtn');
   const menuDropdown = document.getElementById('menuDropdown');
   menuBtn.addEventListener('click', () => { menuDropdown.hidden = !menuDropdown.hidden; });
+  const muteBtn = document.getElementById('muteBtn');
+  const paintMute = () => { muteBtn.textContent = muted ? '🔇 Sound: Off' : '🔊 Sound: On'; };
+  paintMute();
+  muteBtn.addEventListener('click', () => { muted = !muted; localStorage.setItem('muted', muted ? '1' : '0'); paintMute(); });
+  const diffSel = document.getElementById('difficulty');
+  diffSel.value = localStorage.getItem('difficulty') || 'normal';
+  diffSel.addEventListener('change', () => localStorage.setItem('difficulty', diffSel.value));
   document.getElementById('forfeitBtn').addEventListener('click', () => {
-    recordResult(false, opponent.type);
+    recordResult(false, opponent.type, { me: player.name, foe: opponent.name });
     window.location.href = 'index.html';
   });
 }
@@ -329,10 +375,11 @@ function startBattle(player, opponent) {
   };
 
   function init() {
-    els.oppName.textContent = opponent.name; els.oppLevel.textContent = opponent.level; els.oppSprite.src = opponent.front;
-    els.playerName.textContent = player.name; els.playerLevel.textContent = player.level; els.playerSprite.src = player.back;
+    els.oppName.innerHTML = opponent.name + typeBadge(opponent.type); els.oppLevel.textContent = opponent.level; els.oppSprite.src = opponent.front;
+    els.playerName.innerHTML = player.name + typeBadge(player.type); els.playerLevel.textContent = player.level; els.playerSprite.src = player.back;
     els.oppSprite.addEventListener('error', () => handleSpriteError(els.oppSprite));
     els.playerSprite.addEventListener('error', () => handleSpriteError(els.playerSprite));
+    player.pp = player.moves.map(movePP);
     updateHP('opp'); updateHP('player'); renderMoves();
   }
 
@@ -348,50 +395,80 @@ function startBattle(player, opponent) {
 
   function renderMoves() {
     els.actions.innerHTML = '';
-    player.moves.forEach(move => {
+    player.moves.forEach((move, i) => {
       const btn = document.createElement('button');
-      btn.className = 'retro-btn'; btn.textContent = move.name;
-      btn.addEventListener('click', () => playerTurn(move));
+      btn.className = 'retro-btn'; btn.dataset.idx = i;
+      btn.style.setProperty('--tc', TYPE_COLORS[player.type] || '');
+      btn.textContent = `${i + 1}. ${move.name} ${player.pp[i]}/${movePP(move)}`;
+      btn.addEventListener('click', () => playerTurn(move, i));
       els.actions.appendChild(btn);
     });
   }
 
   function setMessage(t) { els.message.textContent = t; }
-  function disableActions(d) { els.actions.querySelectorAll('button').forEach(b => (b.disabled = d)); }
-
-  // Damage scales gently with the attacker's level and is multiplied by
-  // type effectiveness (see TYPE_CHART). Returns { dmg, eff }.
-  function computeDamage(move, attacker, defender) {
-    const eff = typeEffectiveness(attacker.type, defender.type);
-    const levelFactor = 0.6 + attacker.level / 100;
-    const dmg = eff === 0 ? 0 : Math.max(1, Math.round(move.power * levelFactor * eff));
-    return { dmg, eff };
+  function disableActions(d) {
+    els.actions.querySelectorAll('button').forEach(b => (b.disabled = d || player.pp[b.dataset.idx] <= 0));
+  }
+  function animate(el, cls) {
+    el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls);
+    if (cls !== 'anim-faint') el.addEventListener('animationend', () => el.classList.remove(cls), { once: true });
   }
 
-  function playerTurn(move) {
-    disableActions(true);
-    const { dmg, eff } = computeDamage(move, player, opponent);
-    opponent.hp = Math.max(0, opponent.hp - dmg);
-    updateHP('opp');
-    let msg = `${player.name} used ${move.name}!`;
-    if (eff === 0) msg += ` It had no effect on ${opponent.name}...`;
-    else if (eff > 1) msg += ` It's super effective!`;
-    else if (eff < 1) msg += ` It's not very effective...`;
-    setMessage(msg);
+  // Misses (by move accuracy), 1-in-12 crits, and type effectiveness. Returns { dmg, eff, crit, miss }.
+  function computeDamage(move, attacker, defender) {
+    if (Math.random() * 100 >= moveAccuracy(move)) return { dmg: 0, eff: 1, miss: true };
+    const eff = typeEffectiveness(attacker.type, defender.type);
+    const crit = Math.random() < 1 / 12;
+    const levelFactor = 0.6 + attacker.level / 100;
+    const dmg = eff === 0 ? 0 : Math.max(1, Math.round(move.power * levelFactor * eff * (crit ? 1.5 : 1)));
+    return { dmg, eff, crit };
+  }
+
+  function describe(att, move, def, r) {
+    let msg = `${att.name} used ${move.name}!`;
+    if (r.miss) return msg + ' But it missed!';
+    if (r.crit) msg += ' A critical hit!';
+    if (r.eff === 0) msg += ` It had no effect on ${def.name}...`;
+    else if (r.eff > 1) msg += " It's super effective!";
+    else if (r.eff < 1) msg += " It's not very effective...";
+    return msg;
+  }
+
+  // One attack: lunge animation, sound, damage, hit flash, message.
+  function attack(att, def, move, attSprite, defSprite, atkClass, who) {
+    const r = computeDamage(move, att, def);
+    animate(attSprite, atkClass);
+    def.hp = Math.max(0, def.hp - r.dmg);
+    setTimeout(() => {
+      if (r.miss) SFX.miss();
+      else if (r.eff === 0) SFX.weak();
+      else {
+        animate(defSprite, 'anim-hit');
+        if (r.eff > 1) SFX.super(); else if (r.eff < 1) SFX.weak(); else if (r.crit) SFX.crit(); else SFX.hit();
+      }
+      updateHP(who);
+    }, 250);
+    setMessage(describe(att, move, def, r));
+  }
+
+  function playerTurn(move, i) {
+    player.pp[i]--;
+    attack(player, opponent, move, els.playerSprite, els.oppSprite, 'anim-atk-p', 'opp');
+    renderMoves(); disableActions(true);
     if (opponent.hp <= 0) return endGame(true, `${opponent.name} fainted. ${player.name} wins!`);
     setTimeout(opponentTurn, 1300);
   }
 
+  // easy = random, normal = 50% strongest move, hard = always strongest move
+  function pickMove() {
+    const best = opponent.moves.reduce((a, b) => (b.power > a.power ? b : a));
+    const rnd = opponent.moves[Math.floor(Math.random() * opponent.moves.length)];
+    const d = localStorage.getItem('difficulty') || 'normal';
+    return d === 'hard' || (d === 'normal' && Math.random() < 0.5) ? best : rnd;
+  }
+
   function opponentTurn() {
-    const move = opponent.moves[Math.floor(Math.random() * opponent.moves.length)];
-    const { dmg, eff } = computeDamage(move, opponent, player);
-    player.hp = Math.max(0, player.hp - dmg);
-    updateHP('player');
-    let msg = `${opponent.name} used ${move.name}!`;
-    if (eff === 0) msg += ` It had no effect on ${player.name}...`;
-    else if (eff > 1) msg += ` It's super effective!`;
-    else if (eff < 1) msg += ` It's not very effective...`;
-    setMessage(msg);
+    attack(opponent, player, pickMove(), els.oppSprite, els.playerSprite, 'anim-atk-o', 'player');
     if (player.hp <= 0) return endGame(false, `${player.name} fainted. ${opponent.name} wins!`);
     disableActions(false);
   }
@@ -399,9 +476,20 @@ function startBattle(player, opponent) {
   function endGame(won, text) {
     setMessage(text);
     disableActions(true);
-    recordResult(won, opponent.type);
+    recordResult(won, opponent.type, { me: player.name, foe: opponent.name });
+    setTimeout(() => {
+      animate(won ? els.oppSprite : els.playerSprite, 'anim-faint');
+      if (won) SFX.win(); else SFX.faint();
+    }, 700);
     els.restartButton.hidden = false;
   }
+
+  // keyboard: 1-4 pick a move
+  document.addEventListener('keydown', e => {
+    if (e.key < '1' || e.key > '4') return;
+    const b = els.actions.children[+e.key - 1];
+    if (b && !b.disabled) b.click();
+  });
 
   els.restartButton.addEventListener('click', () => { window.location.href = 'index.html'; });
   init();
@@ -425,6 +513,17 @@ if (totalWinsEl) {
   totalWinsEl.textContent = stats.wins;
   document.getElementById('totalLosses').textContent = stats.losses;
   document.getElementById('winRate').textContent = total ? Math.round((stats.wins / total) * 100) + '%' : '0%';
+  document.getElementById('streak').textContent = stats.streak || 0;
+  document.getElementById('bestStreak').textContent = stats.best || 0;
+  const hist = document.getElementById('history');
+  const rows = stats.history || [];
+  if (!rows.length) hist.innerHTML = '<p style="font-size:9px;opacity:.6;">No battles yet.</p>';
+  rows.forEach(h => {
+    const d = document.createElement('div');
+    d.className = 'stat-row';
+    d.innerHTML = `<span>${h.me} vs ${h.foe}</span><span style="color:${h.won ? 'var(--hp-green)' : 'var(--accent-red)'}">${h.won ? 'WIN' : 'LOSS'}</span>`;
+    hist.appendChild(d);
+  });
 
   const breakdown = document.getElementById('typeBreakdown');
   const types = Object.keys(stats.byType);
