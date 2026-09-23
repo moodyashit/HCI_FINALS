@@ -77,6 +77,8 @@ body {
 .pokemon-card[data-type="fighting"]:hover { border-color: #c03028; }
 .pokemon-card[data-type="psychic"]:hover { border-color: #f85888; }
 .pokemon-card[data-type="rock"]:hover { border-color: #b8a038; }
+.pokemon-card[data-type="poison"]:hover { border-color: #a040a0; }
+.pokemon-card[data-type="ground"]:hover { border-color: #e0c068; }
 .pokemon-card:active { transform: translateY(2px); box-shadow: 0 2px 0 #000; }
 
 @media (max-width: 480px) {
