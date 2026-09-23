@@ -134,3 +134,7 @@ body {
 .anim-hit   { animation: hitFlash .5s steps(2, end); }
 .anim-faint { animation: faintOut .6s ease forwards; }
 @media (prefers-reduced-motion: reduce) { .anim-atk-p, .anim-atk-o, .anim-hit { animation: none; } }
+
+/* ---------- team battles ---------- */
+.actions[hidden] { display: none; }
+.dots { margin-top: 2px; font-size: .8em; letter-spacing: 2px; color: var(--accent-yellow); }

@@ -88,3 +88,6 @@ body {
 @media (max-width: 480px) {
   .pokemon-card img { width: 46px; height: 46px; }
 }
+
+.pokemon-card.picked { border-color: var(--accent-yellow); box-shadow: 0 0 0 2px var(--accent-yellow), 0 4px 0 #000; }
+.team-bar { position: sticky; bottom: 0; margin-top: 14px; padding: 12px 0 4px; background: var(--panel-bg); text-align: center; }

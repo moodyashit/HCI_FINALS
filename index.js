@@ -305,10 +305,20 @@ if (pokemonContainer) {
   });
 }
 
+const team = [];
+const teamBtn = document.getElementById('teamStartBtn');
+if (teamBtn) teamBtn.addEventListener('click', () => {
+  localStorage.setItem('playerTeam', JSON.stringify(team));
+  localStorage.setItem('playerPokemon', team[0]);
+  window.location.href = 'main.html';
+});
 document.querySelectorAll('.pokemon-card').forEach(card => {
   card.addEventListener('click', () => {
-    localStorage.setItem('playerPokemon', card.dataset.name);
-    window.location.href = 'main.html';
+    const name = card.dataset.name, i = team.indexOf(name);
+    if (i >= 0) team.splice(i, 1); else if (team.length < 3) team.push(name); else return;
+    card.classList.toggle('picked', i < 0);
+    teamBtn.textContent = `START BATTLE (${team.length}/3)`;
+    teamBtn.disabled = team.length !== 3;
   });
   const img = card.querySelector('img');
   if (img) img.addEventListener('error', () => handleSpriteError(img));
@@ -318,19 +328,18 @@ document.querySelectorAll('.pokemon-card').forEach(card => {
 const trainerIntroEl = document.getElementById('trainerIntro');
 if (trainerIntroEl) {
   const profile = getProfile();
-  const playerName = localStorage.getItem('playerPokemon') || 'Blastoise';
-  const opponentPool = OPPONENT_POOL.filter(name => name !== playerName);
-  const opponentName = opponentPool[Math.floor(Math.random() * opponentPool.length)];
+  const teamNames = JSON.parse(localStorage.getItem('playerTeam') || 'null') || [localStorage.getItem('playerPokemon') || 'Blastoise'];
   const trainer = OPPONENT_TRAINERS[Math.floor(Math.random() * OPPONENT_TRAINERS.length)];
 
   function levelToMaxHp(level) { return Math.round(80 + level * 1.6); }
-
-  const playerLevel = Math.floor(Math.random()*15)+40;
-  const opponentLevel = Math.floor(Math.random()*15)+40;
-  const playerMaxHp = levelToMaxHp(playerLevel);
-  const opponentMaxHp = levelToMaxHp(opponentLevel);
-  const player = { name: playerName, level: playerLevel, hp: playerMaxHp, maxHp: playerMaxHp, ...POKEDEX[playerName] };
-  const opponent = { name: opponentName, level: opponentLevel, hp: opponentMaxHp, maxHp: opponentMaxHp, ...POKEDEX[opponentName] };
+  function makeMon(name) {
+    const level = Math.floor(Math.random() * 15) + 40, maxHp = levelToMaxHp(level);
+    return { name, level, hp: maxHp, maxHp, ...POKEDEX[name] };
+  }
+  const playerTeam = teamNames.map(makeMon);
+  const oppTeam = OPPONENT_POOL.filter(n => !teamNames.includes(n)).sort(() => Math.random() - 0.5).slice(0, teamNames.length).map(makeMon);
+  const player = playerTeam[0];
+  const opponent = oppTeam[0];
 
   const trainerAvatarEl = document.getElementById('trainerAvatar');
   trainerAvatarEl.src = trainerSilhouette(trainer.accent, trainer.hat);
@@ -345,7 +354,7 @@ if (trainerIntroEl) {
   document.getElementById('battleStartBtn').addEventListener('click', () => {
     trainerIntroEl.hidden = true;
     document.getElementById('battleFrame').hidden = false;
-    startBattle(player, opponent);
+    startBattle(playerTeam, oppTeam);
   });
 
   // dropdown menu
@@ -365,22 +374,43 @@ if (trainerIntroEl) {
   });
 }
 
-function startBattle(player, opponent) {
+function startBattle(playerTeam, oppTeam) {
+  let player = playerTeam[0], opponent = oppTeam[0];
   const els = {
     oppName: document.getElementById('oppName'), oppLevel: document.getElementById('oppLevel'),
     oppSprite: document.getElementById('oppSprite'), oppHPBar: document.getElementById('oppHPBar'), oppHPText: document.getElementById('oppHPText'),
     playerName: document.getElementById('playerName'), playerLevel: document.getElementById('playerLevel'),
     playerSprite: document.getElementById('playerSprite'), playerHPBar: document.getElementById('playerHPBar'), playerHPText: document.getElementById('playerHPText'),
-    message: document.getElementById('message'), actions: document.getElementById('actions'), restartButton: document.getElementById('restartButton')
+    message: document.getElementById('message'), actions: document.getElementById('actions'), restartButton: document.getElementById('restartButton'),
+    switchBtn: document.getElementById('switchBtn'), switchPanel: document.getElementById('switchPanel'),
+    oppDots: document.getElementById('oppDots'), playerDots: document.getElementById('playerDots')
   };
 
+  function showOpp() {
+    els.oppName.innerHTML = opponent.name + typeBadge(opponent.type);
+    els.oppLevel.textContent = opponent.level;
+    els.oppSprite.classList.remove('anim-faint');
+    delete els.oppSprite.dataset.fallbackApplied;
+    els.oppSprite.src = opponent.front;
+    updateHP('opp'); renderTeamDots();
+  }
+  function showPlayer() {
+    els.playerName.innerHTML = player.name + typeBadge(player.type);
+    els.playerLevel.textContent = player.level;
+    els.playerSprite.classList.remove('anim-faint');
+    delete els.playerSprite.dataset.fallbackApplied;
+    els.playerSprite.src = player.back;
+    updateHP('player'); renderMoves(); renderTeamDots();
+  }
+  function renderTeamDots() {
+    const dots = t => t.map(p => (p.hp > 0 ? '●' : '○')).join(' ');
+    els.oppDots.textContent = dots(oppTeam); els.playerDots.textContent = dots(playerTeam);
+  }
   function init() {
-    els.oppName.innerHTML = opponent.name + typeBadge(opponent.type); els.oppLevel.textContent = opponent.level; els.oppSprite.src = opponent.front;
-    els.playerName.innerHTML = player.name + typeBadge(player.type); els.playerLevel.textContent = player.level; els.playerSprite.src = player.back;
     els.oppSprite.addEventListener('error', () => handleSpriteError(els.oppSprite));
     els.playerSprite.addEventListener('error', () => handleSpriteError(els.playerSprite));
-    player.pp = player.moves.map(movePP);
-    updateHP('opp'); updateHP('player'); renderMoves();
+    playerTeam.forEach(p => (p.pp = p.moves.map(movePP)));
+    showOpp(); showPlayer();
   }
 
   function updateHP(who) {
@@ -391,6 +421,7 @@ function startBattle(player, opponent) {
     bar.style.width = pct + '%';
     bar.style.background = pct > 50 ? 'var(--hp-green)' : pct > 20 ? 'var(--hp-yellow)' : 'var(--hp-red)';
     text.textContent = `${Math.max(0, mob.hp)}/${mob.maxHp}`;
+    renderTeamDots();
   }
 
   function renderMoves() {
@@ -408,6 +439,7 @@ function startBattle(player, opponent) {
   function setMessage(t) { els.message.textContent = t; }
   function disableActions(d) {
     els.actions.querySelectorAll('button').forEach(b => (b.disabled = d || player.pp[b.dataset.idx] <= 0));
+    els.switchBtn.disabled = d || playerTeam.filter(p => p.hp > 0).length < 2;
   }
   function animate(el, cls) {
     el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls);
@@ -455,7 +487,7 @@ function startBattle(player, opponent) {
     player.pp[i]--;
     attack(player, opponent, move, els.playerSprite, els.oppSprite, 'anim-atk-p', 'opp');
     renderMoves(); disableActions(true);
-    if (opponent.hp <= 0) return endGame(true, `${opponent.name} fainted. ${player.name} wins!`);
+    if (opponent.hp <= 0) return foeFainted();
     setTimeout(opponentTurn, 1300);
   }
 
@@ -469,14 +501,14 @@ function startBattle(player, opponent) {
 
   function opponentTurn() {
     attack(opponent, player, pickMove(), els.oppSprite, els.playerSprite, 'anim-atk-o', 'player');
-    if (player.hp <= 0) return endGame(false, `${player.name} fainted. ${opponent.name} wins!`);
+    if (player.hp <= 0) return playerFainted();
     disableActions(false);
   }
 
   function endGame(won, text) {
     setMessage(text);
     disableActions(true);
-    recordResult(won, opponent.type, { me: player.name, foe: opponent.name });
+    recordResult(won, opponent.type, { me: playerTeam[0].name, foe: oppTeam[0].name });
     setTimeout(() => {
       animate(won ? els.oppSprite : els.playerSprite, 'anim-faint');
       if (won) SFX.win(); else SFX.faint();
@@ -484,9 +516,53 @@ function startBattle(player, opponent) {
     els.restartButton.hidden = false;
   }
 
+  // ---------- team logic: fainting and switching ----------
+  function foeFainted() {
+    if (oppTeam.every(p => p.hp <= 0)) return endGame(true, `${opponent.name} fainted. You win!`);
+    setTimeout(() => { animate(els.oppSprite, 'anim-faint'); SFX.faint(); setMessage(`${opponent.name} fainted!`); }, 700);
+    setTimeout(() => {
+      opponent = oppTeam.find(p => p.hp > 0);
+      showOpp(); setMessage(`The rival sent out ${opponent.name}!`); disableActions(false);
+    }, 2000);
+  }
+  function playerFainted() {
+    if (playerTeam.every(p => p.hp <= 0)) return endGame(false, `${player.name} fainted. You lose!`);
+    setTimeout(() => { animate(els.playerSprite, 'anim-faint'); SFX.faint(); setMessage(`${player.name} fainted! Pick your next Pokémon.`); }, 700);
+    setTimeout(() => openSwitch(true), 1700);
+  }
+  function openSwitch(forced) {
+    els.switchPanel.innerHTML = '';
+    playerTeam.forEach((p, i) => {
+      const b = document.createElement('button');
+      b.className = 'retro-btn';
+      b.style.setProperty('--tc', TYPE_COLORS[p.type] || '');
+      b.textContent = `${p.name} ${p.hp}/${p.maxHp}`;
+      b.disabled = p.hp <= 0 || p === player;
+      b.addEventListener('click', () => switchTo(i, forced));
+      els.switchPanel.appendChild(b);
+    });
+    if (!forced) {
+      const back = document.createElement('button');
+      back.className = 'retro-btn'; back.textContent = 'BACK';
+      back.addEventListener('click', closeSwitch);
+      els.switchPanel.appendChild(back);
+    }
+    els.switchPanel.hidden = false; els.actions.hidden = true; els.switchBtn.hidden = true;
+  }
+  function closeSwitch() { els.switchPanel.hidden = true; els.actions.hidden = false; els.switchBtn.hidden = false; }
+  function switchTo(i, forced) {
+    player = playerTeam[i];
+    closeSwitch(); showPlayer();
+    setMessage(`Go, ${player.name}!`);
+    if (forced) return disableActions(false);
+    disableActions(true);
+    setTimeout(opponentTurn, 1000);
+  }
+  els.switchBtn.addEventListener('click', () => openSwitch(false));
+
   // keyboard: 1-4 pick a move
   document.addEventListener('keydown', e => {
-    if (e.key < '1' || e.key > '4') return;
+    if (e.key < '1' || e.key > '4' || els.actions.hidden) return;
     const b = els.actions.children[+e.key - 1];
     if (b && !b.disabled) b.click();
   });

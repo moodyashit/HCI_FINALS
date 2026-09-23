@@ -37,6 +37,7 @@
           </div>
           <div class="hp-bar"><div id="oppHPBar" class="hp-fill"></div></div>
           <div id="oppHPText" class="hp-count">100/100</div>
+          <div id="oppDots" class="dots"></div>
         </div>
         <div class="sprite-wrap"><img id="oppSprite" class="pokemon" src="" alt="Opponent sprite"></div>
       </div>
@@ -53,6 +54,7 @@
           </div>
           <div class="hp-bar"><div id="playerHPBar" class="hp-fill"></div></div>
           <div id="playerHPText" class="hp-count">100/100</div>
+          <div id="playerDots" class="dots"></div>
         </div>
       </div>
     </div>
@@ -60,6 +62,8 @@
     <div class="box">
       <div id="message" class="message">What will you do?</div>
       <div id="actions" class="actions"></div>
+      <div id="switchPanel" class="actions" hidden></div>
+      <button id="switchBtn" class="retro-btn small" style="margin-top:10px;">SWITCH POKÉMON</button>
       <button id="restartButton" class="retro-btn" hidden>PLAY AGAIN</button>
     </div>
   </div>
