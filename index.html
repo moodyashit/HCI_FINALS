@@ -42,7 +42,12 @@
     </section>
 
     <section id="pokemonSelection" class="screen select-screen" hidden>
-      <h2 class="section-title">CHOOSE 3 POKÉMON</h2>
+      <h2 class="section-title">CHOOSE <span id="pickCount">3</span> POKÉMON</h2>
+      <div class="mode-bar">
+        <button class="retro-btn small mode-btn" data-size="1">1 V 1</button>
+        <button class="retro-btn small mode-btn" data-size="2">2 V 2</button>
+        <button class="retro-btn small mode-btn" data-size="3">3 V 3</button>
+      </div>
       <div class="pokemon-container" id="pokemonContainer"></div>
       <div class="team-bar">
         <p style="font-size:9px;margin:0 0 10px;">YOUR FIRST PICK LEADS THE BATTLE</p>

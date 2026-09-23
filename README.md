@@ -12,7 +12,7 @@ A browser-based, retro-styled Pokémon battle game built for HCI Finals (FEU-A).
 - **Level-scaled stats** — each battle rolls a random level (40–55) for both Pokémon, which affects max HP and move damage
 - **Clean white arena** — the battlefield is a plain white box with soft ground shadows under each sprite and retro rounded corners
 - **Battle polish** — type badges, colored move buttons, lunge/hit/faint animations, WebAudio sound effects (mutable), critical hits, misses (move accuracy), limited PP, and 1–4 keyboard shortcuts
-- **3v3 team battles** — pick 3 Pokémon, switch mid-battle (costs your turn), forced switch when one faints; the battle ends when a whole team is down
+- **1v1 / 2v2 / 3v3 modes** — pick your team size on the selection screen, then pick that many Pokémon, switch mid-battle (costs your turn), forced switch when one faints; the battle ends when a whole team is down
 - **Difficulty** — Easy / Normal / Hard opponent AI, chosen on the trainer intro screen
 - **Stats extras** — win streak, best streak, and the last 10 battles
 - **Turn-based battle** with animated HP bars (green → yellow → red) and battle-log messaging

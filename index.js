@@ -305,20 +305,35 @@ if (pokemonContainer) {
   });
 }
 
+let teamSize = +localStorage.getItem('teamSize') || 3;
 const team = [];
 const teamBtn = document.getElementById('teamStartBtn');
-if (teamBtn) teamBtn.addEventListener('click', () => {
-  localStorage.setItem('playerTeam', JSON.stringify(team));
-  localStorage.setItem('playerPokemon', team[0]);
-  window.location.href = 'main.html';
-});
+function refreshTeamUI() {
+  document.getElementById('pickCount').textContent = teamSize;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('selected', +b.dataset.size === teamSize));
+  document.querySelectorAll('.pokemon-card').forEach(c => c.classList.toggle('picked', team.includes(c.dataset.name)));
+  teamBtn.textContent = `START BATTLE (${team.length}/${teamSize})`;
+  teamBtn.disabled = team.length !== teamSize;
+}
+if (teamBtn) {
+  teamBtn.addEventListener('click', () => {
+    localStorage.setItem('playerTeam', JSON.stringify(team));
+    localStorage.setItem('playerPokemon', team[0]);
+    window.location.href = 'main.html';
+  });
+  document.querySelectorAll('.mode-btn').forEach(b => b.addEventListener('click', () => {
+    teamSize = +b.dataset.size;
+    localStorage.setItem('teamSize', teamSize);
+    team.splice(teamSize);
+    refreshTeamUI();
+  }));
+  refreshTeamUI();
+}
 document.querySelectorAll('.pokemon-card').forEach(card => {
   card.addEventListener('click', () => {
     const name = card.dataset.name, i = team.indexOf(name);
-    if (i >= 0) team.splice(i, 1); else if (team.length < 3) team.push(name); else return;
-    card.classList.toggle('picked', i < 0);
-    teamBtn.textContent = `START BATTLE (${team.length}/3)`;
-    teamBtn.disabled = team.length !== 3;
+    if (i >= 0) team.splice(i, 1); else if (team.length < teamSize) team.push(name); else return;
+    refreshTeamUI();
   });
   const img = card.querySelector('img');
   if (img) img.addEventListener('error', () => handleSpriteError(img));
@@ -410,6 +425,7 @@ function startBattle(playerTeam, oppTeam) {
     els.oppSprite.addEventListener('error', () => handleSpriteError(els.oppSprite));
     els.playerSprite.addEventListener('error', () => handleSpriteError(els.playerSprite));
     playerTeam.forEach(p => (p.pp = p.moves.map(movePP)));
+    els.oppDots.hidden = els.playerDots.hidden = els.switchBtn.hidden = playerTeam.length < 2;
     showOpp(); showPlayer();
   }
 
