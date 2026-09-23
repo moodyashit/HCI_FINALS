@@ -51,7 +51,7 @@ body {
   width: clamp(70px, 16vw, 150px);
   filter: drop-shadow(4px 6px 0 rgba(0, 0, 0, .25));
 }
-.player .pokemon { width: clamp(90px, 20vw, 190px);
+.player .pokemon { width: clamp(90px, 20vw, 190px); }
 
 .stats {
   background: rgba(17, 17, 17, .92);
