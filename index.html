@@ -8,61 +8,93 @@
   <link rel="stylesheet" href="index.css">
 </head>
 <body>
-  <div class="crt">
+  <div class="crt panel">
+
     <section id="titleScreen" class="screen title-screen">
       <h1 class="poke-logo">
         <span class="logo-yellow">POKÉMON</span>
         <span class="logo-sub">BATTLE ARENA</span>
       </h1>
       <button id="startButton" class="retro-btn blink">▶ PRESS START</button>
-      <p class="footnote">A Fan-Made Battle Demo</p>
+      <p class="footnote">
+        <a href="stats.html" style="color:var(--accent-yellow)">VIEW BATTLE STATS</a>
+      </p>
+    </section>
+
+    <section id="profileScreen" class="screen" hidden>
+      <h2 class="section-title">YOUR PROFILE</h2>
+
+      <div style="display:flex;gap:16px;align-items:center;justify-content:center;flex-wrap:wrap;margin-bottom:24px;">
+        <div id="githubAvatar" class="pixel-avatar round"></div>
+        <div style="text-align:left;">
+          <input id="githubInput" type="text" placeholder="GitHub username (optional)"
+            style="font-family:'Press Start 2P',monospace;font-size:9px;padding:10px;border:2px solid #000;border-radius:6px;width:220px;">
+          <br><br>
+          <button id="githubConnectBtn" class="retro-btn small">CONNECT</button>
+          <span id="githubStatus" style="font-size:8px;display:block;margin-top:8px;"></span>
+        </div>
+      </div>
+
+      <h2 class="section-title">PICK YOUR TRAINER</h2>
+      <div id="trainerGrid" class="trainer-grid"></div>
+
+      <button id="profileContinueBtn" class="retro-btn" disabled>CONTINUE</button>
     </section>
 
     <section id="pokemonSelection" class="screen select-screen" hidden>
       <h2 class="section-title">CHOOSE YOUR POKÉMON</h2>
       <div class="pokemon-container">
         <button class="pokemon-card" data-name="Pikachu" data-type="electric">
-          <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/pikachu.gif" alt="Pikachu">
-          <span>Pikachu</span>
+          <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/pikachu.gif" alt="Pikachu"><span>Pikachu</span>
         </button>
         <button class="pokemon-card" data-name="Bulbasaur" data-type="grass">
-          <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/bulbasaur.gif" alt="Bulbasaur">
-          <span>Bulbasaur</span>
+          <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/bulbasaur.gif" alt="Bulbasaur"><span>Bulbasaur</span>
         </button>
         <button class="pokemon-card" data-name="Charmander" data-type="fire">
-          <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/charmander.gif" alt="Charmander">
-          <span>Charmander</span>
+          <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/charmander.gif" alt="Charmander"><span>Charmander</span>
         </button>
         <button class="pokemon-card" data-name="Squirtle" data-type="water">
-          <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/squirtle.gif" alt="Squirtle">
-          <span>Squirtle</span>
+          <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/squirtle.gif" alt="Squirtle"><span>Squirtle</span>
         </button>
         <button class="pokemon-card" data-name="Blastoise" data-type="water">
-          <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/blastoise.gif" alt="Blastoise">
-          <span>Blastoise</span>
+          <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/blastoise.gif" alt="Blastoise"><span>Blastoise</span>
         </button>
         <button class="pokemon-card" data-name="Charizard" data-type="fire">
-          <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/charizard.gif" alt="Charizard">
-          <span>Charizard</span>
+          <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/charizard.gif" alt="Charizard"><span>Charizard</span>
         </button>
         <button class="pokemon-card" data-name="Eevee" data-type="normal">
-          <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/eevee.gif" alt="Eevee">
-          <span>Eevee</span>
+          <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/eevee.gif" alt="Eevee"><span>Eevee</span>
         </button>
         <button class="pokemon-card" data-name="Jigglypuff" data-type="normal">
-          <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/jigglypuff.gif" alt="Jigglypuff">
-          <span>Jigglypuff</span>
+          <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/jigglypuff.gif" alt="Jigglypuff"><span>Jigglypuff</span>
         </button>
         <button class="pokemon-card" data-name="Gengar" data-type="ghost">
-          <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/gengar.gif" alt="Gengar">
-          <span>Gengar</span>
+          <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/gengar.gif" alt="Gengar"><span>Gengar</span>
         </button>
         <button class="pokemon-card" data-name="Snorlax" data-type="normal">
-          <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/snorlax.gif" alt="Snorlax">
-          <span>Snorlax</span>
+          <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/snorlax.gif" alt="Snorlax"><span>Snorlax</span>
+        </button>
+        <button class="pokemon-card" data-name="Vulpix" data-type="fire">
+          <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/vulpix.gif" alt="Vulpix"><span>Vulpix</span>
+        </button>
+        <button class="pokemon-card" data-name="Growlithe" data-type="fire">
+          <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/growlithe.gif" alt="Growlithe"><span>Growlithe</span>
+        </button>
+        <button class="pokemon-card" data-name="Psyduck" data-type="water">
+          <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/psyduck.gif" alt="Psyduck"><span>Psyduck</span>
+        </button>
+        <button class="pokemon-card" data-name="Machop" data-type="fighting">
+          <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/machop.gif" alt="Machop"><span>Machop</span>
+        </button>
+        <button class="pokemon-card" data-name="Abra" data-type="psychic">
+          <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/abra.gif" alt="Abra"><span>Abra</span>
+        </button>
+        <button class="pokemon-card" data-name="Geodude" data-type="rock">
+          <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/geodude.gif" alt="Geodude"><span>Geodude</span>
         </button>
       </div>
     </section>
+
   </div>
 
   <script src="index.js"></script>

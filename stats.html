@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Battle Stats</title>
+  <link rel="stylesheet" href="retro.css">
+  <link rel="stylesheet" href="stats.css">
+</head>
+<body>
+  <div class="panel narrow" style="text-align:center;">
+    <h2 class="section-title" style="color:var(--accent-yellow);font-size:16px;margin-bottom:20px;">
+      BATTLE RECORD
+    </h2>
+
+    <div id="profileSummary" style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:24px;"></div>
+
+    <div class="stat-row"><span>Total Wins</span><span id="totalWins">0</span></div>
+    <div class="stat-row"><span>Total Losses</span><span id="totalLosses">0</span></div>
+    <div class="stat-row"><span>Win Rate</span><span id="winRate">0%</span></div>
+
+    <h3 style="font-size:11px;color:var(--accent-yellow);margin:20px 0 12px;">VS EACH TYPE</h3>
+    <div id="typeBreakdown"></div>
+
+    <div style="margin-top:24px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+      <button id="resetStatsBtn" class="retro-btn small">RESET STATS</button>
+      <button onclick="window.location.href='index.html'" class="retro-btn small">BACK TO TITLE</button>
+    </div>
+  </div>
+
+  <script src="index.js"></script>
+</body>
+</html>

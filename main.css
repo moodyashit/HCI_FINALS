@@ -18,22 +18,7 @@ body {
   padding: clamp(24px, 5vw, 40px);
   text-align: center;
 }
-
-.trainer-avatar {
-  width: 96px;
-  height: 96px;
-  margin: 0 auto 20px;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  filter: drop-shadow(0 4px 0 rgba(0, 0, 0, .4));
-}
-
-.trainer-text {
-  font-size: clamp(10px, 2.4vw, 13px);
-  line-height: 1.8;
-  margin-bottom: 24px;
-}
+.trainer-text { font-size: clamp(10px, 2.4vw, 13px); line-height: 1.8; margin-bottom: 24px; }
 
 /* ---------- Battle scene ---------- */
 .battle-frame { width: min(1150px, 94vw); }
@@ -49,7 +34,7 @@ body {
   aspect-ratio: 16 / 9;
   min-height: 320px;
   max-height: 68vh;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .opponent, .player {
@@ -58,7 +43,6 @@ body {
   flex-direction: column;
   align-items: center;
 }
-
 .opponent { top: 6%; right: 6%; }
 .player { bottom: 8%; left: 6%; flex-direction: column-reverse; }
 
@@ -86,30 +70,16 @@ body {
   border: 2px solid #000;
   border-radius: 8px;
   padding: 8px 12px;
-  min-width: 150px;
+  min-width: 160px;
   font-size: 10px;
 }
-
 .stats .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
 .stats .name { font-weight: bold; color: var(--text-cream); }
 .stats .level { color: var(--accent-yellow); font-size: 8px; }
 .stats .level::before { content: "Lv"; margin-right: 2px; }
 
-.hp-bar {
-  height: 8px;
-  background: #333;
-  border: 1px solid #000;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.hp-fill {
-  height: 100%;
-  width: 100%;
-  background: var(--hp-green);
-  transition: width .4s ease, background .4s ease;
-}
-
+.hp-bar { height: 8px; background: #333; border: 1px solid #000; border-radius: 4px; overflow: hidden; }
+.hp-fill { height: 100%; width: 100%; background: var(--hp-green); transition: width .4s ease, background .4s ease; }
 .hp-count { margin-top: 4px; font-size: 8px; text-align: right; }
 
 .box {
@@ -120,21 +90,9 @@ body {
   box-shadow: 0 0 0 4px var(--accent-yellow);
   padding: 16px;
 }
-
-.message {
-  font-size: clamp(10px, 2vw, 13px);
-  min-height: 32px;
-  margin-bottom: 12px;
-  line-height: 1.6;
-}
-
-.actions {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-}
+.message { font-size: clamp(10px, 2vw, 13px); min-height: 32px; margin-bottom: 12px; line-height: 1.6; }
+.actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
 .actions button { font-size: 10px; padding: 12px 8px; }
-
 #restartButton { margin-top: 12px; width: 100%; }
 
 @media (max-width: 520px) {

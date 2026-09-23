@@ -9,13 +9,22 @@
 </head>
 <body>
   <div id="trainerIntro" class="trainer-intro">
-    <div id="trainerAvatar" class="trainer-avatar"></div>
+    <div id="trainerAvatar" class="pixel-avatar" style="width:96px;height:96px;margin:0 auto 20px;"></div>
     <p id="trainerText" class="trainer-text">A trainer wants to battle!</p>
     <button id="battleStartBtn" class="retro-btn">BATTLE!</button>
   </div>
 
   <div id="battleFrame" class="battle-frame" hidden>
     <div class="game">
+      <div class="menu-wrap">
+        <button id="menuBtn" class="menu-btn">☰</button>
+        <div id="menuDropdown" class="menu-dropdown" hidden>
+          <button id="forfeitBtn">🏳 Forfeit Battle</button>
+          <a href="stats.html">📊 View Stats</a>
+          <a href="index.html">🏠 Main Menu</a>
+        </div>
+      </div>
+
       <div class="opponent">
         <div class="stats">
           <div class="top">
@@ -34,7 +43,10 @@
         <img id="playerSprite" class="pokemon" src="" alt="Your sprite">
         <div class="stats">
           <div class="top">
-            <span id="playerName" class="name">Blastoise</span>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <div id="playerBadge" class="pixel-avatar" style="width:20px;height:20px;border-width:1px;"></div>
+              <span id="playerName" class="name">Blastoise</span>
+            </div>
             <span id="playerLevel" class="level">50</span>
           </div>
           <div class="hp-bar"><div id="playerHPBar" class="hp-fill"></div></div>

@@ -11,31 +11,19 @@ body {
   background-size: cover;
 }
 
-.crt {
-  position: relative;
-  width: min(1100px, 94vw);
-  max-height: 92vh;
-  overflow-y: auto;
-  background: var(--panel-bg);
-  border: 6px solid #000;
-  border-radius: 10px;
-  box-shadow: 0 0 0 4px var(--accent-yellow), 0 10px 0 rgba(0, 0, 0, .3);
-  padding: clamp(20px, 4vw, 56px);
-}
-
+.crt { position: relative; }
 .crt::before {
   content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: repeating-linear-gradient(rgba(0, 0, 0, 0) 0 2px, rgba(0, 0, 0, .08) 3px 4px);
+  background: repeating-linear-gradient(rgba(0,0,0,0) 0 2px, rgba(0,0,0,.08) 3px 4px);
   border-radius: inherit;
 }
 
 .screen { text-align: center; position: relative; }
 
 .poke-logo { margin: 0 0 32px; line-height: 1.6; }
-
 .logo-yellow {
   display: block;
   font-size: clamp(24px, 6vw, 44px);
@@ -43,22 +31,17 @@ body {
   -webkit-text-stroke: 2px #1a1a1a;
   text-shadow: 3px 3px 0 var(--accent-blue);
 }
-
-.logo-sub {
-  display: block;
-  margin-top: 10px;
-  font-size: clamp(10px, 2vw, 16px);
-}
+.logo-sub { display: block; margin-top: 10px; font-size: clamp(10px, 2vw, 16px); }
 
 .blink { animation: blink 1.2s steps(2, start) infinite; }
 @keyframes blink { to { visibility: hidden; } }
 
-.footnote { margin-top: 24px; font-size: 8px; opacity: .6; }
+.footnote { margin-top: 24px; font-size: 9px; }
 
 .section-title {
   font-size: clamp(12px, 2.5vw, 18px);
   color: var(--accent-yellow);
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .pokemon-container {
@@ -82,10 +65,8 @@ body {
   gap: 6px;
   transition: transform .1s ease, box-shadow .1s ease, border-color .1s ease;
 }
-
 .pokemon-card img { width: 56px; height: 56px; }
 .pokemon-card span { font-size: 8px; }
-
 .pokemon-card:hover { transform: translateY(-4px); }
 .pokemon-card[data-type="electric"]:hover { border-color: var(--accent-yellow); }
 .pokemon-card[data-type="grass"]:hover { border-color: #4fa64f; }
@@ -93,7 +74,9 @@ body {
 .pokemon-card[data-type="water"]:hover { border-color: #3b6cff; }
 .pokemon-card[data-type="normal"]:hover { border-color: #a8a878; }
 .pokemon-card[data-type="ghost"]:hover { border-color: #705898; }
-
+.pokemon-card[data-type="fighting"]:hover { border-color: #c03028; }
+.pokemon-card[data-type="psychic"]:hover { border-color: #f85888; }
+.pokemon-card[data-type="rock"]:hover { border-color: #b8a038; }
 .pokemon-card:active { transform: translateY(2px); box-shadow: 0 2px 0 #000; }
 
 @media (max-width: 480px) {

@@ -12,7 +12,6 @@
 }
 
 * { box-sizing: border-box; }
-
 html, body { height: 100%; }
 
 body {
@@ -36,12 +35,106 @@ button.retro-btn {
   font-size: 12px;
   letter-spacing: 1px;
 }
-
 button.retro-btn:hover { background: #4e5fe0; }
-
-button.retro-btn:active {
-  transform: translateY(4px);
-  box-shadow: 0 0 0 #1a237e, inset 0 0 0 2px rgba(255, 255, 255, .2);
-}
-
+button.retro-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #1a237e, inset 0 0 0 2px rgba(255,255,255,.2); }
 button.retro-btn:disabled { opacity: .4; cursor: not-allowed; }
+button.retro-btn.small { font-size: 9px; padding: 8px 10px; }
+
+/* ---- panel shell reused across screens ---- */
+.panel {
+  width: min(1100px, 94vw);
+  max-height: 92vh;
+  overflow-y: auto;
+  background: var(--panel-bg);
+  border: 6px solid #000;
+  border-radius: 10px;
+  box-shadow: 0 0 0 4px var(--accent-yellow), 0 10px 0 rgba(0, 0, 0, .3);
+  padding: clamp(20px, 4vw, 48px);
+}
+.panel.narrow { width: min(560px, 92vw); }
+
+/* ---- pixel avatar bust (trainer icon / github avatar frame) ---- */
+.pixel-avatar {
+  width: 72px;
+  height: 72px;
+  border: 3px solid #000;
+  border-radius: 8px;
+  background-color: #2b2b3d;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.pixel-avatar.round { border-radius: 50%; }
+
+/* ---- trainer class grid ---- */
+.trainer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 12px;
+  margin: 16px 0 24px;
+}
+.trainer-option {
+  font-family: 'Press Start 2P', monospace;
+  background: #2b2b3d;
+  border: 3px solid #000;
+  border-radius: 8px;
+  color: var(--text-cream);
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 8px;
+}
+.trainer-option img { width: 48px; height: 48px; }
+.trainer-option.selected { border-color: var(--accent-yellow); box-shadow: 0 0 0 2px var(--accent-yellow); }
+
+/* ---- dropdown menu (in-battle) ---- */
+.menu-wrap { position: absolute; top: 10px; left: 10px; z-index: 5; }
+.menu-btn {
+  font-family: 'Press Start 2P', monospace;
+  background: #000c;
+  color: var(--text-cream);
+  border: 2px solid #000;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.menu-dropdown {
+  margin-top: 6px;
+  background: var(--panel-bg);
+  border: 2px solid #000;
+  border-radius: 6px;
+  overflow: hidden;
+  min-width: 160px;
+}
+.menu-dropdown a, .menu-dropdown button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font-family: 'Press Start 2P', monospace;
+  background: transparent;
+  color: var(--text-cream);
+  border: none;
+  border-bottom: 1px solid #333;
+  padding: 10px 12px;
+  font-size: 9px;
+  cursor: pointer;
+  text-decoration: none;
+}
+.menu-dropdown a:last-child, .menu-dropdown button:last-child { border-bottom: none; }
+.menu-dropdown a:hover, .menu-dropdown button:hover { background: #333; }
+
+/* ---- stats table ---- */
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border: 2px solid #000;
+  border-radius: 6px;
+  background: #2b2b3d;
+  margin-bottom: 8px;
+  font-size: 10px;
+}
