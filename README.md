@@ -65,6 +65,8 @@ retro.css    — shared design tokens and components (buttons, panels, avatars)
 index.css / main.css / stats.css — per-page layout styles
 ```
 
+Or just open this https://moodyashit.github.io/HCI_FINALS/
+
 ## Data persistence
 
 All progress is stored client-side in `localStorage`:
