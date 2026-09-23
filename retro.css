@@ -44,6 +44,7 @@ button.retro-btn.small { font-size: 9px; padding: 8px 10px; }
 .panel {
   width: min(1100px, 94vw);
   max-height: 92vh;
+  max-height: 92dvh;
   overflow-y: auto;
   background: var(--panel-bg);
   border: 6px solid #000;

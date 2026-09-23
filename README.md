@@ -17,6 +17,8 @@ A browser-based, retro-styled Pokémon battle game built for HCI Finals (FEU-A).
 - **Status effects** — burn, poison, paralysis and sleep, inflicted by fire/ghost, poison, electric and grass attackers (20% chance on a damaging hit)
 - **Gym campaign** — beat 8 leaders in a row (Brock → Champion Lance) for badges; the item bag carries over and you win a Potion per gym
 - **Items and XP** — Potion, Super Potion and Full Heal in battle (uses your turn); Pokémon that fight in a won battle earn XP and level up permanently (saved in `pokeProgress`, cleared by Reset Stats)
+- **Pokédex page** (`pokedex.html`) — search/filter all Pokémon by type; shows each one's level, moves and personal win/loss record
+- **Mobile layout** — smaller, squarer battle arena, 2-column moves, and a scrolling picker that fits phone screens
 - **Difficulty** — Easy / Normal / Hard opponent AI, chosen on the trainer intro screen
 - **Stats extras** — win streak, best streak, and the last 10 battles
 - **Turn-based battle** with animated HP bars (green → yellow → red) and battle-log messaging
@@ -35,7 +37,8 @@ Just open `index.html` in a browser (or serve the folder with any static file se
 ```
 index.html   — title screen, trainer/profile setup, Pokémon selection
 main.html    — trainer intro + turn-based battle
-stats.html   — battle record and per-type breakdown
+stats.html   — battle record, streaks, history and per-type breakdown
+pokedex.html — browsable Pokédex with per-Pokémon records
 index.js     — all game logic (Pokédex data, screens, battle engine, stats)
 retro.css    — shared design tokens and components (buttons, panels, avatars)
 index.css / main.css / stats.css — per-page layout styles

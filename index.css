@@ -101,3 +101,11 @@ button.retro-btn.mode-btn.selected, button.retro-btn.opp-btn.selected, button.re
 #teamBackBtn { margin-right: 10px; }
 #setupBars { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 28px; }
 #setupBars[hidden], .mode-bar[hidden] { display: none; }
+
+/* ---------- mobile ---------- */
+@media (max-width: 700px) {
+  .pokemon-container { max-height: 46vh; max-height: 46dvh; min-height: 0; }
+  .mode-bar { margin-bottom: 8px; }
+  .section-title { margin-bottom: 10px; }
+}
+@media (hover: none) { .pokemon-card:hover { transform: none; } }

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pokédex</title>
+  <link rel="stylesheet" href="retro.css">
+  <link rel="stylesheet" href="stats.css">
+  <link rel="stylesheet" href="pokedex.css">
+</head>
+<body>
+  <div class="panel" style="text-align:center;">
+    <h2 style="color:var(--accent-yellow);font-size:16px;margin:0 0 20px;">POKÉDEX</h2>
+    <div class="dex-tools">
+      <input id="dexSearch" type="text" placeholder="Search name">
+      <select id="dexType"></select>
+    </div>
+    <p id="dexCount" style="font-size:8px;margin:0 0 14px;"></p>
+    <div id="dexGrid" class="dex-grid"></div>
+    <div style="margin-top:20px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+      <button onclick="window.location.href='stats.html'" class="retro-btn small">BATTLE STATS</button>
+      <button onclick="window.location.href='index.html'" class="retro-btn small">BACK TO TITLE</button>
+    </div>
+  </div>
+  <script src="index.js"></script>
+</body>
+</html>

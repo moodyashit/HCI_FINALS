@@ -114,10 +114,12 @@ body {
 }
 
 @media (max-width: 700px) {
-  .game { aspect-ratio: 4 / 3; }
+  .game { aspect-ratio: 5 / 4; }
+  .box { padding: 14px; }
 }
 @media (max-width: 520px) {
-  .actions { grid-template-columns: 1fr; }
+  .game { aspect-ratio: 1 / 1; }
+  .actions button { font-size: 9px; padding: 12px 4px; }
 }
 
 /* ---------- type badges, move colours, animations ---------- */

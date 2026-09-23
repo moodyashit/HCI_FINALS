@@ -185,7 +185,12 @@ function recordResult(won, opponentType, info) {
   if (won) s.byType[opponentType].wins++; else s.byType[opponentType].losses++;
   s.streak = won ? s.streak + 1 : 0;
   s.best = Math.max(s.best, s.streak);
-  if (info) s.history = [{ won, ...info }, ...s.history].slice(0, 10);
+  s.byMon = s.byMon || {};
+  ((info && info.used) || (info ? [info.me] : [])).forEach(n => {
+    const r = s.byMon[n] || (s.byMon[n] = { wins: 0, losses: 0 });
+    if (won) r.wins++; else r.losses++;
+  });
+  if (info) { const { used, ...entry } = info; s.history = [{ won, ...entry }, ...s.history].slice(0, 10); }
   saveStats(s);
 }
 
@@ -647,7 +652,7 @@ function startBattle(playerTeam, oppTeam) {
     text += campaignResult(won);
     setMessage(text);
     disableActions(true);
-    recordResult(won, opponent.type, { me: playerTeam[0].name, foe: oppTeam[0].name });
+    recordResult(won, opponent.type, { me: playerTeam[0].name, foe: oppTeam[0].name, used: playerTeam.filter(p => p.fought).map(p => p.name) });
     setTimeout(() => {
       animate(won ? els.oppSprite : els.playerSprite, 'anim-faint');
       if (won) SFX.win(); else SFX.faint();
@@ -810,4 +815,29 @@ if (totalWinsEl) {
     localStorage.removeItem('pokeProgress');
     location.reload();
   });
+}
+
+// ---------- POKEDEX PAGE ----------
+const dexGrid = document.getElementById('dexGrid');
+if (dexGrid) {
+  const prog = getProgress(), byMon = getStats().byMon || {};
+  const search = document.getElementById('dexSearch'), typeSel = document.getElementById('dexType');
+  const types = [...new Set(Object.values(POKEDEX).map(p => p.type))].sort();
+  typeSel.innerHTML = '<option value="">All types</option>' + types.map(t => `<option>${t}</option>`).join('');
+  function renderDex() {
+    const q = search.value.trim().toLowerCase();
+    const list = Object.entries(POKEDEX).filter(([n, p]) => n.toLowerCase().includes(q) && (!typeSel.value || p.type === typeSel.value));
+    dexGrid.innerHTML = list.map(([n, p]) => {
+      const rec = byMon[n] || { wins: 0, losses: 0 }, tot = rec.wins + rec.losses;
+      return `<div class="dex-card"><img src="${p.front}" alt="${n}" onerror="handleSpriteError(this)">
+        <div class="dex-name">${n}${typeBadge(p.type)}</div>
+        <div>Lv ${prog[n] ? prog[n].level : '40 (base)'}</div>
+        <div>${tot ? `${rec.wins}W / ${rec.losses}L (${Math.round((rec.wins / tot) * 100)}%)` : 'No battles yet'}</div>
+        <ul class="dex-moves">${p.moves.map(m => `<li>${m.name}<span>${m.power}</span></li>`).join('')}</ul></div>`;
+    }).join('') || '<p style="font-size:9px;">No Pokémon match.</p>';
+    document.getElementById('dexCount').textContent = `${list.length}/${Object.keys(POKEDEX).length} SHOWN`;
+  }
+  search.addEventListener('input', renderDex);
+  typeSel.addEventListener('change', renderDex);
+  renderDex();
 }
