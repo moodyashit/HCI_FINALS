@@ -7,7 +7,7 @@ A browser-based, retro-styled Pokémon battle game built for HCI Finals (FEU-A).
 - **Title → Profile → Select → Battle → Stats** flow across four linked pages
 - **Trainer customization** — pick a trainer class (Youngster, Lass, Ace Trainer, Hiker, Swimmer, Rocket Grunt), each with a procedurally-drawn pixel silhouette avatar (no image assets needed)
 - **Optional GitHub avatar** — enter a GitHub username to pull in your real avatar via the public GitHub API; falls back gracefully if the username isn't found
-- **51 selectable Pokémon**, each with 4 unique moves and a type (15 types total, cards generated from the `POKEDEX` in `index.js`)
+- **100 selectable Pokémon**, each with 4 unique moves and a type (15 types total, cards generated from the `POKEDEX` in `index.js`)
 - **Type effectiveness system** — moves are boosted, weakened, or nullified depending on attacker/defender type (e.g. Water is super effective against Fire)
 - **Level-scaled stats** — each battle rolls a random level (40–55) for both Pokémon, which affects max HP and move damage
 - **Clean white arena** — the battlefield is a plain white box with soft ground shadows under each sprite and retro rounded corners

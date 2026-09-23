@@ -131,6 +131,64 @@ function typeEffectiveness(attackerType, defenderType) {
 // ---------- speed, real move types, stat moves, weather ----------
 const VS = localStorage.getItem('vsMode') === '1';   // 2-player hot-seat battle
 const SPEED = {Pikachu:90,Bulbasaur:45,Charmander:65,Squirtle:43,Blastoise:78,Charizard:100,Eevee:55,Jigglypuff:20,Gengar:110,Snorlax:30,Vulpix:65,Growlithe:60,Psyduck:55,Machop:35,Abra:90,Geodude:20,Meowth:90,Ekans:55,Sandshrew:40,Oddish:30,Poliwag:90,Ponyta:90,Magnemite:45,Doduo:75,Venusaur:80,Raichu:110,Arcanine:95,Alakazam:120,Machamp:55,Golem:45,Gyarados:81,Dragonite:80,Mewtwo:130,Lapras:60,Onix:70,Pidgeot:101,Scyther:105,Jynx:95,Electabuzz:105,Magmar:93,Haunter:95,Cubone:35,Dratini:50,Zubat:55,Butterfree:70,Nidoking:85,Vaporeon:65,Jolteon:130,Flareon:65,Lucario:90,Articuno:85};
+// ---------- Pokémon #52-100 (compact form: name, type, speed, [move, power]...) ----------
+const addMon = (name, type, speed, moves) => {
+  const id = name.toLowerCase();
+  POKEDEX[name] = { type, moves: moves.map(([n, power]) => ({ name: n, power })),
+    front: `https://img.pokemondb.net/sprites/black-white/anim/normal/${id}.gif`,
+    back:  `https://img.pokemondb.net/sprites/black-white/anim/back-normal/${id}.gif` };
+  SPEED[name] = speed;
+};
+addMon('Ivysaur','grass',60,[['Vine Whip',8],['Razor Leaf',11],['Body Slam',10],['Tackle',6]]);
+addMon('Charmeleon','fire',80,[['Ember',8],['Slash',10],['Flamethrower',11],['Fire Fang',9]]);
+addMon('Wartortle','water',58,[['Water Gun',8],['Bite',8],['Water Pulse',10],['Tackle',6]]);
+addMon('Pidgey','flying',56,[['Gust',7],['Quick Attack',6],['Wing Attack',8],['Tackle',6]]);
+addMon('Rattata','normal',72,[['Quick Attack',6],['Bite',8],['Tackle',6],['Headbutt',8]]);
+addMon('Arbok','poison',80,[['Sludge Bomb',12],['Bite',8],['Crunch',10],['Wrap',7]]);
+addMon('Sandslash','ground',65,[['Slash',10],['Earthquake',12],['Rollout',8],['Sand Attack',4]]);
+addMon('Nidoqueen','poison',76,[['Poison Jab',10],['Earthquake',12],['Body Slam',10],['Sludge Bomb',12]]);
+addMon('Clefairy','normal',35,[['Pound',6],['Double Slap',8],['Body Slam',10],['Swift',9]]);
+addMon('Ninetales','fire',100,[['Flamethrower',12],['Fire Spin',10],['Quick Attack',6],['Bite',8]]);
+addMon('Golbat','flying',90,[['Wing Attack',8],['Bite',8],['Air Cutter',9],['Leech Life',7]]);
+addMon('Vileplume','grass',50,[['Razor Leaf',11],['Acid',7],['Solar Beam',14],['Poison Powder',6]]);
+addMon('Venomoth','bug',90,[['Bug Buzz',11],['Psybeam',10],['Silver Wind',9],['Gust',7]]);
+addMon('Dugtrio','ground',120,[['Earthquake',12],['Slash',10],['Bone Club',9],['Sand Attack',4]]);
+addMon('Primeape','fighting',95,[['Karate Chop',9],['Cross Chop',12],['Low Kick',7],['Seismic Toss',11]]);
+addMon('Poliwrath','water',70,[['Waterfall',11],['Body Slam',10],['Seismic Toss',11],['Water Pulse',9]]);
+addMon('Kadabra','psychic',105,[['Psybeam',10],['Confusion',9],['Psychic',13],['Shadow Ball',11]]);
+addMon('Machoke','fighting',45,[['Karate Chop',9],['Cross Chop',12],['Seismic Toss',11],['Body Slam',10]]);
+addMon('Tentacool','water',70,[['Water Pulse',9],['Acid',7],['Bubble',7],['Poison Sting',6]]);
+addMon('Rapidash','fire',105,[['Flame Wheel',11],['Stomp',9],['Flamethrower',12],['Quick Attack',6]]);
+addMon('Slowbro','water',30,[['Water Pulse',10],['Confusion',9],['Surf',12],['Headbutt',8]]);
+addMon('Dodrio','normal',100,[['Drill Peck',10],['Fury Attack',8],['Quick Attack',6],['Tackle',6]]);
+addMon('Muk','poison',50,[['Sludge Bomb',12],['Poison Jab',10],['Body Slam',10],['Acid',7]]);
+addMon('Gastly','ghost',80,[['Lick',6],['Shadow Ball',11],['Night Shade',9],['Smog',6]]);
+addMon('Hitmonlee','fighting',87,[['Low Kick',7],['Karate Chop',9],['Close Combat',13],['Headbutt',8]]);
+addMon('Hitmonchan','fighting',76,[['Ice Punch',11],['Thunder Punch',11],['Fire Punch',10],['Karate Chop',9]]);
+addMon('Rhydon','ground',40,[['Earthquake',13],['Rock Slide',11],['Horn Attack',8],['Body Slam',10]]);
+addMon('Chansey','normal',50,[['Pound',6],['Body Slam',10],['Double Slap',8],['Swift',9]]);
+addMon('Tangela','grass',60,[['Vine Whip',8],['Absorb',6],['Razor Leaf',11],['Slam',9]]);
+addMon('Kangaskhan','normal',90,[['Body Slam',10],['Crunch',10],['Slam',9],['Headbutt',8]]);
+addMon('Starmie','water',115,[['Surf',12],['Psychic',13],['Ice Beam',12],['Swift',9]]);
+addMon('Pinsir','bug',85,[['X-Scissor',12],['Slash',10],['Body Slam',10],['Bite',8]]);
+addMon('Tauros','normal',110,[['Body Slam',10],['Earthquake',12],['Stomp',9],['Quick Attack',6]]);
+addMon('Magikarp','water',80,[['Tackle',6],['Bubble',7],['Headbutt',8],['Bite',8]]);
+addMon('Porygon','normal',40,[['Swift',9],['Psybeam',10],['Hyper Beam',14],['Thunder Shock',9]]);
+addMon('Omanyte','rock',35,[['Water Gun',8],['Rock Throw',9],['Bite',8],['Water Pulse',9]]);
+addMon('Kabuto','rock',55,[['Scratch',5],['Rock Throw',9],['Slash',10],['Bite',8]]);
+addMon('Aerodactyl','rock',130,[['Rock Slide',11],['Wing Attack',8],['Crunch',10],['Hyper Beam',14]]);
+addMon('Zapdos','electric',100,[['Thunder',13],['Drill Peck',10],['Air Slash',11],['Thunderbolt',13]]);
+addMon('Moltres','fire',90,[['Flamethrower',12],['Wing Attack',9],['Air Slash',11],['Fire Spin',10]]);
+addMon('Dragonair','dragon',70,[['Twister',9],['Dragon Rage',8],['Slam',9],['Body Slam',10]]);
+addMon('Mew','psychic',100,[['Psychic',13],['Aura Sphere',12],['Shadow Ball',11],['Swift',9]]);
+addMon('Exeggutor','grass',55,[['Solar Beam',14],['Confusion',9],['Razor Leaf',11],['Stomp',9]]);
+addMon('Weezing','poison',60,[['Sludge Bomb',12],['Smog',6],['Shadow Ball',11],['Tackle',6]]);
+addMon('Marowak','ground',45,[['Bonemerang',11],['Bone Club',9],['Earthquake',12],['Headbutt',8]]);
+addMon('Cloyster','water',70,[['Ice Beam',12],['Surf',12],['Water Pulse',9],['Slam',9]]);
+addMon('Seaking','water',68,[['Waterfall',11],['Water Pulse',9],['Horn Attack',8],['Peck',7]]);
+addMon('Lickitung','normal',30,[['Lick',6],['Slam',9],['Body Slam',10],['Headbutt',8]]);
+addMon('Horsea','water',60,[['Bubble',7],['Water Gun',8],['Twister',9],['Smog',6]]);
+
 const PRIORITY = { 'Quick Attack': 1, 'Extreme Speed': 2 };
 // Every move has its own type; anything not listed is Normal.
 const MOVE_TYPE = {
@@ -162,7 +220,8 @@ const STAT_MOVES = {
 };
 const MOVE_SWAPS = { Charmander:[1,'Growl'], Squirtle:[1,'Leer'], Bulbasaur:[1,'Growl'], Machop:[1,'Swords Dance'], Scyther:[2,'Swords Dance'],
   Onix:[2,'Harden'], Golem:[3,'Harden'], Pikachu:[3,'Agility'], Butterfree:[1,'String Shot'], Dragonite:[2,'Swords Dance'], Lucario:[3,'Swords Dance'],
-  Meowth:[0,'Growl'], Eevee:[1,'Growl'], Zubat:[1,'Leer'], Gyarados:[3,'Swords Dance'], Ekans:[0,'Leer'], Jolteon:[1,'Agility'] };
+  Meowth:[0,'Growl'], Eevee:[1,'Growl'], Zubat:[1,'Leer'], Gyarados:[3,'Swords Dance'], Ekans:[0,'Leer'], Jolteon:[1,'Agility'],
+  Charmeleon:[1,'Growl'], Wartortle:[1,'Leer'], Hitmonchan:[3,'Swords Dance'], Pinsir:[3,'Swords Dance'] };
 Object.entries(MOVE_SWAPS).forEach(([n, [i, m]]) => { POKEDEX[n].moves[i] = { ...STAT_MOVES[m] }; });
 
 const stageMult = s => (s >= 0 ? (2 + s) / 2 : 2 / (2 - s));
