@@ -224,6 +224,38 @@ const SFX = {
   win:   () => [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => beep(f, .15), i * 140))
 };
 
+// ---------- XP / levels (saved per Pokémon) ----------
+const XP_PER_LEVEL = 50, MAX_LEVEL = 100;
+function getProgress() { try { return JSON.parse(localStorage.getItem('pokeProgress')) || {}; } catch (e) { return {}; } }
+// Every Pokémon that fought in a won battle earns XP; returns "grew to Lv N" messages.
+function grantXP(mons, foesBeaten) {
+  const prog = getProgress(), lines = [];
+  mons.filter(m => m.fought).forEach(m => {
+    const p = prog[m.name] || { level: m.level, xp: 0 }, before = p.level;
+    p.xp += 40 + 25 * foesBeaten;
+    while (p.xp >= XP_PER_LEVEL && p.level < MAX_LEVEL) { p.xp -= XP_PER_LEVEL; p.level++; }
+    if (p.level > before) lines.push(`${m.name} grew to Lv ${p.level}!`);
+    prog[m.name] = p;
+  });
+  localStorage.setItem('pokeProgress', JSON.stringify(prog));
+  return lines;
+}
+
+// ---------- gym campaign ----------
+const GYM_LEADERS = [
+  { name:'Gym Leader Brock',   badge:'Boulder',  accent:'#b8a038', hat:'band', team:['Onix','Geodude','Golem'] },
+  { name:'Gym Leader Misty',   badge:'Cascade',  accent:'#3ba7e3', hat:'none', team:['Lapras','Psyduck','Gyarados'] },
+  { name:'Gym Leader Surge',   badge:'Thunder',  accent:'#d4a800', hat:'cap',  team:['Raichu','Electabuzz','Magnemite'] },
+  { name:'Gym Leader Erika',   badge:'Rainbow',  accent:'#4fa64f', hat:'bow',  team:['Venusaur','Bulbasaur','Oddish'] },
+  { name:'Gym Leader Sabrina', badge:'Marsh',    accent:'#f85888', hat:'bow',  team:['Alakazam','Abra','Gengar'] },
+  { name:'Gym Leader Blaine',  badge:'Volcano',  accent:'#e3350d', hat:'band', team:['Arcanine','Magmar','Charizard'] },
+  { name:'Gym Leader Giovanni',badge:'Earth',    accent:'#4a4a4a', hat:'r',    team:['Nidoking','Cubone','Sandshrew'] },
+  { name:'Champion Lance',     badge:'Champion', accent:'#7038f8', hat:'cap',  team:['Dragonite','Dratini','Mewtwo'] }
+];
+const BAG_START = { potion: 3, superpotion: 1, fullheal: 2 };
+function getCampaign() { try { return JSON.parse(localStorage.getItem('campaign')); } catch (e) { return null; } }
+function saveCampaign(c) { if (c) localStorage.setItem('campaign', JSON.stringify(c)); else localStorage.removeItem('campaign'); }
+
 const OPPONENT_POOL = Object.keys(POKEDEX);
 
 // ---------- TITLE SCREEN ----------
@@ -295,18 +327,21 @@ if (trainerGrid) {
 // Cards are generated from POKEDEX, so adding a Pokémon only takes one entry above.
 const pokemonContainer = document.getElementById('pokemonContainer');
 if (pokemonContainer) {
+  const prog = getProgress();
+  const lvOf = n => (prog[n] ? `<span style="font-size:7px;color:var(--accent-yellow)">Lv ${prog[n].level}</span>` : '');
   Object.entries(POKEDEX).forEach(([name, data]) => {
     const btn = document.createElement('button');
     btn.className = 'pokemon-card';
     btn.dataset.name = name;
     btn.dataset.type = data.type;
-    btn.innerHTML = `<img src="${data.front}" alt="${name}"><span>${name}</span>`;
+    btn.innerHTML = `<img src="${data.front}" alt="${name}"><span>${name}</span>${lvOf(name)}`;
     pokemonContainer.appendChild(btn);
   });
 }
 
 let teamSize = +localStorage.getItem('teamSize') || 3;
 let oppMode = localStorage.getItem('oppMode') || 'random';
+let campMode = localStorage.getItem('campMode') || 'single';
 let phase = 'player';            // 'player' = pick your team, 'opp' = pick the opponent's team
 const team = [], oppPick = [];
 const teamBtn = document.getElementById('teamStartBtn');
@@ -315,12 +350,19 @@ function refreshTeamUI() {
   document.getElementById('pickCount').textContent = teamSize;
   document.getElementById('pickWho').textContent = phase === 'player' ? '' : 'OPPONENT ';
   document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('selected', +b.dataset.size === teamSize));
+  document.querySelectorAll('.camp-btn').forEach(b => b.addEventListener('click', () => {
+    campMode = b.dataset.camp;
+    localStorage.setItem('campMode', campMode);
+    refreshTeamUI();
+  }));
   document.querySelectorAll('.opp-btn').forEach(b => b.classList.toggle('selected', b.dataset.mode === oppMode));
   document.querySelectorAll('.pokemon-card').forEach(c => {
     c.classList.toggle('picked', picks.includes(c.dataset.name));
     c.disabled = phase === 'opp' && team.includes(c.dataset.name);
   });
-  const last = phase === 'opp' || oppMode === 'random';
+  document.querySelectorAll('.camp-btn').forEach(b => b.classList.toggle('selected', b.dataset.camp === campMode));
+  document.getElementById('oppRow').hidden = campMode === 'campaign';
+  const last = phase === 'opp' || oppMode === 'random' || campMode === 'campaign';
   teamBtn.textContent = `${last ? 'START BATTLE' : 'NEXT: PICK OPPONENT'} (${picks.length}/${teamSize})`;
   teamBtn.disabled = picks.length !== teamSize;
   document.getElementById('setupBars').hidden = phase === 'opp';
@@ -328,10 +370,11 @@ function refreshTeamUI() {
 }
 if (teamBtn) {
   teamBtn.addEventListener('click', () => {
-    if (phase === 'player' && oppMode === 'choose') { phase = 'opp'; refreshTeamUI(); return; }
+    if (phase === 'player' && oppMode === 'choose' && campMode !== 'campaign') { phase = 'opp'; refreshTeamUI(); return; }
     localStorage.setItem('playerTeam', JSON.stringify(team));
     localStorage.setItem('playerPokemon', team[0]);
-    if (oppMode === 'choose') localStorage.setItem('oppTeam', JSON.stringify(oppPick));
+    saveCampaign(campMode === 'campaign' ? { stage: 0, badges: [], bag: { ...BAG_START } } : null);
+    if (oppMode === 'choose' && campMode !== 'campaign') localStorage.setItem('oppTeam', JSON.stringify(oppPick));
     else localStorage.removeItem('oppTeam');
     window.location.href = 'main.html';
   });
@@ -365,26 +408,33 @@ const trainerIntroEl = document.getElementById('trainerIntro');
 if (trainerIntroEl) {
   const profile = getProfile();
   const teamNames = JSON.parse(localStorage.getItem('playerTeam') || 'null') || [localStorage.getItem('playerPokemon') || 'Blastoise'];
-  const trainer = OPPONENT_TRAINERS[Math.floor(Math.random() * OPPONENT_TRAINERS.length)];
+  const camp = getCampaign(), gym = camp && GYM_LEADERS[camp.stage];
+  const trainer = gym || OPPONENT_TRAINERS[Math.floor(Math.random() * OPPONENT_TRAINERS.length)];
 
   function levelToMaxHp(level) { return Math.round(80 + level * 1.6); }
-  function makeMon(name) {
-    const level = Math.floor(Math.random() * 15) + 40, maxHp = levelToMaxHp(level);
+  function makeMon(name, level) {
+    const maxHp = levelToMaxHp(level);
     return { name, level, hp: maxHp, maxHp, ...POKEDEX[name] };
   }
-  const playerTeam = teamNames.map(makeMon);
+  const prog = getProgress();
+  const playerTeam = teamNames.map(n => makeMon(n, prog[n] ? prog[n].level : 40));
+  const avgLv = Math.round(playerTeam.reduce((a, p) => a + p.level, 0) / playerTeam.length);
+  // gym leaders scale with the stage; other opponents track your team's level (±3)
+  const foeLevel = () => (gym ? 40 + camp.stage * 2 : Math.max(5, avgLv + Math.floor(Math.random() * 7) - 3));
   const chosen = JSON.parse(localStorage.getItem('oppTeam') || 'null');
-  const oppNames = chosen && chosen.length === teamNames.length && chosen.every(n => POKEDEX[n])
-    ? chosen
-    : OPPONENT_POOL.filter(n => !teamNames.includes(n)).sort(() => Math.random() - 0.5).slice(0, teamNames.length);
-  const oppTeam = oppNames.map(makeMon);
+  const oppNames = gym
+    ? gym.team.slice(0, teamNames.length)
+    : chosen && chosen.length === teamNames.length && chosen.every(n => POKEDEX[n])
+      ? chosen
+      : OPPONENT_POOL.filter(n => !teamNames.includes(n)).sort(() => Math.random() - 0.5).slice(0, teamNames.length);
+  const oppTeam = oppNames.map(n => makeMon(n, foeLevel()));
   const player = playerTeam[0];
   const opponent = oppTeam[0];
 
   const trainerAvatarEl = document.getElementById('trainerAvatar');
   trainerAvatarEl.src = trainerSilhouette(trainer.accent, trainer.hat);
   trainerAvatarEl.addEventListener('error', () => handleSpriteError(trainerAvatarEl));
-  document.getElementById('trainerText').textContent = `${trainer.name} wants to battle! They sent out ${opponent.name}!`;
+  document.getElementById('trainerText').textContent = `${trainer.name} wants to battle! They sent out ${opponent.name}!${camp ? ` [GYM ${camp.stage + 1}/${GYM_LEADERS.length}]` : ''}`;
 
   const playerBadge = document.getElementById('playerBadge');
   const playerClass = TRAINER_CLASSES.find(tc => tc.id === profile.trainerClassId) || TRAINER_CLASSES[0];
@@ -409,6 +459,7 @@ if (trainerIntroEl) {
   diffSel.value = localStorage.getItem('difficulty') || 'normal';
   diffSel.addEventListener('change', () => localStorage.setItem('difficulty', diffSel.value));
   document.getElementById('forfeitBtn').addEventListener('click', () => {
+    saveCampaign(null);
     recordResult(false, opponent.type, { me: player.name, foe: opponent.name });
     window.location.href = 'index.html';
   });
@@ -416,13 +467,16 @@ if (trainerIntroEl) {
 
 function startBattle(playerTeam, oppTeam) {
   let player = playerTeam[0], opponent = oppTeam[0];
+  const campState = getCampaign();
+  const bag = campState ? campState.bag : { ...BAG_START };
+  let nextGym = false;
   const els = {
     oppName: document.getElementById('oppName'), oppLevel: document.getElementById('oppLevel'),
     oppSprite: document.getElementById('oppSprite'), oppHPBar: document.getElementById('oppHPBar'), oppHPText: document.getElementById('oppHPText'),
     playerName: document.getElementById('playerName'), playerLevel: document.getElementById('playerLevel'),
     playerSprite: document.getElementById('playerSprite'), playerHPBar: document.getElementById('playerHPBar'), playerHPText: document.getElementById('playerHPText'),
     message: document.getElementById('message'), actions: document.getElementById('actions'), restartButton: document.getElementById('restartButton'),
-    switchBtn: document.getElementById('switchBtn'), switchPanel: document.getElementById('switchPanel'),
+    switchBtn: document.getElementById('switchBtn'), itemBtn: document.getElementById('itemBtn'), switchPanel: document.getElementById('switchPanel'),
     oppDots: document.getElementById('oppDots'), playerDots: document.getElementById('playerDots')
   };
 
@@ -435,6 +489,7 @@ function startBattle(playerTeam, oppTeam) {
     updateHP('opp'); renderTeamDots();
   }
   function showPlayer() {
+    player.fought = true;
     els.playerName.innerHTML = player.name + typeBadge(player.type);
     els.playerLevel.textContent = player.level;
     els.playerSprite.classList.remove('anim-faint');
@@ -482,6 +537,7 @@ function startBattle(playerTeam, oppTeam) {
   function disableActions(d) {
     els.actions.querySelectorAll('button').forEach(b => (b.disabled = d || player.pp[b.dataset.idx] <= 0));
     els.switchBtn.disabled = d || playerTeam.filter(p => p.hp > 0).length < 2;
+    els.itemBtn.disabled = d;
   }
   function animate(el, cls) {
     el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls);
@@ -587,6 +643,8 @@ function startBattle(playerTeam, oppTeam) {
   }
 
   function endGame(won, text) {
+    if (won) text += ' ' + grantXP(playerTeam, oppTeam.length).join(' ');
+    text += campaignResult(won);
     setMessage(text);
     disableActions(true);
     recordResult(won, opponent.type, { me: playerTeam[0].name, foe: oppTeam[0].name });
@@ -630,9 +688,9 @@ function startBattle(playerTeam, oppTeam) {
       back.addEventListener('click', closeSwitch);
       els.switchPanel.appendChild(back);
     }
-    els.switchPanel.hidden = false; els.actions.hidden = true; els.switchBtn.hidden = true;
+    els.switchPanel.hidden = false; els.actions.hidden = true; els.switchBtn.hidden = true; els.itemBtn.hidden = true;
   }
-  function closeSwitch() { els.switchPanel.hidden = true; els.actions.hidden = false; els.switchBtn.hidden = false; }
+  function closeSwitch() { els.switchPanel.hidden = true; els.actions.hidden = false; els.switchBtn.hidden = playerTeam.length < 2; els.itemBtn.hidden = false; }
   function switchTo(i, forced) {
     player = playerTeam[i];
     closeSwitch(); showPlayer();
@@ -647,6 +705,51 @@ function startBattle(playerTeam, oppTeam) {
   }
   els.switchBtn.addEventListener('click', () => openSwitch(false));
 
+  // ---------- items (using one costs your turn) ----------
+  const ITEMS = {
+    potion:      { label: 'Potion +50 HP',        need: m => m.hp < m.maxHp, use: m => { m.hp = Math.min(m.maxHp, m.hp + 50);  return `${m.name} recovered HP!`; } },
+    superpotion: { label: 'Super Potion +100 HP', need: m => m.hp < m.maxHp, use: m => { m.hp = Math.min(m.maxHp, m.hp + 100); return `${m.name} recovered a lot of HP!`; } },
+    fullheal:    { label: 'Full Heal',            need: m => !!m.status,     use: m => { m.status = null; return `${m.name} was cured of its status!`; } }
+  };
+  function openItems() {
+    els.switchPanel.innerHTML = '';
+    Object.keys(ITEMS).forEach(k => {
+      const b = document.createElement('button');
+      b.className = 'retro-btn'; b.textContent = `${ITEMS[k].label} x${bag[k] || 0}`;
+      b.disabled = !(bag[k] > 0) || !ITEMS[k].need(player);
+      b.addEventListener('click', () => useItem(k));
+      els.switchPanel.appendChild(b);
+    });
+    const back = document.createElement('button');
+    back.className = 'retro-btn'; back.textContent = 'BACK';
+    back.addEventListener('click', closeSwitch);
+    els.switchPanel.appendChild(back);
+    els.switchPanel.hidden = false; els.actions.hidden = true; els.switchBtn.hidden = true; els.itemBtn.hidden = true;
+  }
+  function useItem(k) {
+    bag[k]--;
+    const msg = ITEMS[k].use(player);
+    closeSwitch(); updateHP('opp'); updateHP('player');
+    setMessage(msg); disableActions(true);
+    setTimeout(opponentTurn, 1000);
+  }
+  els.itemBtn.addEventListener('click', openItems);
+
+  // ---------- XP + gym campaign progress ----------
+  function campaignResult(won) {
+    const camp = getCampaign();
+    if (!camp) return '';
+    if (!won) { saveCampaign(null); return ' Your gym run is over.'; }
+    const badge = GYM_LEADERS[camp.stage].badge;
+    camp.badges.push(badge);
+    camp.stage++;
+    camp.bag = bag; camp.bag.potion = (camp.bag.potion || 0) + 1;
+    if (camp.stage >= GYM_LEADERS.length) { saveCampaign(null); return ' You are the CHAMPION! Every badge is yours!'; }
+    saveCampaign(camp);
+    nextGym = true; els.restartButton.textContent = 'NEXT GYM';
+    return ` You won the ${badge} Badge and a Potion!`;
+  }
+
   // keyboard: 1-4 pick a move
   document.addEventListener('keydown', e => {
     if (e.key < '1' || e.key > '4' || els.actions.hidden) return;
@@ -654,7 +757,7 @@ function startBattle(playerTeam, oppTeam) {
     if (b && !b.disabled) b.click();
   });
 
-  els.restartButton.addEventListener('click', () => { window.location.href = 'index.html'; });
+  els.restartButton.addEventListener('click', () => { if (nextGym) window.location.reload(); else window.location.href = 'index.html'; });
   init();
 }
 
@@ -704,6 +807,7 @@ if (totalWinsEl) {
 
   document.getElementById('resetStatsBtn').addEventListener('click', () => {
     localStorage.removeItem('battleStats');
+    localStorage.removeItem('pokeProgress');
     location.reload();
   });
 }

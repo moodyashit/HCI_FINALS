@@ -94,8 +94,10 @@ body {
 .pokemon-container { max-height: calc(92vh - 450px); min-height: 180px; overflow-y: auto; padding: 8px; }
 .team-bar { margin-top: 14px; text-align: center; }
 .mode-bar { display: flex; gap: 10px; justify-content: center; margin-bottom: 14px; }
-button.retro-btn.mode-btn.selected, button.retro-btn.opp-btn.selected { background: var(--accent-yellow); color: #000; }
+button.retro-btn.mode-btn.selected, button.retro-btn.opp-btn.selected, button.retro-btn.camp-btn.selected { background: var(--accent-yellow); color: #000; }
 
 .pokemon-card:disabled { opacity: .3; cursor: not-allowed; }
 .pokemon-card:disabled:hover { transform: none; }
 #teamBackBtn { margin-right: 10px; }
+#setupBars { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 28px; }
+#setupBars[hidden], .mode-bar[hidden] { display: none; }

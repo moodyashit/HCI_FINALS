@@ -15,6 +15,8 @@ A browser-based, retro-styled Pokémon battle game built for HCI Finals (FEU-A).
 - **1v1 / 2v2 / 3v3 modes** — pick your team size on the selection screen, then pick that many Pokémon, switch mid-battle (costs your turn), forced switch when one faints; the battle ends when a whole team is down
 - **Choose your opponent** — "CHOOSE FOE" adds a second pick screen for the opponent's team; "RANDOM FOE" keeps it random
 - **Status effects** — burn, poison, paralysis and sleep, inflicted by fire/ghost, poison, electric and grass attackers (20% chance on a damaging hit)
+- **Gym campaign** — beat 8 leaders in a row (Brock → Champion Lance) for badges; the item bag carries over and you win a Potion per gym
+- **Items and XP** — Potion, Super Potion and Full Heal in battle (uses your turn); Pokémon that fight in a won battle earn XP and level up permanently (saved in `pokeProgress`, cleared by Reset Stats)
 - **Difficulty** — Easy / Normal / Hard opponent AI, chosen on the trainer intro screen
 - **Stats extras** — win streak, best streak, and the last 10 battles
 - **Turn-based battle** with animated HP bars (green → yellow → red) and battle-log messaging
