@@ -91,17 +91,19 @@ const WEATHER = {
 // ---------- shinies + export/import save ----------
 const getShinies = () => { try { return JSON.parse(localStorage.getItem('shinies')) || []; } catch (e) { return []; } };
 const getCaught = () => { try { const l = JSON.parse(localStorage.getItem('caught')); return Array.isArray(l) ? l : []; } catch (e) { return []; } };
-// ---------- starters: a brand-new player owns only these 3; everything else has to be caught ----------
-// `caught` is the player's roster. It is seeded once (only while the key doesn't exist), so an imported save
-// that contains its own `caught` list is respected as-is. Older saves with no `caught` list keep the Pokémon
-// they already have progress on.
+// ---------- starters: everyone always owns these 3; everything else has to be caught ----------
+// `caught` is the player's roster. The starters are merged in on every load, so a save that already had a
+// `caught` list (e.g. from testing recruits) still gets them. A save with no `caught` list at all also keeps
+// the Pokémon it already has progress on.
 const STARTERS = ['Bulbasaur', 'Charmander', 'Squirtle'];
 (function seedStarters() {
   try {
-    if (localStorage.getItem('caught') !== null) return;
-    let prog = {}; try { prog = JSON.parse(localStorage.getItem('pokeProgress')) || {}; } catch (e) {}
-    const seed = [...new Set([...STARTERS, ...Object.keys(prog)])].filter(n => POKEDEX[n]);
-    localStorage.setItem('caught', JSON.stringify(seed));
+    const raw = localStorage.getItem('caught');
+    let list = []; try { list = JSON.parse(raw); } catch (e) {}
+    if (!Array.isArray(list)) list = [];
+    if (raw === null) { try { list = list.concat(Object.keys(JSON.parse(localStorage.getItem('pokeProgress')) || {})); } catch (e) {} }
+    const seed = [...new Set([...STARTERS, ...list])].filter(n => POKEDEX[n]);
+    if (raw === null || seed.length !== list.length) localStorage.setItem('caught', JSON.stringify(seed));
   } catch (e) {}
 })();
 function markCaught(n) { const l = getCaught(); if (!l.includes(n)) { l.push(n); localStorage.setItem('caught', JSON.stringify(l)); } }
