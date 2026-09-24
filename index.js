@@ -296,6 +296,65 @@ addMon('Scizor','steel',65,[['Iron Tail',10],['Iron Head',10],['Slash',10],['Tac
 addMon('Shuckle','rock',5,[['Rock Throw',9],['Rock Slide',11],['Swift',9],['Fury Swipes',9]]);
 addMon('Heracross','bug',85,[['Bug Buzz',11],['X-Scissor',12],['Pound',6],['Double Slap',8]]);
 
+// ---------- Roster expansion: +500 Pokémon (Gen 2-6), generated from compact lists ----------
+// Moves are built from per-type pools (STAB x2, a Normal move, a coverage move); '*' marks legendaries. Gen 6 uses HOME sprites.
+(() => {
+  const POOL = {
+    normal:'Pound6,Tackle6,Double Slap8,Headbutt8,Stomp9,Swift9,Slash10,Body Slam10', fire:'Ember8,Flame Wheel9,Fire Fang9,Fire Punch10,Flame Burst10,Flamethrower11',
+    water:'Bubble6,Water Gun8,Water Pulse10,Waterfall10,Surf12,Hydro Pump14', grass:'Absorb6,Vine Whip8,Razor Leaf11,Seed Bomb11,Solar Beam14',
+    electric:'Thunder Shock7,Spark8,Thunder Fang9,Thunder Punch10,Thunderbolt12,Thunder14', ice:'Powder Snow7,Ice Punch10,Ice Beam12,Blizzard14',
+    fighting:'Karate Chop8,Low Kick8,Seismic Toss9,Cross Chop12,Aura Sphere12,Close Combat13', poison:'Poison Sting6,Acid7,Sludge9,Poison Jab10,Sludge Bomb12',
+    ground:'Bone Club8,Bonemerang9,Earthquake13', flying:'Peck7,Gust7,Wing Attack8,Air Cutter9,Air Slash11,Drill Peck11',
+    psychic:'Confusion9,Psybeam10,Psyshock11,Psychic13', bug:'Fury Cutter6,Leech Life8,Silver Wind9,Bug Buzz11,X-Scissor12',
+    rock:'Rollout8,Rock Throw9,Rock Slide11', ghost:'Lick6,Night Shade9,Shadow Ball11', dragon:'Twister8,Dragon Rage9,Dragon Claw11,Outrage13',
+    dark:'Bite8,Feint Attack8,Crunch10', steel:'Metal Claw9,Iron Tail10,Iron Head10', fairy:'Moonblast12,Pound6,Swift9,Moonblast12'
+  };
+  const P = {}; Object.entries(POOL).forEach(([t, s]) => { P[t] = s.split(',').map(x => { const m = x.match(/^(.*?)(\d+)$/); return [m[1], +m[2]]; }); });
+  const types = Object.keys(P);
+  const hash = s => { let h = 7; for (const c of s) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; };
+  const pick = (t, i) => P[t][Math.min(P[t].length - 1, Math.max(0, i))];
+  const add = (type, list, hd) => list.split(' ').forEach(raw => {
+    const legend = raw.endsWith('*'), name0 = raw.replace('*', ''), name = name0[0].toUpperCase() + name0.slice(1);
+    if (POKEDEX[name]) return;
+    const h = hash(name), tier = legend ? 4 : h % 3, id = name.toLowerCase();
+    const cov = types[(h >>> 3) % types.length], nrm = pick('normal', (h >>> 5) % 6);
+    const mv = [pick(type, tier + 1), pick(type, tier - 1 + (h >>> 7) % 2), nrm, pick(cov, tier)];
+    const seen = new Set(); const moves = mv.filter(m => !seen.has(m[0]) && seen.add(m[0]));
+    while (moves.length < 4) { const m = pick('normal', moves.length); if (!seen.has(m[0])) { seen.add(m[0]); moves.push(m); } else moves.push(pick('normal', (h >>> 9) % 8 + moves.length)); }
+    POKEDEX[name] = { type, moves: moves.slice(0, 4).map(([n, power]) => ({ name: n, power })),
+      front: hd ? `https://img.pokemondb.net/sprites/home/normal/${id}.png` : `https://img.pokemondb.net/sprites/black-white/anim/normal/${id}.gif`,
+      back:  hd ? `https://img.pokemondb.net/sprites/home/normal/${id}.png` : `https://img.pokemondb.net/sprites/black-white/anim/back-normal/${id}.gif` };
+    SPEED[name] = 30 + h % 85 + (legend ? 30 : 0);
+  });
+  const G = [
+    ['normal','sentret furret hoothoot noctowl aipom ambipom teddiursa ursaring miltank blissey stantler smeargle porygon2 zigzagoon linoone slakoth vigoroth slaking whismur loudred exploud skitty delcatty spinda swablu kecleon zangoose castform bidoof bibarel buneary lopunny glameow purugly chatot porygon-z munchlax lickilicky patrat watchog lillipup herdier stoutland minccino cinccino audino bouffalant rufflet braviary regigigas* arceus* meloetta* azurill togepi'],
+    ['fire','cyndaquil quilava typhlosion slugma magcargo houndour houndoom entei* torchic combusken blaziken numel camerupt torkoal chimchar monferno infernape magmortar heatran* ho-oh* pansear simisear tepig pignite emboar darumaka darmanitan litwick lampent chandelure heatmor victini* reshiram* larvesta volcarona'],
+    ['water','totodile croconaw feraligatr chinchou lanturn marill azumarill politoed wooper quagsire slowking remoraid octillery mantine kingdra suicune* mudkip marshtomp swampert lotad lombre ludicolo wingull pelipper carvanha sharpedo wailmer wailord corphish crawdaunt feebas milotic spheal sealeo walrein clamperl huntail gorebyss relicanth luvdisc kyogre* piplup prinplup empoleon buizel floatzel shellos gastrodon finneon lumineon mantyke palkia* phione manaphy* oshawott dewott samurott panpour simipour tympole palpitoad seismitoad tirtouga carracosta ducklett swanna frillish jellicent alomomola keldeo* corsola'],
+    ['grass','chikorita bayleef meganium hoppip skiploom jumpluff sunkern sunflora treecko grovyle sceptile seedot nuzleaf shiftry shroomish breloom roselia cacnea cacturne tropius turtwig grotle torterra budew roserade cherubi cherrim carnivine snover abomasnow leafeon tangrowth shaymin* snivy servine serperior pansage simisage cottonee whimsicott petilil lilligant maractus foongus amoonguss deerling sawsbuck virizion* ferroseed ferrothorn'],
+    ['electric','pichu elekid electrike manectric plusle minun raikou* shinx luxio luxray pachirisu electivire blitzle zebstrika joltik galvantula emolga tynamo eelektrik eelektross thundurus* zekrom* stunfisk rotom'],
+    ['ice','swinub piloswine delibird snorunt glalie regice* froslass mamoswine glaceon vanillite vanillish vanilluxe cubchoo beartic cryogonal kyurem* smoochum sneasel weavile'],
+    ['fighting','tyrogue hitmontop makuhita hariyama meditite medicham riolu toxicroak gallade timburr gurdurr conkeldurr throh sawk mienfoo mienshao cobalion* terrakion* scraggy scrafty croagunk'],
+    ['poison','gulpin swalot seviper skorupi drapion stunky skuntank trubbish garbodor'],
+    ['ground','phanpy donphan trapinch vibrava flygon gible gabite garchomp hippopotas hippowdon drilbur excadrill sandile krokorok krookodile groudon* landorus* golett golurk rhyperior rhydon nosepass'],
+    ['flying','natu xatu togetic togekiss skarmory taillow swellow starly staravia staraptor pidove tranquill unfezant woobat swoobat vullaby mandibuzz lugia* tornadus* yanma yanmega altaria'],
+    ['psychic','unown ralts kirlia gardevoir spoink grumpig lunatone solrock baltoy claydol chimecho beldum metang metagross latias* latios* jirachi* deoxys* bronzor bronzong uxie* mesprit* azelf* cresselia* munna musharna sigilyph gothita gothorita gothitelle solosis duosion reuniclus elgyem beheeyem'],
+    ['bug','ledyba ledian spinarak ariados wurmple silcoon beautifly cascoon dustox surskit masquerain nincada ninjask shedinja volbeat illumise kricketot kricketune burmy mothim combee vespiquen sewaddle swadloon leavanny venipede whirlipede scolipede karrablast escavalier shelmet accelgor genesect* dwebble crustle'],
+    ['rock','sudowoodo larvitar pupitar tyranitar probopass lileep cradily anorith armaldo regirock* cranidos rampardos shieldon bastiodon roggenrola boldore gigalith archen archeops'],
+    ['ghost','shuppet banette duskull dusclops dusknoir drifloon drifblim mismagius spiritomb giratina* yamask cofagrigus'],
+    ['dragon','bagon shelgon salamence rayquaza* axew fraxure haxorus druddigon deino zweilous hydreigon dialga* latias'],
+    ['dark','murkrow honchkrow poochyena mightyena sableye absol purrloin liepard zorua zoroark pawniard bisharp darkrai* umbreon'],
+    ['steel','mawile aron lairon aggron registeel* klink klang klinklang durant magnezone'],
+    ['fairy','snubbull mime cleffa igglybuff']
+  ];
+  G.forEach(([t, l]) => add(t, l, false));
+  [['grass','chespin quilladin chesnaught skiddo gogoat phantump trevenant'],['fire','fennekin braixen delphox litleo pyroar fletchinder talonflame volcanion*'],
+   ['water','froakie frogadier greninja clauncher clawitzer binacle barbaracle'],['fighting','pancham pangoro hawlucha'],['normal','bunnelby diggersby fletchling furfrou'],
+   ['electric','helioptile heliolisk dedenne'],['ice','bergmite avalugg'],['rock','tyrunt tyrantrum amaura aurorus carbink diancie*'],['poison','skrelp dragalge'],
+   ['bug','scatterbug spewpa vivillon'],['psychic','espurr meowstic'],['dark','inkay malamar yveltal*'],['ghost','pumpkaboo gourgeist'],['steel','honedge doublade aegislash klefki'],
+   ['fairy','flabebe floette florges spritzee aromatisse swirlix slurpuff sylveon xerneas*'],['dragon','goomy sliggoo goodra noibat noivern zygarde*'],['psychic','hoopa*']
+  ].forEach(([t, l]) => add(t, l, true));
+})();
+
 const PRIORITY = { 'Quick Attack': 1, 'Extreme Speed': 2 };
 // Every move has its own type; anything not listed is Normal.
 const MOVE_TYPE = {
@@ -616,7 +675,7 @@ if (pokemonContainer) {
     btn.className = 'pokemon-card';
     btn.dataset.name = name;
     btn.dataset.type = data.type;
-    btn.innerHTML = `<img src="${data.front}" alt="${name}"><span>${name}</span>${lvOf(name)}`;
+    btn.innerHTML = `<img src="${data.front}" alt="${name}" loading="lazy"><span>${name}</span>${lvOf(name)}`;
     pokemonContainer.appendChild(btn);
   });
 }
@@ -732,6 +791,34 @@ document.querySelectorAll('.pokemon-card').forEach(card => {
   const img = card.querySelector('img');
   if (img) img.addEventListener('error', () => handleSpriteError(img));
 });
+
+// ---------- picker utilities: search, type filter, random / clear team, type chart ----------
+if (teamBtn) {
+  const $ = id => document.getElementById(id);
+  const typeSel = $('pickType');
+  [...new Set(Object.values(POKEDEX).map(p => p.type))].sort().forEach(t => typeSel.add(new Option(t.toUpperCase(), t)));
+  const applyFilter = () => {
+    const q = $('pickSearch').value.trim().toLowerCase(), t = typeSel.value;
+    document.querySelectorAll('.pokemon-card').forEach(c => { c.hidden = !(c.dataset.name.toLowerCase().includes(q) && (!t || c.dataset.type === t)); });
+    pokemonContainer.scrollTop = 0;
+  };
+  $('pickSearch').addEventListener('input', applyFilter);
+  typeSel.addEventListener('change', applyFilter);
+  $('randomTeamBtn').addEventListener('click', () => {
+    const picks = phase === 'player' ? team : oppPick;
+    const pool = Object.keys(POKEDEX).filter(n => !picks.includes(n) && !(phase === 'opp' && team.includes(n)));
+    while (picks.length < teamSize && pool.length) picks.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+    refreshTeamUI();
+  });
+  $('clearTeamBtn').addEventListener('click', () => { (phase === 'player' ? team : oppPick).length = 0; refreshTeamUI(); });
+  $('typeChartBtn').addEventListener('click', () => {
+    const d = $('typeChartDlg'), fmt = (row, v) => Object.keys(row).filter(k => row[k] === v).map(typeBadge).join('') || '-';
+    d.querySelector('.chart-body').innerHTML = Object.entries(TYPE_CHART).map(([t, row]) =>
+      `<p>${typeBadge(t)}<br>2x: ${fmt(row, 2)}<br>1/2x: ${fmt(row, 0.5)}<br>0x: ${fmt(row, 0)}</p>`).join('');
+    d.showModal();
+  });
+  $('typeChartClose').addEventListener('click', () => $('typeChartDlg').close());
+}
 
 // ---------- BATTLE SCREEN ----------
 const trainerIntroEl = document.getElementById('trainerIntro');
@@ -1472,7 +1559,7 @@ if (dexGrid) {
     const list = Object.entries(POKEDEX).filter(([n, p]) => n.toLowerCase().includes(q) && (!typeSel.value || p.type === typeSel.value));
     dexGrid.innerHTML = list.map(([n, p]) => {
       const rec = byMon[n] || { wins: 0, losses: 0 }, tot = rec.wins + rec.losses;
-      return `<div class="dex-card"><img src="${p.front}" alt="${n}" onerror="handleSpriteError(this)">
+      return `<div class="dex-card"><img src="${p.front}" alt="${n}" loading="lazy" onerror="handleSpriteError(this)">
         <div class="dex-name">${n}${shinySet.has(n) ? ' ★' : ''}${typeBadge(p.type)}</div>
         <div>Lv ${prog[n] ? prog[n].level : '40 (base)'}</div>
         <div>${tot ? `${rec.wins}W / ${rec.losses}L (${Math.round((rec.wins / tot) * 100)}%)` : 'No battles yet'}</div>
@@ -1484,6 +1571,28 @@ if (dexGrid) {
   typeSel.addEventListener('change', renderDex);
   renderDex();
 }
+
+// ---------- back buttons: a sticky BACK bar on top of every screen (Esc works too) ----------
+(() => {
+  const $ = id => document.getElementById(id), goHome = () => { window.location.href = 'index.html'; };
+  const bar = (host, fn) => { if (!host) return; const d = document.createElement('div'); d.className = 'back-bar';
+    const b = document.createElement('button'); b.className = 'retro-btn small'; b.textContent = '◀ BACK'; b.addEventListener('click', fn); d.appendChild(b); host.prepend(d); };
+  const back = () => { let same = false; try { same = document.referrer && new URL(document.referrer).origin === location.origin; } catch (e) {} same && history.length > 1 ? history.back() : goHome(); };
+  if ($('tutorialScreen')) {
+    bar($('tutorialScreen'), () => $('tutorialDoneBtn').click());
+    bar($('profileScreen'), () => { $('profileScreen').hidden = true; $('titleScreen').hidden = false; });
+    bar($('pokemonSelection'), () => { if (phase === 'opp') $('teamBackBtn').click(); else { $('pokemonSelection').hidden = true; $('profileScreen').hidden = false; } });
+  } else if ($('trainerIntro')) {
+    bar($('trainerIntro'), goHome);
+    const m = $('menuDropdown');
+    if (m) { const b = document.createElement('button'); b.textContent = '◀ Back (forfeit)';
+      b.addEventListener('click', () => { if (confirm('Leave this battle? It counts as a forfeit.')) $('forfeitBtn').click(); }); m.prepend(b); }
+  } else if ($('dexGrid') || $('totalWins')) bar(document.querySelector('.panel'), back);
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape' || document.querySelector('dialog[open]')) return;
+    const b = [...document.querySelectorAll('.back-bar button')].find(x => x.offsetParent); if (b) b.click();
+  });
+})();
 
 // ---------- install as an app (offline support) ----------
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {

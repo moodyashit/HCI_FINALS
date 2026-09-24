@@ -150,3 +150,7 @@ button.retro-btn.small { font-size: 9px; padding: 8px 10px; }
   margin-bottom: 8px;
   font-size: 10px;
 }
+
+/* ---- back bar (sticky on top of every screen) ---- */
+.back-bar { position: sticky; top: 0; z-index: 6; text-align: left; margin: 0 0 14px; padding: 2px 0 6px; background: var(--panel-bg); }
+.trainer-intro .back-bar { background: transparent; position: static; }

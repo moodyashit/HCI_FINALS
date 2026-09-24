@@ -86,6 +86,13 @@
           <button class="retro-btn small camp-btn" data-camp="versus">2-PLAYER</button>
         </div>
       </div>
+      <div class="mode-bar" id="pickTools">
+        <input id="pickSearch" class="pick-input" type="search" placeholder="Search name">
+        <select id="pickType" class="pick-input"><option value="">All types</option></select>
+        <button id="randomTeamBtn" class="retro-btn small">🎲 RANDOM</button>
+        <button id="clearTeamBtn" class="retro-btn small">CLEAR</button>
+        <button id="typeChartBtn" class="retro-btn small">TYPE CHART</button>
+      </div>
       <div class="pokemon-container" id="pokemonContainer"></div>
       <div class="team-bar">
         <p style="font-size:9px;margin:0 0 10px;">YOUR FIRST PICK LEADS THE BATTLE</p>
@@ -101,6 +108,8 @@
     </section>
 
   </div>
+
+  <dialog id="typeChartDlg" class="chart-dlg"><h3>TYPE CHART</h3><div class="chart-body"></div><button id="typeChartClose" class="retro-btn small">CLOSE</button></dialog>
 
   <script src="index.js"></script>
 </body>
