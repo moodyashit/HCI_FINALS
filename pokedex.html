@@ -18,6 +18,8 @@
     <div class="dex-tools">
       <input id="dexSearch" type="text" placeholder="Search name">
       <select id="dexType"></select>
+      <select id="dexEra"></select>
+      <select id="dexLegend"><option value="">All Pokémon</option><option value="1">Legendary only</option></select>
     </div>
     <p id="dexCount" style="font-size:8px;margin:0 0 14px;"></p>
     <div id="dexGrid" class="dex-grid"></div>
@@ -26,6 +28,8 @@
       <button onclick="window.location.href='index.html'" class="retro-btn small">BACK TO TITLE</button>
     </div>
   </div>
+  <dialog id="dexDlg" class="dex-dlg"><div class="dex-body"></div><button id="dexClose" class="retro-btn small">CLOSE</button></dialog>
+  <script src="roster.js"></script>
   <script src="index.js"></script>
 </body>
 </html>

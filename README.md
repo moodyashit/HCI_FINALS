@@ -26,9 +26,14 @@ A browser-based, retro-styled Pokémon battle game built for HCI Finals (FEU-A).
 - **Status effects** — burn, poison, paralysis and sleep, inflicted by fire/ghost, poison, electric and grass attackers (20% chance on a damaging hit)
 - **Gym campaign** — beat 8 leaders in a row (Brock → Champion Lance) for badges; the item bag carries over and you win a Potion per gym
 - **Items and XP** — Potion, Super Potion and Full Heal in battle (uses your turn); Pokémon that fight in a won battle earn XP and level up permanently (saved in `pokeProgress`, cleared by Reset Stats)
-- **Back buttons** — a sticky BACK bar on top of every screen and page (Esc works too); in battle, the MENU has a confirm-then-forfeit back option
-- **Picker tools** — name search, type filter, random team, clear team and a type chart on the team-select screen
-- **Trainer profile** — trainer name, 12 classes with small perks (Gym Leader unlocks at 10 wins, Champion at 25), win-based ranks (Rookie → Champion), a large preview and class-specific battle intro lines
+- **Back buttons** — sticky BACK bar on every screen (Esc works too)
+- **Picker tools** — name search, type filter, random/clear team, type chart
+- **Trainer profile** — name, 12 classes with perks, win ranks, locked classes, preview, intro lines
+- **Base stats and dual types** — per-species HP/Attack/Defense/Speed; dual types affect both type effectiveness and STAB
+- **Evolution** — Pokémon evolve after a win once they reach their level (Lv 45/50/60 depending on the line)
+- **Shop** — Revive, X Attack and a Lucky Egg (+50% XP for 5 wins)
+- **Pokédex** — silhouettes until used, era and legendary filters, detail popup with base stats and evolution
+- **Settings** — volume, battle speed, reduce motion
 - **Pokédex page** (`pokedex.html`) — search/filter all Pokémon by type; shows each one's level, moves and personal win/loss record
 - **Mobile layout** — smaller, squarer battle arena, 2-column moves, and a scrolling picker that fits phone screens
 - **Difficulty** — Easy / Normal / Hard opponent AI, chosen on the trainer intro screen
@@ -63,7 +68,9 @@ main.html    — trainer intro + turn-based battle
 stats.html   — battle record, streaks, history and per-type breakdown
 pokedex.html — browsable Pokédex with per-Pokémon records
 sw.js / manifest.webmanifest / icon-*.png — installable-app files
-index.js     — all game logic (Pokédex data, screens, battle engine, stats)
+roster.js    — Pokédex data, dual types, evolution lines, base stats
+settings.html — volume, battle speed, reduce motion
+index.js     — game logic (screens, battle engine, stats)
 retro.css    — shared design tokens and components (buttons, panels, avatars)
 index.css / main.css / stats.css — per-page layout styles
 ```
@@ -90,6 +97,8 @@ UPDATE (09/24/26) — added Dark/Steel/Fairy types, confusion/flinch/recoil/mult
 
 UPDATE (09/24/26) — added 100 more Pokémon (the rest of Gen 1 plus Gen 2 favorites like Espeon, Scizor, Heracross and Ampharos), bringing the roster to 203.
 
-UPDATE (09/24/26) — added 503 more Pokémon (Gen 2–6; Gen 6 uses static HOME sprites), a sticky BACK button on every screen/page (Esc works too), and picker tools: name search, type filter, random team, clear team and a type chart.
+UPDATE (09/24/26) — +503 Gen 2–6 Pokémon, back buttons, picker tools.
 
-UPDATE (09/24/26) — added 301 more Pokémon from Gen 7–9 (roster is now 1,007), plus a trainer overhaul: trainer name, 6 new classes (Bug Catcher, Scientist, Psychic, Ranger, Gym Leader, Champion), a small perk per class, win-based ranks, locked classes, a larger trainer preview and class-specific battle intro lines.
+UPDATE (09/24/26) — +301 Gen 7–9 Pokémon (1,007 total) and the trainer overhaul (name, 12 classes, perks, ranks).
+
+UPDATE (09/24/26) — split the roster into roster.js; added base stats, dual types, evolution, new shop items (Revive, X Attack, Lucky Egg), Pokédex silhouettes/filters/detail popup, a settings page, sprite fallbacks and mirrored HOME back sprites.

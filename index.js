@@ -1,108 +1,3 @@
-const POKEDEX = {
-  Pikachu:    { type:'electric', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/pikachu.gif',    back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/pikachu.gif',
-    moves:[{name:'Thunder Shock',power:9},{name:'Quick Attack',power:6},{name:'Thunderbolt',power:13},{name:'Iron Tail',power:10}] },
-  Bulbasaur:  { type:'grass', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/bulbasaur.gif',    back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/bulbasaur.gif',
-    moves:[{name:'Vine Whip',power:8},{name:'Tackle',power:6},{name:'Razor Leaf',power:11},{name:'Seed Bomb',power:12}] },
-  Charmander: { type:'fire', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/charmander.gif',    back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/charmander.gif',
-    moves:[{name:'Ember',power:8},{name:'Scratch',power:5},{name:'Flame Burst',power:12},{name:'Metal Claw',power:9}] },
-  Squirtle:   { type:'water', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/squirtle.gif',     back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/squirtle.gif',
-    moves:[{name:'Bubble',power:7},{name:'Tackle',power:6},{name:'Water Gun',power:9},{name:'Bite',power:8}] },
-  Blastoise:  { type:'water', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/blastoise.gif',    back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/blastoise.gif',
-    moves:[{name:'Water Cannon',power:10},{name:'Water Pulse',power:8},{name:'Surf',power:12},{name:'Tackle',power:6}] },
-  Charizard:  { type:'fire', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/charizard.gif',     back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/charizard.gif',
-    moves:[{name:'Flamethrower',power:11},{name:'Dragon Claw',power:10},{name:'Wing Attack',power:8},{name:'Fire Fang',power:9}] },
-  Eevee:      { type:'normal', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/eevee.gif',       back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/eevee.gif',
-    moves:[{name:'Quick Attack',power:7},{name:'Tackle',power:6},{name:'Swift',power:9},{name:'Bite',power:8}] },
-  Jigglypuff: { type:'normal', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/jigglypuff.gif',  back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/jigglypuff.gif',
-    moves:[{name:'Double Slap',power:8},{name:'Pound',power:6},{name:'Rollout',power:9},{name:'Body Slam',power:10}] },
-  Gengar:     { type:'ghost', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/gengar.gif',       back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/gengar.gif',
-    moves:[{name:'Shadow Ball',power:11},{name:'Lick',power:6},{name:'Sludge Bomb',power:12},{name:'Night Shade',power:9}] },
-  Snorlax:    { type:'normal', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/snorlax.gif',     back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/snorlax.gif',
-    moves:[{name:'Body Slam',power:11},{name:'Tackle',power:6},{name:'Hyper Beam',power:14},{name:'Crunch',power:10}] },
-  Vulpix:     { type:'fire', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/vulpix.gif',        back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/vulpix.gif',
-    moves:[{name:'Ember',power:8},{name:'Quick Attack',power:6},{name:'Fire Spin',power:10},{name:'Bite',power:8}] },
-  Growlithe:  { type:'fire', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/growlithe.gif',     back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/growlithe.gif',
-    moves:[{name:'Bite',power:8},{name:'Ember',power:8},{name:'Flame Wheel',power:11},{name:'Roar',power:5}] },
-  Psyduck:    { type:'water', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/psyduck.gif',      back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/psyduck.gif',
-    moves:[{name:'Water Gun',power:8},{name:'Confusion',power:9},{name:'Scratch',power:5},{name:'Water Pulse',power:10}] },
-  Machop:     { type:'fighting', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/machop.gif',    back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/machop.gif',
-    moves:[{name:'Karate Chop',power:9},{name:'Low Kick',power:7},{name:'Seismic Toss',power:11},{name:'Tackle',power:6}] },
-  Abra:       { type:'psychic', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/abra.gif',       back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/abra.gif',
-    moves:[{name:'Confusion',power:9},{name:'Psybeam',power:10},{name:'Psyshock',power:11},{name:'Teleport Jab',power:5}] },
-  Geodude:    { type:'rock', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/geodude.gif',       back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/geodude.gif',
-    moves:[{name:'Rock Throw',power:9},{name:'Tackle',power:6},{name:'Rollout',power:8},{name:'Rock Slide',power:11}] },
-  Meowth:     { type:'normal', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/meowth.gif',      back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/meowth.gif',
-    moves:[{name:'Scratch',power:5},{name:'Bite',power:8},{name:'Fury Swipes',power:9},{name:'Pay Day',power:7}] },
-  Ekans:      { type:'poison', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/ekans.gif',       back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/ekans.gif',
-    moves:[{name:'Wrap',power:7},{name:'Bite',power:8},{name:'Sludge',power:9},{name:'Poison Sting',power:6}] },
-  Sandshrew:  { type:'ground', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/sandshrew.gif',   back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/sandshrew.gif',
-    moves:[{name:'Scratch',power:5},{name:'Sand Attack',power:4},{name:'Slash',power:10},{name:'Rollout',power:8}] },
-  Oddish:     { type:'grass', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/oddish.gif',       back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/oddish.gif',
-    moves:[{name:'Absorb',power:6},{name:'Acid',power:7},{name:'Razor Leaf',power:11},{name:'Poison Powder',power:6}] },
-  Poliwag:    { type:'water', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/poliwag.gif',      back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/poliwag.gif',
-    moves:[{name:'Bubble',power:7},{name:'Water Gun',power:8},{name:'Double Slap',power:8},{name:'Body Slam',power:10}] },
-  Ponyta:     { type:'fire', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/ponyta.gif',        back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/ponyta.gif',
-    moves:[{name:'Ember',power:8},{name:'Stomp',power:9},{name:'Flame Wheel',power:11},{name:'Tackle',power:6}] },
-  Magnemite:  { type:'electric', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/magnemite.gif', back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/magnemite.gif',
-    moves:[{name:'Thunder Shock',power:9},{name:'Sonic Boom',power:8},{name:'Spark',power:10},{name:'Tackle',power:6}] },
-  Doduo:      { type:'normal', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/doduo.gif',       back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/doduo.gif',
-    moves:[{name:'Peck',power:7},{name:'Quick Attack',power:6},{name:'Fury Attack',power:8},{name:'Drill Peck',power:10}] },
-  Venusaur:  { type:'grass', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/venusaur.gif', back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/venusaur.gif',
-    moves:[{name:'Vine Whip',power:8},{name:'Razor Leaf',power:11},{name:'Solar Beam',power:14},{name:'Body Slam',power:10}] },
-  Raichu:    { type:'electric', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/raichu.gif', back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/raichu.gif',
-    moves:[{name:'Thunderbolt',power:13},{name:'Quick Attack',power:6},{name:'Thunder Punch',power:11},{name:'Iron Tail',power:10}] },
-  Arcanine:  { type:'fire', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/arcanine.gif', back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/arcanine.gif',
-    moves:[{name:'Flamethrower',power:12},{name:'Fire Fang',power:10},{name:'Extreme Speed',power:11},{name:'Crunch',power:10}] },
-  Alakazam:  { type:'psychic', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/alakazam.gif', back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/alakazam.gif',
-    moves:[{name:'Psychic',power:13},{name:'Psybeam',power:10},{name:'Confusion',power:9},{name:'Shadow Ball',power:11}] },
-  Machamp:   { type:'fighting', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/machamp.gif', back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/machamp.gif',
-    moves:[{name:'Cross Chop',power:12},{name:'Karate Chop',power:9},{name:'Seismic Toss',power:11},{name:'Body Slam',power:10}] },
-  Golem:     { type:'rock', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/golem.gif', back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/golem.gif',
-    moves:[{name:'Rock Slide',power:11},{name:'Earthquake',power:13},{name:'Rollout',power:8},{name:'Tackle',power:6}] },
-  Gyarados:  { type:'water', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/gyarados.gif', back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/gyarados.gif',
-    moves:[{name:'Hydro Pump',power:14},{name:'Bite',power:8},{name:'Waterfall',power:11},{name:'Dragon Rage',power:9}] },
-  Dragonite: { type:'dragon', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/dragonite.gif', back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/dragonite.gif',
-    moves:[{name:'Dragon Claw',power:11},{name:'Outrage',power:13},{name:'Wing Attack',power:8},{name:'Hyper Beam',power:14}] },
-  Mewtwo:    { type:'psychic', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/mewtwo.gif', back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/mewtwo.gif',
-    moves:[{name:'Psychic',power:13},{name:'Shadow Ball',power:11},{name:'Aura Sphere',power:12},{name:'Confusion',power:9}] },
-  Lapras:    { type:'water', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/lapras.gif', back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/lapras.gif',
-    moves:[{name:'Surf',power:12},{name:'Ice Beam',power:12},{name:'Water Pulse',power:9},{name:'Body Slam',power:10}] },
-  Onix:      { type:'rock', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/onix.gif', back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/onix.gif',
-    moves:[{name:'Rock Throw',power:9},{name:'Rock Slide',power:11},{name:'Slam',power:9},{name:'Iron Tail',power:10}] },
-  Pidgeot:   { type:'flying', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/pidgeot.gif', back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/pidgeot.gif',
-    moves:[{name:'Wing Attack',power:9},{name:'Gust',power:7},{name:'Air Slash',power:11},{name:'Quick Attack',power:6}] },
-  Scyther:   { type:'bug', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/scyther.gif', back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/scyther.gif',
-    moves:[{name:'Slash',power:10},{name:'X-Scissor',power:12},{name:'Wing Attack',power:8},{name:'Fury Cutter',power:8}] },
-  Jynx:      { type:'ice', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/jynx.gif', back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/jynx.gif',
-    moves:[{name:'Ice Punch',power:11},{name:'Powder Snow',power:8},{name:'Psychic',power:12},{name:'Pound',power:6}] },
-  Electabuzz:{ type:'electric', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/electabuzz.gif', back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/electabuzz.gif',
-    moves:[{name:'Thunder Punch',power:11},{name:'Thunderbolt',power:13},{name:'Quick Attack',power:6},{name:'Low Kick',power:7}] },
-  Magmar:    { type:'fire', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/magmar.gif', back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/magmar.gif',
-    moves:[{name:'Flamethrower',power:12},{name:'Fire Punch',power:10},{name:'Ember',power:8},{name:'Smog',power:6}] },
-  Haunter:   { type:'ghost', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/haunter.gif', back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/haunter.gif',
-    moves:[{name:'Shadow Ball',power:11},{name:'Lick',power:6},{name:'Night Shade',power:9},{name:'Dream Eater',power:10}] },
-  Cubone:    { type:'ground', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/cubone.gif', back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/cubone.gif',
-    moves:[{name:'Bone Club',power:9},{name:'Bonemerang',power:11},{name:'Headbutt',power:8},{name:'Earthquake',power:12}] },
-  Dratini:   { type:'dragon', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/dratini.gif', back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/dratini.gif',
-    moves:[{name:'Dragon Rage',power:8},{name:'Wrap',power:7},{name:'Twister',power:9},{name:'Slam',power:9}] },
-  Zubat:     { type:'flying', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/zubat.gif', back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/zubat.gif',
-    moves:[{name:'Wing Attack',power:8},{name:'Leech Life',power:7},{name:'Air Cutter',power:9},{name:'Bite',power:8}] },
-  Butterfree:{ type:'bug', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/butterfree.gif', back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/butterfree.gif',
-    moves:[{name:'Bug Buzz',power:11},{name:'Gust',power:7},{name:'Psybeam',power:10},{name:'Silver Wind',power:9}] },
-  Nidoking:  { type:'poison', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/nidoking.gif', back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/nidoking.gif',
-    moves:[{name:'Poison Jab',power:10},{name:'Earthquake',power:13},{name:'Horn Attack',power:8},{name:'Sludge Bomb',power:12}] },
-  Vaporeon:  { type:'water', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/vaporeon.gif', back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/vaporeon.gif',
-    moves:[{name:'Water Pulse',power:9},{name:'Surf',power:12},{name:'Bite',power:8},{name:'Quick Attack',power:6}] },
-  Jolteon:   { type:'electric', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/jolteon.gif', back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/jolteon.gif',
-    moves:[{name:'Thunder',power:13},{name:'Pin Missile',power:8},{name:'Quick Attack',power:6},{name:'Thunder Fang',power:10}] },
-  Flareon:   { type:'fire', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/flareon.gif', back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/flareon.gif',
-    moves:[{name:'Flamethrower',power:12},{name:'Fire Fang',power:10},{name:'Ember',power:8},{name:'Bite',power:8}] },
-  Lucario:   { type:'fighting', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/lucario.gif', back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/lucario.gif',
-    moves:[{name:'Aura Sphere',power:12},{name:'Force Palm',power:10},{name:'Close Combat',power:13},{name:'Metal Claw',power:9}] },
-  Articuno:  { type:'ice', front:'https://img.pokemondb.net/sprites/black-white/anim/normal/articuno.gif', back:'https://img.pokemondb.net/sprites/black-white/anim/back-normal/articuno.gif',
-    moves:[{name:'Ice Beam',power:12},{name:'Blizzard',power:14},{name:'Wing Attack',power:8},{name:'Gust',power:7}] }
-};
-
 // Attacker type -> { defenderType: multiplier }. Unlisted pairs default to 1x.
 const TYPE_CHART = {
   normal:   { rock: 0.5, ghost: 0, steel: 0.5 },
@@ -125,257 +20,17 @@ const TYPE_CHART = {
   fairy:    { fighting: 2, dragon: 2, dark: 2, fire: 0.5, poison: 0.5, steel: 0.5 }
 };
 
-function typeEffectiveness(attackerType, defenderType) {
-  const row = TYPE_CHART[attackerType];
-  if (!row || row[defenderType] === undefined) return 1;
-  return row[defenderType];
+function typeEffectiveness(attackerType, defenderType, defenderType2) {
+  const row = TYPE_CHART[attackerType], f = t => (!row || row[t] === undefined ? 1 : row[t]);
+  return f(defenderType) * (defenderType2 ? f(defenderType2) : 1);
 }
+const statRatio = (a, d) => (a.bs && d.bs ? Math.min(1.35, Math.max(0.75, Math.sqrt(a.bs.atk / d.bs.def))) : 1);
+const hpMult = n => { const b = POKEDEX[n] && POKEDEX[n].bs; return b ? Math.min(1.4, Math.max(0.7, b.hp / 100)) : 1; };
+const T = ms => ms * ({ slow: 1.6, normal: 1, fast: 0.5 }[localStorage.getItem('battleSpeed')] || 1);   // battle speed setting
+if (localStorage.getItem('reduceMotion') === '1') document.documentElement.classList.add('reduce-motion');
 
 // ---------- speed, real move types, stat moves, weather ----------
 const VS = localStorage.getItem('vsMode') === '1';   // 2-player hot-seat battle
-const SPEED = {Pikachu:90,Bulbasaur:45,Charmander:65,Squirtle:43,Blastoise:78,Charizard:100,Eevee:55,Jigglypuff:20,Gengar:110,Snorlax:30,Vulpix:65,Growlithe:60,Psyduck:55,Machop:35,Abra:90,Geodude:20,Meowth:90,Ekans:55,Sandshrew:40,Oddish:30,Poliwag:90,Ponyta:90,Magnemite:45,Doduo:75,Venusaur:80,Raichu:110,Arcanine:95,Alakazam:120,Machamp:55,Golem:45,Gyarados:81,Dragonite:80,Mewtwo:130,Lapras:60,Onix:70,Pidgeot:101,Scyther:105,Jynx:95,Electabuzz:105,Magmar:93,Haunter:95,Cubone:35,Dratini:50,Zubat:55,Butterfree:70,Nidoking:85,Vaporeon:65,Jolteon:130,Flareon:65,Lucario:90,Articuno:85};
-// ---------- Pokémon #52-100 (compact form: name, type, speed, [move, power]...) ----------
-const addMon = (name, type, speed, moves) => {
-  const id = name.toLowerCase();
-  POKEDEX[name] = { type, moves: moves.map(([n, power]) => ({ name: n, power })),
-    front: `https://img.pokemondb.net/sprites/black-white/anim/normal/${id}.gif`,
-    back:  `https://img.pokemondb.net/sprites/black-white/anim/back-normal/${id}.gif` };
-  SPEED[name] = speed;
-};
-addMon('Ivysaur','grass',60,[['Vine Whip',8],['Razor Leaf',11],['Body Slam',10],['Tackle',6]]);
-addMon('Charmeleon','fire',80,[['Ember',8],['Slash',10],['Flamethrower',11],['Fire Fang',9]]);
-addMon('Wartortle','water',58,[['Water Gun',8],['Bite',8],['Water Pulse',10],['Tackle',6]]);
-addMon('Pidgey','flying',56,[['Gust',7],['Quick Attack',6],['Wing Attack',8],['Tackle',6]]);
-addMon('Rattata','normal',72,[['Quick Attack',6],['Bite',8],['Tackle',6],['Headbutt',8]]);
-addMon('Arbok','poison',80,[['Sludge Bomb',12],['Bite',8],['Crunch',10],['Wrap',7]]);
-addMon('Sandslash','ground',65,[['Slash',10],['Earthquake',12],['Rollout',8],['Sand Attack',4]]);
-addMon('Nidoqueen','poison',76,[['Poison Jab',10],['Earthquake',12],['Body Slam',10],['Sludge Bomb',12]]);
-addMon('Clefairy','normal',35,[['Pound',6],['Double Slap',8],['Body Slam',10],['Swift',9]]);
-addMon('Ninetales','fire',100,[['Flamethrower',12],['Fire Spin',10],['Quick Attack',6],['Bite',8]]);
-addMon('Golbat','flying',90,[['Wing Attack',8],['Bite',8],['Air Cutter',9],['Leech Life',7]]);
-addMon('Vileplume','grass',50,[['Razor Leaf',11],['Acid',7],['Solar Beam',14],['Poison Powder',6]]);
-addMon('Venomoth','bug',90,[['Bug Buzz',11],['Psybeam',10],['Silver Wind',9],['Gust',7]]);
-addMon('Dugtrio','ground',120,[['Earthquake',12],['Slash',10],['Bone Club',9],['Sand Attack',4]]);
-addMon('Primeape','fighting',95,[['Karate Chop',9],['Cross Chop',12],['Low Kick',7],['Seismic Toss',11]]);
-addMon('Poliwrath','water',70,[['Waterfall',11],['Body Slam',10],['Seismic Toss',11],['Water Pulse',9]]);
-addMon('Kadabra','psychic',105,[['Psybeam',10],['Confusion',9],['Psychic',13],['Shadow Ball',11]]);
-addMon('Machoke','fighting',45,[['Karate Chop',9],['Cross Chop',12],['Seismic Toss',11],['Body Slam',10]]);
-addMon('Tentacool','water',70,[['Water Pulse',9],['Acid',7],['Bubble',7],['Poison Sting',6]]);
-addMon('Rapidash','fire',105,[['Flame Wheel',11],['Stomp',9],['Flamethrower',12],['Quick Attack',6]]);
-addMon('Slowbro','water',30,[['Water Pulse',10],['Confusion',9],['Surf',12],['Headbutt',8]]);
-addMon('Dodrio','normal',100,[['Drill Peck',10],['Fury Attack',8],['Quick Attack',6],['Tackle',6]]);
-addMon('Muk','poison',50,[['Sludge Bomb',12],['Poison Jab',10],['Body Slam',10],['Acid',7]]);
-addMon('Gastly','ghost',80,[['Lick',6],['Shadow Ball',11],['Night Shade',9],['Smog',6]]);
-addMon('Hitmonlee','fighting',87,[['Low Kick',7],['Karate Chop',9],['Close Combat',13],['Headbutt',8]]);
-addMon('Hitmonchan','fighting',76,[['Ice Punch',11],['Thunder Punch',11],['Fire Punch',10],['Karate Chop',9]]);
-addMon('Rhydon','ground',40,[['Earthquake',13],['Rock Slide',11],['Horn Attack',8],['Body Slam',10]]);
-addMon('Chansey','normal',50,[['Pound',6],['Body Slam',10],['Double Slap',8],['Swift',9]]);
-addMon('Tangela','grass',60,[['Vine Whip',8],['Absorb',6],['Razor Leaf',11],['Slam',9]]);
-addMon('Kangaskhan','normal',90,[['Body Slam',10],['Crunch',10],['Slam',9],['Headbutt',8]]);
-addMon('Starmie','water',115,[['Surf',12],['Psychic',13],['Ice Beam',12],['Swift',9]]);
-addMon('Pinsir','bug',85,[['X-Scissor',12],['Slash',10],['Body Slam',10],['Bite',8]]);
-addMon('Tauros','normal',110,[['Body Slam',10],['Earthquake',12],['Stomp',9],['Quick Attack',6]]);
-addMon('Magikarp','water',80,[['Tackle',6],['Bubble',7],['Headbutt',8],['Bite',8]]);
-addMon('Porygon','normal',40,[['Swift',9],['Psybeam',10],['Hyper Beam',14],['Thunder Shock',9]]);
-addMon('Omanyte','rock',35,[['Water Gun',8],['Rock Throw',9],['Bite',8],['Water Pulse',9]]);
-addMon('Kabuto','rock',55,[['Scratch',5],['Rock Throw',9],['Slash',10],['Bite',8]]);
-addMon('Aerodactyl','rock',130,[['Rock Slide',11],['Wing Attack',8],['Crunch',10],['Hyper Beam',14]]);
-addMon('Zapdos','electric',100,[['Thunder',13],['Drill Peck',10],['Air Slash',11],['Thunderbolt',13]]);
-addMon('Moltres','fire',90,[['Flamethrower',12],['Wing Attack',9],['Air Slash',11],['Fire Spin',10]]);
-addMon('Dragonair','dragon',70,[['Twister',9],['Dragon Rage',8],['Slam',9],['Body Slam',10]]);
-addMon('Mew','psychic',100,[['Psychic',13],['Aura Sphere',12],['Shadow Ball',11],['Swift',9]]);
-addMon('Exeggutor','grass',55,[['Solar Beam',14],['Confusion',9],['Razor Leaf',11],['Stomp',9]]);
-addMon('Weezing','poison',60,[['Sludge Bomb',12],['Smog',6],['Shadow Ball',11],['Tackle',6]]);
-addMon('Marowak','ground',45,[['Bonemerang',11],['Bone Club',9],['Earthquake',12],['Headbutt',8]]);
-addMon('Cloyster','water',70,[['Ice Beam',12],['Surf',12],['Water Pulse',9],['Slam',9]]);
-addMon('Seaking','water',68,[['Waterfall',11],['Water Pulse',9],['Horn Attack',8],['Peck',7]]);
-addMon('Lickitung','normal',30,[['Lick',6],['Slam',9],['Body Slam',10],['Headbutt',8]]);
-addMon('Horsea','water',60,[['Bubble',7],['Water Gun',8],['Twister',9],['Smog',6]]);
-addMon('Umbreon','dark',65,[['Bite',8],['Feint Attack',8],['Crunch',10],['Quick Attack',6]]);
-addMon('Steelix','steel',30,[['Iron Tail',10],['Iron Head',10],['Earthquake',13],['Rock Slide',11]]);
-addMon('Clefable','fairy',60,[['Moonblast',12],['Double Slap',8],['Body Slam',10],['Pound',6]]);
-// ---------- Pokémon #104-203 (added: full Gen1 remainder + Gen2 favourites) ----------
-addMon('Caterpie','bug',45,[['Silver Wind',9],['String Shot',4],['Horn Attack',8],['Swift',9]]);
-addMon('Metapod','bug',30,[['String Shot',4],['X-Scissor',12],['Body Slam',10],['Fury Attack',8]]);
-addMon('Weedle','bug',50,[['String Shot',4],['Pin Missile',8],['Scratch',5],['Swift',9]]);
-addMon('Kakuna','bug',35,[['Bug Buzz',11],['X-Scissor',12],['Swift',9],['Quick Attack',6]]);
-addMon('Beedrill','poison',75,[['Sludge Bomb',12],['Poison Sting',6],['Wrap',7],['Body Slam',10]]);
-addMon('Spearow','flying',70,[['Gust',7],['Air Slash',11],['Slam',9],['Double Slap',8]]);
-addMon('Fearow','flying',90,[['Wing Attack',9],['Air Slash',11],['Slam',9],['Fury Attack',8]]);
-addMon('Nidorina','poison',56,[['Acid',7],['Sludge',9],['Horn Attack',8],['Fury Swipes',9]]);
-addMon('Nidorino','poison',65,[['Poison Powder',6],['Sludge',9],['Quick Attack',6],['Stomp',9]]);
-addMon('Paras','bug',25,[['X-Scissor',12],['Pin Missile',8],['Wrap',7],['Horn Attack',8]]);
-addMon('Parasect','bug',30,[['Leech Life',7],['Pin Missile',8],['Tackle',6],['Slash',10]]);
-addMon('Venonat','bug',45,[['String Shot',4],['Pin Missile',8],['Body Slam',10],['Pound',6]]);
-addMon('Diglett','ground',95,[['Earthquake',13],['Bonemerang',11],['Horn Attack',8],['Body Slam',10]]);
-addMon('Persian','normal',115,[['Quick Attack',6],['Stomp',9],['Scratch',5],['Wrap',7]]);
-addMon('Golduck','water',85,[['Water Cannon',10],['Hydro Pump',14],['Tackle',6],['Horn Attack',8]]);
-addMon('Mankey','fighting',70,[['Close Combat',13],['Force Palm',10],['Scratch',5],['Fury Swipes',9]]);
-addMon('Poliwhirl','water',60,[['Surf',12],['Bubble',7],['Slam',9],['Swift',9]]);
-addMon('Bellsprout','grass',40,[['Solar Beam',14],['Seed Bomb',12],['Slash',10],['Fury Swipes',9]]);
-addMon('Weepinbell','grass',55,[['Solar Beam',14],['Vine Whip',8],['Quick Attack',6],['Fury Swipes',9]]);
-addMon('Victreebel','grass',70,[['Seed Bomb',12],['Solar Beam',14],['Slam',9],['Stomp',9]]);
-addMon('Tentacruel','water',100,[['Surf',12],['Bubble',7],['Scratch',5],['Body Slam',10]]);
-addMon('Graveler','rock',35,[['Rock Slide',11],['Rollout',8],['Fury Attack',8],['Slash',10]]);
-addMon('Slowpoke','water',15,[['Water Cannon',10],['Surf',12],['Wrap',7],['Fury Swipes',9]]);
-addMon('Farfetchd','flying',60,[['Drill Peck',10],['Wing Attack',9],['Slash',10],['Fury Attack',8]]);
-addMon('Seel','water',65,[['Water Pulse',9],['Hydro Pump',14],['Double Slap',8],['Pound',6]]);
-addMon('Dewgong','ice',70,[['Blizzard',14],['Ice Beam',12],['Quick Attack',6],['Stomp',9]]);
-addMon('Grimer','poison',25,[['Poison Powder',6],['Sludge',9],['Tackle',6],['Stomp',9]]);
-addMon('Shellder','water',40,[['Surf',12],['Hydro Pump',14],['Tackle',6],['Slash',10]]);
-addMon('Drowzee','psychic',90,[['Dream Eater',10],['Psybeam',10],['Quick Attack',6],['Double Slap',8]]);
-addMon('Hypno','psychic',96,[['Dream Eater',10],['Psychic',13],['Wrap',7],['Horn Attack',8]]);
-addMon('Krabby','water',50,[['Water Cannon',10],['Bubble',7],['Swift',9],['Quick Attack',6]]);
-addMon('Kingler','water',75,[['Water Pulse',9],['Surf',12],['Fury Attack',8],['Pound',6]]);
-addMon('Voltorb','electric',100,[['Thunder Shock',9],['Thunder Fang',10],['Stomp',9],['Wrap',7]]);
-addMon('Electrode','electric',140,[['Thunder Punch',11],['Thunder Shock',9],['Fury Attack',8],['Double Slap',8]]);
-addMon('Exeggcute','grass',40,[['Seed Bomb',12],['Vine Whip',8],['Slam',9],['Slash',10]]);
-addMon('Koffing','poison',35,[['Sludge Bomb',12],['Sludge',9],['Quick Attack',6],['Tackle',6]]);
-addMon('Rhyhorn','ground',25,[['Bonemerang',11],['Earthquake',13],['Wrap',7],['Headbutt',8]]);
-addMon('Seadra','water',85,[['Waterfall',11],['Water Gun',8],['Stomp',9],['Double Slap',8]]);
-addMon('Goldeen','water',63,[['Waterfall',11],['Hydro Pump',14],['Stomp',9],['Pound',6]]);
-addMon('Staryu','water',85,[['Water Gun',8],['Water Pulse',9],['Stomp',9],['Wrap',7]]);
-addMon('Omastar','rock',55,[['Rock Slide',11],['Rollout',8],['Horn Attack',8],['Scratch',5]]);
-addMon('Kabutops','rock',80,[['Rock Throw',9],['Rock Slide',11],['Swift',9],['Stomp',9]]);
-addMon('Ditto','normal',48,[['Headbutt',8],['Stomp',9],['Wrap',7],['Slam',9]]);
-addMon('Raticate','normal',97,[['Stomp',9],['Body Slam',10],['Horn Attack',8],['Swift',9]]);
-addMon('Wigglytuff','normal',45,[['Swift',9],['Double Slap',8],['Stomp',9],['Headbutt',8]]);
-addMon('Gloom','grass',40,[['Razor Leaf',11],['Solar Beam',14],['Swift',9],['Slam',9]]);
-addMon('Magneton','electric',70,[['Thunder Fang',10],['Thunder',13],['Pound',6],['Headbutt',8]]);
-addMon('Chikorita','grass',45,[['Seed Bomb',12],['Razor Leaf',11],['Fury Swipes',9],['Horn Attack',8]]);
-addMon('Cyndaquil','fire',65,[['Flamethrower',12],['Ember',8],['Pound',6],['Double Slap',8]]);
-addMon('Totodile','water',50,[['Bubble',7],['Surf',12],['Wrap',7],['Scratch',5]]);
-addMon('Sentret','normal',60,[['Double Slap',8],['Headbutt',8],['Scratch',5],['Body Slam',10]]);
-addMon('Furret','normal',97,[['Slam',9],['Body Slam',10],['Double Slap',8],['Scratch',5]]);
-addMon('Hoothoot','flying',30,[['Air Cutter',9],['Wing Attack',9],['Wrap',7],['Fury Swipes',9]]);
-addMon('Noctowl','flying',65,[['Air Slash',11],['Gust',7],['Body Slam',10],['Slam',9]]);
-addMon('Ledyba','bug',55,[['Silver Wind',9],['Leech Life',7],['Fury Swipes',9],['Swift',9]]);
-addMon('Ledian','bug',55,[['Silver Wind',9],['Bug Buzz',11],['Body Slam',10],['Wrap',7]]);
-addMon('Spinarak','bug',40,[['Pin Missile',8],['Silver Wind',9],['Pound',6],['Headbutt',8]]);
-addMon('Ariados','bug',52,[['X-Scissor',12],['Fury Cutter',8],['Pound',6],['Tackle',6]]);
-addMon('Crobat','poison',130,[['Poison Sting',6],['Sludge Bomb',12],['Swift',9],['Quick Attack',6]]);
-addMon('Chinchou','electric',67,[['Thunder Shock',9],['Thunder',13],['Double Slap',8],['Slash',10]]);
-addMon('Lanturn','water',67,[['Water Cannon',10],['Surf',12],['Body Slam',10],['Slash',10]]);
-addMon('Pichu','electric',60,[['Spark',10],['Thunder Punch',11],['Tackle',6],['Stomp',9]]);
-addMon('Cleffa','fairy',35,[['Moonblast',12],['Stomp',9],['Slash',10],['Scratch',5]]);
-addMon('Togepi','fairy',20,[['Moonblast',12],['Wrap',7],['Slash',10],['Horn Attack',8]]);
-addMon('Togetic','fairy',40,[['Moonblast',12],['Swift',9],['Fury Swipes',9],['Double Slap',8]]);
-addMon('Natu','psychic',70,[['Psybeam',10],['Dream Eater',10],['Headbutt',8],['Wrap',7]]);
-addMon('Xatu','psychic',95,[['Psyshock',11],['Psybeam',10],['Pound',6],['Slam',9]]);
-addMon('Mareep','electric',45,[['Thunder Punch',11],['Thunder',13],['Body Slam',10],['Pound',6]]);
-addMon('Flaaffy','electric',55,[['Thunder',13],['Thunder Punch',11],['Scratch',5],['Horn Attack',8]]);
-addMon('Ampharos','electric',65,[['Thunder',13],['Thunder Fang',10],['Wrap',7],['Quick Attack',6]]);
-addMon('Bellossom','grass',50,[['Vine Whip',8],['Seed Bomb',12],['Pound',6],['Scratch',5]]);
-addMon('Marill','water',40,[['Waterfall',11],['Water Gun',8],['Quick Attack',6],['Pound',6]]);
-addMon('Azumarill','water',50,[['Water Cannon',10],['Surf',12],['Scratch',5],['Slash',10]]);
-addMon('Sudowoodo','rock',30,[['Rock Throw',9],['Rollout',8],['Fury Attack',8],['Wrap',7]]);
-addMon('Politoed','water',75,[['Water Pulse',9],['Hydro Pump',14],['Stomp',9],['Slam',9]]);
-addMon('Hoppip','grass',70,[['Solar Beam',14],['Absorb',6],['Slam',9],['Tackle',6]]);
-addMon('Skiploom','grass',80,[['Vine Whip',8],['Seed Bomb',12],['Double Slap',8],['Swift',9]]);
-addMon('Jumpluff','grass',110,[['Vine Whip',8],['Solar Beam',14],['Swift',9],['Stomp',9]]);
-addMon('Aipom','normal',85,[['Slash',10],['Double Slap',8],['Tackle',6],['Headbutt',8]]);
-addMon('Sunkern','grass',30,[['Razor Leaf',11],['Vine Whip',8],['Body Slam',10],['Slam',9]]);
-addMon('Sunflora','grass',30,[['Vine Whip',8],['Solar Beam',14],['Slash',10],['Horn Attack',8]]);
-addMon('Yanma','bug',95,[['X-Scissor',12],['String Shot',4],['Tackle',6],['Headbutt',8]]);
-addMon('Wooper','ground',15,[['Bone Club',9],['Sand Attack',4],['Pound',6],['Horn Attack',8]]);
-addMon('Quagsire','water',35,[['Waterfall',11],['Surf',12],['Slam',9],['Scratch',5]]);
-addMon('Espeon','psychic',110,[['Psyshock',11],['Psychic',13],['Slam',9],['Stomp',9]]);
-addMon('Murkrow','dark',91,[['Feint Attack',8],['Bite',8],['Slam',9],['Body Slam',10]]);
-addMon('Slowking','psychic',30,[['Confusion',9],['Psyshock',11],['Double Slap',8],['Swift',9]]);
-addMon('Misdreavus','ghost',85,[['Shadow Ball',11],['Night Shade',9],['Wrap',7],['Scratch',5]]);
-addMon('Wobbuffet','psychic',33,[['Dream Eater',10],['Confusion',9],['Body Slam',10],['Swift',9]]);
-addMon('Girafarig','psychic',85,[['Confusion',9],['Psybeam',10],['Scratch',5],['Quick Attack',6]]);
-addMon('Pineco','bug',15,[['Pin Missile',8],['String Shot',4],['Stomp',9],['Swift',9]]);
-addMon('Forretress','steel',40,[['Iron Tail',10],['Metal Claw',9],['Stomp',9],['Slam',9]]);
-addMon('Dunsparce','normal',45,[['Fury Swipes',9],['Horn Attack',8],['Quick Attack',6],['Double Slap',8]]);
-addMon('Gligar','ground',85,[['Earthquake',13],['Sand Attack',4],['Scratch',5],['Swift',9]]);
-addMon('Snubbull','fairy',60,[['Moonblast',12],['Pound',6],['Wrap',7],['Tackle',6]]);
-addMon('Granbull','fairy',45,[['Moonblast',12],['Wrap',7],['Tackle',6],['Pound',6]]);
-addMon('Qwilfish','poison',85,[['Sludge',9],['Acid',7],['Pound',6],['Wrap',7]]);
-addMon('Scizor','steel',65,[['Iron Tail',10],['Iron Head',10],['Slash',10],['Tackle',6]]);
-addMon('Shuckle','rock',5,[['Rock Throw',9],['Rock Slide',11],['Swift',9],['Fury Swipes',9]]);
-addMon('Heracross','bug',85,[['Bug Buzz',11],['X-Scissor',12],['Pound',6],['Double Slap',8]]);
-
-// ---------- Roster expansion: +500 Pokémon (Gen 2-6), generated from compact lists ----------
-// Moves are built from per-type pools (STAB x2, a Normal move, a coverage move); '*' marks legendaries. Gen 6 uses HOME sprites.
-(() => {
-  const POOL = {
-    normal:'Pound6,Tackle6,Double Slap8,Headbutt8,Stomp9,Swift9,Slash10,Body Slam10', fire:'Ember8,Flame Wheel9,Fire Fang9,Fire Punch10,Flame Burst10,Flamethrower11',
-    water:'Bubble6,Water Gun8,Water Pulse10,Waterfall10,Surf12,Hydro Pump14', grass:'Absorb6,Vine Whip8,Razor Leaf11,Seed Bomb11,Solar Beam14',
-    electric:'Thunder Shock7,Spark8,Thunder Fang9,Thunder Punch10,Thunderbolt12,Thunder14', ice:'Powder Snow7,Ice Punch10,Ice Beam12,Blizzard14',
-    fighting:'Karate Chop8,Low Kick8,Seismic Toss9,Cross Chop12,Aura Sphere12,Close Combat13', poison:'Poison Sting6,Acid7,Sludge9,Poison Jab10,Sludge Bomb12',
-    ground:'Bone Club8,Bonemerang9,Earthquake13', flying:'Peck7,Gust7,Wing Attack8,Air Cutter9,Air Slash11,Drill Peck11',
-    psychic:'Confusion9,Psybeam10,Psyshock11,Psychic13', bug:'Fury Cutter6,Leech Life8,Silver Wind9,Bug Buzz11,X-Scissor12',
-    rock:'Rollout8,Rock Throw9,Rock Slide11', ghost:'Lick6,Night Shade9,Shadow Ball11', dragon:'Twister8,Dragon Rage9,Dragon Claw11,Outrage13',
-    dark:'Bite8,Feint Attack8,Crunch10', steel:'Metal Claw9,Iron Tail10,Iron Head10', fairy:'Moonblast12,Pound6,Swift9,Moonblast12'
-  };
-  const P = {}; Object.entries(POOL).forEach(([t, s]) => { P[t] = s.split(',').map(x => { const m = x.match(/^(.*?)(\d+)$/); return [m[1], +m[2]]; }); });
-  const types = Object.keys(P);
-  const hash = s => { let h = 7; for (const c of s) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; };
-  const pick = (t, i) => P[t][Math.min(P[t].length - 1, Math.max(0, i))];
-  const add = (type, list, hd) => list.split(' ').forEach(raw => {
-    const legend = raw.endsWith('*'), name0 = raw.replace('*', ''), name = name0[0].toUpperCase() + name0.slice(1);
-    if (POKEDEX[name]) return;
-    const h = hash(name), tier = legend ? 4 : h % 3, id = name.toLowerCase();
-    const cov = types[(h >>> 3) % types.length], nrm = pick('normal', (h >>> 5) % 6);
-    const mv = [pick(type, tier + 1), pick(type, tier - 1 + (h >>> 7) % 2), nrm, pick(cov, tier)];
-    const seen = new Set(); const moves = mv.filter(m => !seen.has(m[0]) && seen.add(m[0]));
-    while (moves.length < 4) { const m = pick('normal', moves.length); if (!seen.has(m[0])) { seen.add(m[0]); moves.push(m); } else moves.push(pick('normal', (h >>> 9) % 8 + moves.length)); }
-    POKEDEX[name] = { type, moves: moves.slice(0, 4).map(([n, power]) => ({ name: n, power })),
-      front: hd ? `https://img.pokemondb.net/sprites/home/normal/${id}.png` : `https://img.pokemondb.net/sprites/black-white/anim/normal/${id}.gif`,
-      back:  hd ? `https://img.pokemondb.net/sprites/home/normal/${id}.png` : `https://img.pokemondb.net/sprites/black-white/anim/back-normal/${id}.gif` };
-    SPEED[name] = 30 + h % 85 + (legend ? 30 : 0);
-  });
-  const G = [
-    ['normal','sentret furret hoothoot noctowl aipom ambipom teddiursa ursaring miltank blissey stantler smeargle porygon2 zigzagoon linoone slakoth vigoroth slaking whismur loudred exploud skitty delcatty spinda swablu kecleon zangoose castform bidoof bibarel buneary lopunny glameow purugly chatot porygon-z munchlax lickilicky patrat watchog lillipup herdier stoutland minccino cinccino audino bouffalant rufflet braviary regigigas* arceus* meloetta* azurill togepi'],
-    ['fire','cyndaquil quilava typhlosion slugma magcargo houndour houndoom entei* torchic combusken blaziken numel camerupt torkoal chimchar monferno infernape magmortar heatran* ho-oh* pansear simisear tepig pignite emboar darumaka darmanitan litwick lampent chandelure heatmor victini* reshiram* larvesta volcarona'],
-    ['water','totodile croconaw feraligatr chinchou lanturn marill azumarill politoed wooper quagsire slowking remoraid octillery mantine kingdra suicune* mudkip marshtomp swampert lotad lombre ludicolo wingull pelipper carvanha sharpedo wailmer wailord corphish crawdaunt feebas milotic spheal sealeo walrein clamperl huntail gorebyss relicanth luvdisc kyogre* piplup prinplup empoleon buizel floatzel shellos gastrodon finneon lumineon mantyke palkia* phione manaphy* oshawott dewott samurott panpour simipour tympole palpitoad seismitoad tirtouga carracosta ducklett swanna frillish jellicent alomomola keldeo* corsola'],
-    ['grass','chikorita bayleef meganium hoppip skiploom jumpluff sunkern sunflora treecko grovyle sceptile seedot nuzleaf shiftry shroomish breloom roselia cacnea cacturne tropius turtwig grotle torterra budew roserade cherubi cherrim carnivine snover abomasnow leafeon tangrowth shaymin* snivy servine serperior pansage simisage cottonee whimsicott petilil lilligant maractus foongus amoonguss deerling sawsbuck virizion* ferroseed ferrothorn'],
-    ['electric','pichu elekid electrike manectric plusle minun raikou* shinx luxio luxray pachirisu electivire blitzle zebstrika joltik galvantula emolga tynamo eelektrik eelektross thundurus* zekrom* stunfisk rotom'],
-    ['ice','swinub piloswine delibird snorunt glalie regice* froslass mamoswine glaceon vanillite vanillish vanilluxe cubchoo beartic cryogonal kyurem* smoochum sneasel weavile'],
-    ['fighting','tyrogue hitmontop makuhita hariyama meditite medicham riolu toxicroak gallade timburr gurdurr conkeldurr throh sawk mienfoo mienshao cobalion* terrakion* scraggy scrafty croagunk'],
-    ['poison','gulpin swalot seviper skorupi drapion stunky skuntank trubbish garbodor'],
-    ['ground','phanpy donphan trapinch vibrava flygon gible gabite garchomp hippopotas hippowdon drilbur excadrill sandile krokorok krookodile groudon* landorus* golett golurk rhyperior rhydon nosepass'],
-    ['flying','natu xatu togetic togekiss skarmory taillow swellow starly staravia staraptor pidove tranquill unfezant woobat swoobat vullaby mandibuzz lugia* tornadus* yanma yanmega altaria'],
-    ['psychic','unown ralts kirlia gardevoir spoink grumpig lunatone solrock baltoy claydol chimecho beldum metang metagross latias* latios* jirachi* deoxys* bronzor bronzong uxie* mesprit* azelf* cresselia* munna musharna sigilyph gothita gothorita gothitelle solosis duosion reuniclus elgyem beheeyem'],
-    ['bug','ledyba ledian spinarak ariados wurmple silcoon beautifly cascoon dustox surskit masquerain nincada ninjask shedinja volbeat illumise kricketot kricketune burmy mothim combee vespiquen sewaddle swadloon leavanny venipede whirlipede scolipede karrablast escavalier shelmet accelgor genesect* dwebble crustle'],
-    ['rock','sudowoodo larvitar pupitar tyranitar probopass lileep cradily anorith armaldo regirock* cranidos rampardos shieldon bastiodon roggenrola boldore gigalith archen archeops'],
-    ['ghost','shuppet banette duskull dusclops dusknoir drifloon drifblim mismagius spiritomb giratina* yamask cofagrigus'],
-    ['dragon','bagon shelgon salamence rayquaza* axew fraxure haxorus druddigon deino zweilous hydreigon dialga* latias'],
-    ['dark','murkrow honchkrow poochyena mightyena sableye absol purrloin liepard zorua zoroark pawniard bisharp darkrai* umbreon'],
-    ['steel','mawile aron lairon aggron registeel* klink klang klinklang durant magnezone'],
-    ['fairy','snubbull mime cleffa igglybuff']
-  ];
-  G.forEach(([t, l]) => add(t, l, false));
-  [['grass','chespin quilladin chesnaught skiddo gogoat phantump trevenant'],['fire','fennekin braixen delphox litleo pyroar fletchinder talonflame volcanion*'],
-   ['water','froakie frogadier greninja clauncher clawitzer binacle barbaracle'],['fighting','pancham pangoro hawlucha'],['normal','bunnelby diggersby fletchling furfrou'],
-   ['electric','helioptile heliolisk dedenne'],['ice','bergmite avalugg'],['rock','tyrunt tyrantrum amaura aurorus carbink diancie*'],['poison','skrelp dragalge'],
-   ['bug','scatterbug spewpa vivillon'],['psychic','espurr meowstic'],['dark','inkay malamar yveltal*'],['ghost','pumpkaboo gourgeist'],['steel','honedge doublade aegislash klefki'],
-   ['fairy','flabebe floette florges spritzee aromatisse swirlix slurpuff sylveon xerneas*'],['dragon','goomy sliggoo goodra noibat noivern zygarde*'],['psychic','hoopa*']
-  ].forEach(([t, l]) => add(t, l, true));
-  // Gen 7-9 (HOME sprites)
-  [['grass','rowlet dartrix decidueye fomantis lurantis morelull shiinotic bounsweet steenee tsareena comfey dhelmise grookey thwackey rillaboom gossifleur eldegoss applin flapple appletun sprigatito floragato meowscarada smoliv dolliv arboliva bramblin brambleghast toedscool toedscruel capsakid scovillain kartana zarude* poltchageist sinistcha ogerpon* hydrapple dipplin iron-leaves wo-chien* tapu-bulu*'],
-   ['fire','litten torracat incineroar salandit salazzle turtonator scorbunny raboot cinderace sizzlipede centiskorch fuecoco crocalor skeledirge charcadet armarouge ceruledge blacephalon* gouging-fire* iron-moth chi-yu*'],
-   ['water','popplio brionne primarina wishiwashi mareanie toxapex dewpider araquanid wimpod golisopod pyukumuku bruxish sobble drizzile inteleon chewtle drednaw cramorant arrokuda barraskewda quaxly quaxwell quaquaval finizen palafin veluza dondozo tatsugiri wiglett wugtrio basculegion dracovish arctovish'],
-   ['electric','togedemaru xurkitree* zeraora* yamper boltund toxel toxtricity pincurchin dracozolt arctozolt regieleki* morpeko tadbulb bellibolt wattrel kilowattrel pawmi pawmo pawmot tapu-koko* miraidon* raging-bolt*'],
-   ['normal','yungoos gumshoos stufful bewear oranguru passimian komala type-null* silvally* pikipek trumbeak toucannon skwovet greedent wooloo dubwool lechonk oinkologne tandemaus maushold fidough dachsbun maschiff mabosstiff cyclizar dudunsparce farigiraf wyrdeer indeedee'],
-   ['bug','grubbin charjabug vikavolt cutiefly ribombee blipbug dottler orbeetle tarountula spidops nymble lokix rellor rabsca pheromosa* buzzwole* kleavor'],
-   ['fighting','crabrawler crabominable marshadow* clobbopus grapploct falinks kubfu* urshifu* sneasler koraidon* iron-hands zamazenta*'],
-   ['rock','rockruff lycanroc minior stonjourner carkol coalossal nacli naclstack garganacl klawf glimmet glimmora iron-boulder iron-thorns'],
-   ['ground','mudbray mudsdale sandygast palossand silicobra sandaconda iron-treads great-tusk* ursaluna runerigus ting-lu*'],
-   ['ghost','mimikyu polteageist sinistea spectrier* greavard houndstone gimmighoul flutter-mane* cursola calyrex*'],
-   ['fairy','milcery alcremie enamorus* tinkatink tinkatuff tinkaton iron-valiant scream-tail tapu-fini* tapu-lele* zacian*'],
-   ['dark','nickit thievul kingambit impidimp morgrem grimmsnarl obstagoon chien-pao* iron-jugulis guzzlord* overqwil'],
-   ['poison','shroodle grafaiai nihilego* naganadel poipole clodsire okidogi* pecharunt* munkidori* eternatus*'],
-   ['psychic','cosmog cosmoem lunala* solgaleo* necrozma* hatenna hattrem hatterene espathra mr-rime brute-bonnet'],
-   ['flying','rookidee corvisquire corviknight squawkabilly flamigo bombirdier oricorio drampa'],
-   ['dragon','jangmo-o hakamo-o kommo-o dreepy drakloak dragapult frigibax arctibax baxcalibur regidrago* wyrdeer'],
-   ['steel','meltan melmetal magearna* celesteela* stakataka* cufant copperajah perrserker duraludon archaludon gholdengo iron-crown* orthworm sirfetchd iron-bundle'],
-   ['ice','snom frosmoth eiscue glastrier* cetoddle cetitan'],
-   ['steel','varoom revavroom'],['psychic','flittle'],['fighting','annihilape'],['dark','fezandipiti*'],['normal','terapagos*'],['rock','rolycoly'],['water','basculin']
-  ].forEach(([t, l]) => add(t, l, true));
-})();
-
 const PRIORITY = { 'Quick Attack': 1, 'Extreme Speed': 2 };
 // Every move has its own type; anything not listed is Normal.
 const MOVE_TYPE = {
@@ -437,7 +92,7 @@ const WEATHER = {
 const getShinies = () => { try { return JSON.parse(localStorage.getItem('shinies')) || []; } catch (e) { return []; } };
 function markShiny(n) { const l = getShinies(); if (!l.includes(n)) { l.push(n); localStorage.setItem('shinies', JSON.stringify(l)); } }
 
-const SAVE_KEYS = ['battleProfile','battleStats','pokeProgress','campaign','shinies','playerTeam','playerPokemon','difficulty','muted','teamSize','oppMode','campMode','seenTutorial','inventory','teamPresets'];
+const SAVE_KEYS = ['battleProfile','battleStats','pokeProgress','campaign','shinies','playerTeam','playerPokemon','difficulty','muted','teamSize','oppMode','campMode','seenTutorial','inventory','teamPresets','volume','battleSpeed','reduceMotion'];
 const SAVE_JSON_KEYS = ['battleProfile','battleStats','pokeProgress','campaign','shinies','playerTeam','inventory','teamPresets'];
 function exportSave() {
   const data = {};
@@ -464,6 +119,11 @@ const FALLBACK_SPRITE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000
 
 function handleSpriteError(img) {
   if (img.dataset.fallbackApplied) return;
+  const m = img.src.match(/black-white\/anim\/(?:back-)?(?:normal|shiny)\/([^/.]+)\.gif$/);
+  if (m && !img.dataset.triedHome) {   // animated sprite missing: try the static HOME sprite before the Poké Ball
+    img.dataset.triedHome = '1'; if (img.id === 'playerSprite') img.classList.add('flip');
+    img.src = `https://img.pokemondb.net/sprites/home/normal/${m[1]}.png`; return;
+  }
   img.dataset.fallbackApplied = '1';
   img.src = FALLBACK_SPRITE;
 }
@@ -562,6 +222,7 @@ let muted = localStorage.getItem('muted') === '1';
 let audioCtx;
 function beep(freq, dur, type = 'square', vol = 0.05, slide = 0) {
   if (muted) return;
+  { const v = localStorage.getItem('volume'); if (v !== null) vol *= +v; }
   try {
     audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
     const t = audioCtx.currentTime, o = audioCtx.createOscillator(), g = audioCtx.createGain();
@@ -587,13 +248,20 @@ const XP_PER_LEVEL = 50, MAX_LEVEL = 100;
 function getProgress() { try { return JSON.parse(localStorage.getItem('pokeProgress')) || {}; } catch (e) { return {}; } }
 // Every Pokémon that fought in a won battle earns XP; returns "grew to Lv N" messages.
 function grantXP(mons, foesBeaten) {
-  const prog = getProgress(), lines = [];
+  const prog = getProgress(), lines = [], inv = getInventory(), egg = (inv.luckyegg || 0) > 0;
+  if (egg) { inv.luckyegg--; saveInventory(inv); lines.push('Lucky Egg: +50% XP!'); }
   mons.filter(m => m.fought).forEach(m => {
     const p = prog[m.name] || { level: m.level, xp: 0 }, before = p.level;
-    p.xp += 40 + 25 * foesBeaten;
+    p.xp += Math.round((40 + 25 * foesBeaten) * (egg ? 1.5 : 1));
     while (p.xp >= XP_PER_LEVEL && p.level < MAX_LEVEL) { p.xp -= XP_PER_LEVEL; p.level++; }
     if (p.level > before) lines.push(`${m.name} grew to Lv ${p.level}!`);
     prog[m.name] = p;
+    const ev = EVOLVE[m.name];
+    if (ev && p.level >= ev.at) {   // evolution: progress and team slot move to the new form
+      prog[ev.to] = p; delete prog[m.name]; lines.push(`${m.name} evolved into ${ev.to}!`);
+      try { localStorage.setItem('playerTeam', JSON.stringify(JSON.parse(localStorage.getItem('playerTeam') || '[]').map(x => (x === m.name ? ev.to : x))));
+        if (localStorage.getItem('playerPokemon') === m.name) localStorage.setItem('playerPokemon', ev.to); } catch (e) {}
+    }
   });
   localStorage.setItem('pokeProgress', JSON.stringify(prog));
   return lines;
@@ -682,7 +350,7 @@ if (trainerGrid) {
       const res = await fetch(`https://api.github.com/users/${encodeURIComponent(username)}`);
       if (!res.ok) throw new Error('not found');
       const data = await res.json();
-      delete githubAvatar.dataset.fallbackApplied;
+      delete githubAvatar.dataset.fallbackApplied; delete githubAvatar.dataset.triedHome;
       githubAvatar.src = data.avatar_url;
       githubStatus.textContent = `Connected as ${data.login}`;
       const p = getProfile();
@@ -870,7 +538,7 @@ if (trainerIntroEl) {
 
   function levelToMaxHp(level) { return Math.round(80 + level * 1.6); }
   function makeMon(name, level) {
-    const maxHp = levelToMaxHp(level);
+    const maxHp = Math.round(levelToMaxHp(level) * hpMult(name));
     const d = POKEDEX[name], shiny = Math.random() < 1 / 64;   // 1-in-64 recolored sprite
     return { name, level, hp: maxHp, maxHp, ...d, shiny, speed: SPEED[name] || 60, stages: freshStages(),
       front: shiny ? d.front.replace('/anim/normal/', '/anim/shiny/') : d.front,
@@ -954,7 +622,7 @@ function startBattle(playerTeam, oppTeam) {
     els.oppName.innerHTML = opponent.name + typeBadge(opponent.type);
     els.oppLevel.textContent = opponent.level;
     els.oppSprite.classList.remove('anim-faint');
-    delete els.oppSprite.dataset.fallbackApplied;
+    delete els.oppSprite.dataset.fallbackApplied; delete els.oppSprite.dataset.triedHome;
     els.oppSprite.src = opponent.front;
     updateHP('opp'); renderTeamDots();
   }
@@ -964,8 +632,9 @@ function startBattle(playerTeam, oppTeam) {
     els.playerName.innerHTML = player.name + typeBadge(player.type);
     els.playerLevel.textContent = player.level;
     els.playerSprite.classList.remove('anim-faint');
-    delete els.playerSprite.dataset.fallbackApplied;
+    delete els.playerSprite.dataset.fallbackApplied; delete els.playerSprite.dataset.triedHome;
     els.playerSprite.src = player.back;
+    els.playerSprite.classList.toggle('flip', player.back === player.front);   // HOME sprites only face front: mirror them
     updateHP('player'); renderMoves(); renderTeamDots();
   }
   function renderTeamDots() {
@@ -1026,14 +695,14 @@ function startBattle(playerTeam, oppTeam) {
   // Single hit's damage, no accuracy check (used directly for each hit of a multi-hit move).
   function calcHitDamage(move, attacker, defender) {
     const mt = moveType(move);
-    const eff = typeEffectiveness(mt, defender.type);
+    const eff = typeEffectiveness(mt, defender.type, defender.type2);
     const pk = !VS && playerTeam.includes(attacker) ? myPerk() : {};
     const crit = Math.random() < (pk.crit || 1 / 12);
     const perkMult = (pk.all || 1) * (pk.t && pk.t.includes(mt) ? pk.m : 1);
     const levelFactor = 0.6 + attacker.level / 100;
-    const stab = mt === attacker.type ? 1.5 : 1;
+    const stab = mt === attacker.type || mt === attacker.type2 ? 1.5 : 1;
     const stages = stageMult(attacker.stages.atk) / stageMult(defender.stages.def);
-    const dmg = eff === 0 ? 0 : Math.max(1, Math.round(move.power * levelFactor * eff * stab * perkMult * stages * weatherMult(mt) * (crit ? 1.5 : 1) * (attacker.status === 'brn' ? 0.5 : 1)));
+    const dmg = eff === 0 ? 0 : Math.max(1, Math.round(move.power * levelFactor * eff * stab * perkMult * statRatio(attacker, defender) * stages * weatherMult(mt) * (crit ? 1.5 : 1) * (attacker.status === 'brn' ? 0.5 : 1)));
     return { dmg, eff, crit };
   }
   // Misses (by move accuracy), then a single hit's damage. Returns { dmg, eff, crit, miss }.
@@ -1171,7 +840,7 @@ function startBattle(playerTeam, oppTeam) {
 
   // ---------- opponent AI ----------
   const diff = () => localStorage.getItem('difficulty') || 'normal';
-  const expDmg = (m, a, d) => (m.power ? m.power * typeEffectiveness(moveType(m), d.type) * (moveType(m) === a.type ? 1.5 : 1) : 0);
+  const expDmg = (m, a, d) => (m.power ? m.power * typeEffectiveness(moveType(m), d.type, d.type2) * (moveType(m) === a.type || moveType(m) === a.type2 ? 1.5 : 1) : 0);
   const bestScore = (a, d) => Math.max(...a.moves.map(m => expDmg(m, a, d)));
 
   // easy = random, normal = 50% best move, hard = best move (+ buffs/debuffs when it is safe)
@@ -1226,23 +895,23 @@ function startBattle(playerTeam, oppTeam) {
     attack(player, opponent, move, els.playerSprite, els.oppSprite, 'anim-atk-p', !!then);
     if (opponent.hp <= 0) return foeFainted();
     if (player.hp <= 0) return playerFainted(VS ? null : then);
-    if (then) setTimeout(then, 1300); else roundEnd();
+    if (then) setTimeout(then, T(1300)); else roundEnd();
   }
   function foeAct(plan, then) {
     if (plan.kind === 'switch') {
       opponent.stages = freshStages(); opponent = oppTeam[plan.i]; showOpp();
       setMessage(`The rival withdrew and sent out ${opponent.name}!`);
-      return setTimeout(then || roundEnd, 1300);
+      return setTimeout(then || roundEnd, T(1300));
     }
     if (plan.kind === 'potion') {
       foePotions--; opponent.hp = Math.min(opponent.maxHp, opponent.hp + 50); updateHP('opp');
       setMessage(`The rival used a Potion on ${opponent.name}!`);
-      return setTimeout(then || roundEnd, 1300);
+      return setTimeout(then || roundEnd, T(1300));
     }
     attack(opponent, player, plan.move, els.oppSprite, els.playerSprite, 'anim-atk-o', !!then);
     if (player.hp <= 0) return playerFainted();
     if (opponent.hp <= 0) return foeFainted();
-    if (then) setTimeout(then, 1300); else roundEnd();
+    if (then) setTimeout(then, T(1300)); else roundEnd();
   }
   const opponentTurn = () => foeAct(aiPlan());
 
@@ -1278,14 +947,14 @@ function startBattle(playerTeam, oppTeam) {
     setTimeout(() => {
       animate(won ? els.oppSprite : els.playerSprite, 'anim-faint');
       if (won) SFX.win(); else SFX.faint();
-    }, 700);
+    }, T(700));
     els.restartButton.hidden = false;
   }
 
   // ---------- team logic: fainting and switching ----------
   function foeFainted() {
     if (oppTeam.every(p => p.hp <= 0)) return endGame(true, `${opponent.name} fainted. ${VS ? 'Player 1 wins!' : 'You win!'}`);
-    setTimeout(() => { animate(els.oppSprite, 'anim-faint'); SFX.faint(); setMessage(`${opponent.name} fainted!`); }, 700);
+    setTimeout(() => { animate(els.oppSprite, 'anim-faint'); SFX.faint(); setMessage(`${opponent.name} fainted!`); }, T(700));
     setTimeout(() => {
       if (VS) { setMessage(`${opponent.name} fainted! Player 2, pick your next Pokémon.`); return openSwitch(true, true); }
       opponent = oppTeam.find(p => p.hp > 0);
@@ -1296,8 +965,8 @@ function startBattle(playerTeam, oppTeam) {
   function playerFainted(next) {
     afterForced = next || null;
     if (playerTeam.every(p => p.hp <= 0)) return endGame(false, `${player.name} fainted. ${VS ? 'Player 2 wins!' : 'You lose!'}`);
-    setTimeout(() => { animate(els.playerSprite, 'anim-faint'); SFX.faint(); setMessage(`${player.name} fainted! Pick your next Pokémon.`); }, 700);
-    setTimeout(() => openSwitch(true), 1700);
+    setTimeout(() => { animate(els.playerSprite, 'anim-faint'); SFX.faint(); setMessage(`${player.name} fainted! Pick your next Pokémon.`); }, T(700));
+    setTimeout(() => openSwitch(true), T(1700));
   }
   function openSwitch(forced, foe) {
     els.switchPanel.innerHTML = '';
@@ -1325,12 +994,12 @@ function startBattle(playerTeam, oppTeam) {
     setMessage(`Go, ${player.name}!`);
     if (forced) {
       disableActions(true);
-      if (afterForced) { const f = afterForced; afterForced = null; return setTimeout(f, 1000); }
+      if (afterForced) { const f = afterForced; afterForced = null; return setTimeout(f, T(1000)); }
       if (VS) { vsChoice = null; vsStage = null; setMessage(`Go, ${player.name}! Player 1: choose a move.`); }
       return disableActions(false);
     }
     disableActions(true);
-    setTimeout(opponentTurn, 1000);
+    setTimeout(opponentTurn, T(1000));
   }
   function foeSwitchTo(i) {   // hot-seat: Player 2's forced switch
     opponent.stages = freshStages(); opponent = oppTeam[i];
@@ -1343,7 +1012,9 @@ function startBattle(playerTeam, oppTeam) {
   const ITEMS = {
     potion:      { label: 'Potion +50 HP',        need: m => m.hp < m.maxHp, use: m => { m.hp = Math.min(m.maxHp, m.hp + 50);  return `${m.name} recovered HP!`; } },
     superpotion: { label: 'Super Potion +100 HP', need: m => m.hp < m.maxHp, use: m => { m.hp = Math.min(m.maxHp, m.hp + 100); return `${m.name} recovered a lot of HP!`; } },
-    fullheal:    { label: 'Full Heal',            need: m => !!m.status,     use: m => { m.status = null; return `${m.name} was cured of its status!`; } }
+    fullheal:    { label: 'Full Heal',            need: m => !!m.status,     use: m => { m.status = null; return `${m.name} was cured of its status!`; } },
+    revive:      { label: 'Revive', need: () => playerTeam.some(m => m.hp <= 0), use: () => { const f = playerTeam.find(m => m.hp <= 0); f.hp = Math.floor(f.maxHp / 2); return `${f.name} was revived!`; } },
+    xattack:     { label: 'X Attack', need: m => m.stages.atk < 6, use: m => { m.stages.atk = Math.min(6, m.stages.atk + 1); return `${m.name}'s Attack rose!`; } }
   };
   function openItems() {
     els.switchPanel.innerHTML = '';
@@ -1366,7 +1037,7 @@ function startBattle(playerTeam, oppTeam) {
     const msg = ITEMS[k].use(player);
     closeSwitch(); updateHP('opp'); updateHP('player');
     setMessage(msg); disableActions(true);
-    setTimeout(opponentTurn, 1000);
+    setTimeout(opponentTurn, T(1000));
   }
   els.itemBtn.addEventListener('click', openItems);
 
@@ -1482,7 +1153,10 @@ if (totalWinsEl) {
   const SHOP_ITEMS = [
     { key: 'potion', label: 'Potion', desc: '+50 HP in battle', cost: 20 },
     { key: 'superpotion', label: 'Super Potion', desc: '+100 HP in battle', cost: 45 },
-    { key: 'fullheal', label: 'Full Heal', desc: 'Cures status in battle', cost: 30 }
+    { key: 'fullheal', label: 'Full Heal', desc: 'Cures status in battle', cost: 30 },
+    { key: 'revive', label: 'Revive', desc: 'Revives a fainted teammate at half HP', cost: 60 },
+    { key: 'xattack', label: 'X Attack', desc: '+1 Attack in battle', cost: 25 },
+    { key: 'luckyegg', label: 'Lucky Egg', desc: '+50% XP for your next 5 wins; count = wins left', cost: 80, qty: 5 }
   ];
   const RARE_CANDY_COST = 100;
   function renderShop() {
@@ -1501,7 +1175,7 @@ if (totalWinsEl) {
       b.addEventListener('click', () => {
         if (!spendCoins(it.cost)) return;
         const inv2 = getInventory();
-        inv2[it.key] = (inv2[it.key] || 0) + 1;
+        inv2[it.key] = (inv2[it.key] || 0) + (it.qty || 1);
         saveInventory(inv2);
         shopMsg.textContent = `Bought a ${it.label}!`;
         document.getElementById('coinCount').textContent = `${getCoins()} COINS`;
@@ -1595,25 +1269,53 @@ if (totalWinsEl) {
 const dexGrid = document.getElementById('dexGrid');
 if (dexGrid) {
   const prog = getProgress(), byMon = getStats().byMon || {}, shinySet = new Set(getShinies());
-  const search = document.getElementById('dexSearch'), typeSel = document.getElementById('dexType');
-  const types = [...new Set(Object.values(POKEDEX).map(p => p.type))].sort();
-  typeSel.innerHTML = '<option value="">All types</option>' + types.map(t => `<option>${t}</option>`).join('');
+  const $ = id => document.getElementById(id), search = $('dexSearch'), typeSel = $('dexType'), eraSel = $('dexEra'), legSel = $('dexLegend'), dlg = $('dexDlg');
+  const all = Object.values(POKEDEX);
+  typeSel.innerHTML = '<option value="">All types</option>' + [...new Set(all.flatMap(p => [p.type, p.type2].filter(Boolean)))].sort().map(t => `<option>${t}</option>`).join('');
+  eraSel.innerHTML = '<option value="">All eras</option>' + [...new Set(all.map(p => p.era))].map(e => `<option>${e}</option>`).join('');
+  const seen = n => !!(prog[n] || byMon[n]), badges = p => typeBadge(p.type) + (p.type2 ? typeBadge(p.type2) : '');
+  const caught = Object.keys(POKEDEX).filter(seen).length;
   function renderDex() {
     const q = search.value.trim().toLowerCase();
-    const list = Object.entries(POKEDEX).filter(([n, p]) => n.toLowerCase().includes(q) && (!typeSel.value || p.type === typeSel.value));
+    const list = Object.entries(POKEDEX).filter(([n, p]) => n.toLowerCase().includes(q) && (!typeSel.value || p.type === typeSel.value || p.type2 === typeSel.value)
+      && (!eraSel.value || p.era === eraSel.value) && (!legSel.value || p.legend));
     dexGrid.innerHTML = list.map(([n, p]) => {
-      const rec = byMon[n] || { wins: 0, losses: 0 }, tot = rec.wins + rec.losses;
-      return `<div class="dex-card"><img src="${p.front}" alt="${n}" loading="lazy" onerror="handleSpriteError(this)">
-        <div class="dex-name">${n}${shinySet.has(n) ? ' ★' : ''}${typeBadge(p.type)}</div>
-        <div>Lv ${prog[n] ? prog[n].level : '40 (base)'}</div>
-        <div>${tot ? `${rec.wins}W / ${rec.losses}L (${Math.round((rec.wins / tot) * 100)}%)` : 'No battles yet'}</div>
-        <ul class="dex-moves">${p.moves.map(m => `<li>${m.name} ${typeBadge(moveType(m))}<span>${m.power || 'STAT'}</span></li>`).join('')}</ul></div>`;
+      const s = seen(n), rec = byMon[n] || { wins: 0, losses: 0 }, tot = rec.wins + rec.losses;
+      return `<div class="dex-card${s ? '' : ' unseen'}" data-name="${n}"><img src="${p.front}" alt="${s ? n : '???'}" loading="lazy" onerror="handleSpriteError(this)">
+        <div class="dex-name">${s ? n : '???'}${shinySet.has(n) ? ' ★' : ''}${p.legend ? ' ✦' : ''}${s ? badges(p) : ''}</div>
+        <div>${s ? 'Lv ' + (prog[n] ? prog[n].level : '40 (base)') : 'Not caught yet'}</div>
+        <div>${s && tot ? `${rec.wins}W / ${rec.losses}L (${Math.round((rec.wins / tot) * 100)}%)` : ''}</div></div>`;
     }).join('') || '<p style="font-size:9px;">No Pokémon match.</p>';
-    document.getElementById('dexCount').textContent = `${list.length}/${Object.keys(POKEDEX).length} SHOWN`;
+    $('dexCount').textContent = `${caught}/${all.length} CAUGHT · ${list.length} SHOWN · tap a card for details`;
   }
-  search.addEventListener('input', renderDex);
-  typeSel.addEventListener('change', renderDex);
+  const bar = (l, v) => `<div class="bs"><span>${l}</span><i style="width:${Math.min(100, v / 1.6)}%"></i><b>${v}</b></div>`;
+  dexGrid.addEventListener('click', e => {
+    const c = e.target.closest('.dex-card'); if (!c) return;
+    const n = c.dataset.name, p = POKEDEX[n], rec = byMon[n] || { wins: 0, losses: 0 }, ev = EVOLVE[n], from = EVOLVES_FROM[n];
+    dlg.querySelector('.dex-body').innerHTML = !seen(n)
+      ? `<img src="${p.front}" class="unseenimg" alt=""><p>???</p><p style="opacity:.7">Use this Pokémon in a battle to unlock its entry.</p>`
+      : `<img src="${p.front}" alt="${n}" onerror="handleSpriteError(this)"><h3>${n}${p.legend ? ' ✦' : ''}</h3><p>${badges(p)}<br>${p.era}${shinySet.has(n) ? ' · ★ shiny used' : ''}</p>
+        ${bar('HP', p.bs.hp)}${bar('ATK', p.bs.atk)}${bar('DEF', p.bs.def)}${bar('SPD', p.bs.spe)}
+        <p>${from ? `Evolves from ${from}. ` : ''}${ev ? `Evolves into ${ev.to} at Lv ${ev.at}.` : from ? '' : 'Does not evolve.'}</p>
+        <p>Lv ${prog[n] ? prog[n].level : '40 (base)'} · ${rec.wins}W / ${rec.losses}L</p>
+        <ul class="dex-moves">${p.moves.map(m => `<li>${m.name} ${typeBadge(moveType(m))}<span>${m.power || 'STAT'}</span></li>`).join('')}</ul>`;
+    dlg.showModal();
+  });
+  $('dexClose').addEventListener('click', () => dlg.close());
+  [search, typeSel, eraSel, legSel].forEach(el => el.addEventListener(el === search ? 'input' : 'change', renderDex));
   renderDex();
+}
+
+// ---------- settings page ----------
+if (document.getElementById('settingsPage')) {
+  const $ = id => document.getElementById(id), vol = $('setVolume'), spd = $('setSpeed'), red = $('setMotion');
+  const v0 = localStorage.getItem('volume'); vol.value = v0 === null ? 100 : Math.round(v0 * 100);
+  spd.value = localStorage.getItem('battleSpeed') || 'normal'; red.checked = localStorage.getItem('reduceMotion') === '1';
+  vol.addEventListener('input', () => { localStorage.setItem('volume', vol.value / 100); $('volLabel').textContent = vol.value + '%'; });
+  vol.addEventListener('change', () => beep(660, .12));
+  spd.addEventListener('change', () => localStorage.setItem('battleSpeed', spd.value));
+  red.addEventListener('change', () => { localStorage.setItem('reduceMotion', red.checked ? '1' : '0'); document.documentElement.classList.toggle('reduce-motion', red.checked); });
+  $('volLabel').textContent = vol.value + '%';
 }
 
 // ---------- back buttons: a sticky BACK bar on top of every screen (Esc works too) ----------
@@ -1631,7 +1333,7 @@ if (dexGrid) {
     const m = $('menuDropdown');
     if (m) { const b = document.createElement('button'); b.textContent = '◀ Back (forfeit)';
       b.addEventListener('click', () => { if (confirm('Leave this battle? It counts as a forfeit.')) $('forfeitBtn').click(); }); m.prepend(b); }
-  } else if ($('dexGrid') || $('totalWins')) bar(document.querySelector('.panel'), back);
+  } else if ($('dexGrid') || $('totalWins') || $('settingsPage')) bar(document.querySelector('.panel'), back);
   document.addEventListener('keydown', e => {
     if (e.key !== 'Escape' || document.querySelector('dialog[open]')) return;
     const b = [...document.querySelectorAll('.back-bar button')].find(x => x.offsetParent); if (b) b.click();

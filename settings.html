@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#1f1f2e">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="retro.css">
+  <link rel="stylesheet" href="stats.css">
+</head>
+<body>
+  <div id="settingsPage" class="panel narrow" style="text-align:center;">
+    <h2 style="color:var(--accent-yellow);font-size:16px;margin:0 0 20px;">SETTINGS</h2>
+    <div class="stat-row"><span>Volume <span id="volLabel"></span></span><input id="setVolume" type="range" min="0" max="100"></div>
+    <div class="stat-row"><span>Battle speed</span>
+      <select id="setSpeed" style="font-family:'Press Start 2P',monospace;font-size:9px;padding:6px;border:2px solid #000;border-radius:6px;">
+        <option value="slow">Slow</option><option value="normal">Normal</option><option value="fast">Fast</option></select></div>
+    <div class="stat-row"><span>Reduce motion</span><input id="setMotion" type="checkbox"></div>
+    <p style="font-size:8px;opacity:.7;line-height:1.8;">Mute is in the battle MENU. Settings are saved on this device.</p>
+    <button onclick="window.location.href='index.html'" class="retro-btn small">BACK TO TITLE</button>
+  </div>
+  <script src="roster.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>
