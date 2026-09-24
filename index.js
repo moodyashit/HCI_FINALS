@@ -353,6 +353,27 @@ addMon('Heracross','bug',85,[['Bug Buzz',11],['X-Scissor',12],['Pound',6],['Doub
    ['bug','scatterbug spewpa vivillon'],['psychic','espurr meowstic'],['dark','inkay malamar yveltal*'],['ghost','pumpkaboo gourgeist'],['steel','honedge doublade aegislash klefki'],
    ['fairy','flabebe floette florges spritzee aromatisse swirlix slurpuff sylveon xerneas*'],['dragon','goomy sliggoo goodra noibat noivern zygarde*'],['psychic','hoopa*']
   ].forEach(([t, l]) => add(t, l, true));
+  // Gen 7-9 (HOME sprites)
+  [['grass','rowlet dartrix decidueye fomantis lurantis morelull shiinotic bounsweet steenee tsareena comfey dhelmise grookey thwackey rillaboom gossifleur eldegoss applin flapple appletun sprigatito floragato meowscarada smoliv dolliv arboliva bramblin brambleghast toedscool toedscruel capsakid scovillain kartana zarude* poltchageist sinistcha ogerpon* hydrapple dipplin iron-leaves wo-chien* tapu-bulu*'],
+   ['fire','litten torracat incineroar salandit salazzle turtonator scorbunny raboot cinderace sizzlipede centiskorch fuecoco crocalor skeledirge charcadet armarouge ceruledge blacephalon* gouging-fire* iron-moth chi-yu*'],
+   ['water','popplio brionne primarina wishiwashi mareanie toxapex dewpider araquanid wimpod golisopod pyukumuku bruxish sobble drizzile inteleon chewtle drednaw cramorant arrokuda barraskewda quaxly quaxwell quaquaval finizen palafin veluza dondozo tatsugiri wiglett wugtrio basculegion dracovish arctovish'],
+   ['electric','togedemaru xurkitree* zeraora* yamper boltund toxel toxtricity pincurchin dracozolt arctozolt regieleki* morpeko tadbulb bellibolt wattrel kilowattrel pawmi pawmo pawmot tapu-koko* miraidon* raging-bolt*'],
+   ['normal','yungoos gumshoos stufful bewear oranguru passimian komala type-null* silvally* pikipek trumbeak toucannon skwovet greedent wooloo dubwool lechonk oinkologne tandemaus maushold fidough dachsbun maschiff mabosstiff cyclizar dudunsparce farigiraf wyrdeer indeedee'],
+   ['bug','grubbin charjabug vikavolt cutiefly ribombee blipbug dottler orbeetle tarountula spidops nymble lokix rellor rabsca pheromosa* buzzwole* kleavor'],
+   ['fighting','crabrawler crabominable marshadow* clobbopus grapploct falinks kubfu* urshifu* sneasler koraidon* iron-hands zamazenta*'],
+   ['rock','rockruff lycanroc minior stonjourner carkol coalossal nacli naclstack garganacl klawf glimmet glimmora iron-boulder iron-thorns'],
+   ['ground','mudbray mudsdale sandygast palossand silicobra sandaconda iron-treads great-tusk* ursaluna runerigus ting-lu*'],
+   ['ghost','mimikyu polteageist sinistea spectrier* greavard houndstone gimmighoul flutter-mane* cursola calyrex*'],
+   ['fairy','milcery alcremie enamorus* tinkatink tinkatuff tinkaton iron-valiant scream-tail tapu-fini* tapu-lele* zacian*'],
+   ['dark','nickit thievul kingambit impidimp morgrem grimmsnarl obstagoon chien-pao* iron-jugulis guzzlord* overqwil'],
+   ['poison','shroodle grafaiai nihilego* naganadel poipole clodsire okidogi* pecharunt* munkidori* eternatus*'],
+   ['psychic','cosmog cosmoem lunala* solgaleo* necrozma* hatenna hattrem hatterene espathra mr-rime brute-bonnet'],
+   ['flying','rookidee corvisquire corviknight squawkabilly flamigo bombirdier oricorio drampa'],
+   ['dragon','jangmo-o hakamo-o kommo-o dreepy drakloak dragapult frigibax arctibax baxcalibur regidrago* wyrdeer'],
+   ['steel','meltan melmetal magearna* celesteela* stakataka* cufant copperajah perrserker duraludon archaludon gholdengo iron-crown* orthworm sirfetchd iron-bundle'],
+   ['ice','snom frosmoth eiscue glastrier* cetoddle cetitan'],
+   ['steel','varoom revavroom'],['psychic','flittle'],['fighting','annihilape'],['dark','fezandipiti*'],['normal','terapagos*'],['rock','rolycoly'],['water','basculin']
+  ].forEach(([t, l]) => add(t, l, true));
 })();
 
 const PRIORITY = { 'Quick Attack': 1, 'Extreme Speed': 2 };
@@ -448,13 +469,22 @@ function handleSpriteError(img) {
 }
 
 const TRAINER_CLASSES = [
-  { id:'youngster', name:'Youngster', accent:'#3b4cca', hat:'cap' },
-  { id:'lass',       name:'Lass',       accent:'#ff6ec7', hat:'bow' },
-  { id:'ace',        name:'Ace Trainer',accent:'#e3350d', hat:'none' },
-  { id:'hiker',      name:'Hiker',      accent:'#a8a878', hat:'band' },
-  { id:'swimmer',    name:'Swimmer',    accent:'#3ba7e3', hat:'none' },
-  { id:'rocket',     name:'Rocket Grunt',accent:'#4a4a4a', hat:'r' }
+  { id:'youngster', name:'Youngster', accent:'#3b4cca', hat:'cap',  perk:{ coin:1.2 }, perkText:'+20% coins from wins', line:"My Pokémon are in the top percentage!" },
+  { id:'lass',      name:'Lass',      accent:'#ff6ec7', hat:'bow',  perk:{ t:['fairy','normal'], m:1.08 }, perkText:'+8% Fairy and Normal moves', line:"Let's have a cute little battle!" },
+  { id:'ace',       name:'Ace Trainer', accent:'#e3350d', hat:'none', perk:{ all:1.03 }, perkText:'+3% damage on every move', line:"I only train the best." },
+  { id:'hiker',     name:'Hiker',     accent:'#a8a878', hat:'band', perk:{ t:['rock','ground'], m:1.1 }, perkText:'+10% Rock and Ground moves', line:"The mountains made me tough!" },
+  { id:'swimmer',   name:'Swimmer',   accent:'#3ba7e3', hat:'none', perk:{ t:['water','ice'], m:1.1 }, perkText:'+10% Water and Ice moves', line:"Dive in, the water's great!" },
+  { id:'rocket',    name:'Rocket Grunt', accent:'#4a4a4a', hat:'r', perk:{ crit:1/8 }, perkText:'Crits land 1 in 8 (not 1 in 12)', line:"Prepare for trouble!" },
+  { id:'bugcatcher',name:'Bug Catcher', accent:'#6aa84f', hat:'cap', perk:{ t:['bug','grass'], m:1.1 }, perkText:'+10% Bug and Grass moves', line:"I caught tons of bugs today!" },
+  { id:'scientist', name:'Scientist', accent:'#d9d9d9', hat:'glass', perk:{ t:['electric','steel'], m:1.1 }, perkText:'+10% Electric and Steel moves', line:"Let's run an experiment." },
+  { id:'psychic',   name:'Psychic',   accent:'#9b59b6', hat:'band', perk:{ t:['psychic','ghost'], m:1.1 }, perkText:'+10% Psychic and Ghost moves', line:"I foresaw this battle." },
+  { id:'ranger',    name:'Ranger',    accent:'#2e8b57', hat:'cap', perk:{ t:['flying','fighting'], m:1.08 }, perkText:'+8% Flying and Fighting moves', line:"Nature is on my side." },
+  { id:'gymleader', name:'Gym Leader', accent:'#ff9800', hat:'star', unlock:10, perk:{ all:1.05, coin:1.1 }, perkText:'+5% damage, +10% coins (unlock: 10 wins)', line:"Show me your best badge-worthy moves!" },
+  { id:'champion',  name:'Champion',  accent:'#ffcb05', hat:'star', unlock:25, perk:{ all:1.07, crit:1/10 }, perkText:'+7% damage, crits 1 in 10 (unlock: 25 wins)', line:"Welcome to the top." }
 ];
+const RANKS = [[0, 'Rookie'], [5, 'Trainer'], [15, 'Ace'], [30, 'Elite'], [60, 'Champion']];
+const rankOf = w => RANKS.filter(r => w >= r[0]).pop()[1];
+const myPerk = () => { const c = TRAINER_CLASSES.find(t => t.id === getProfile().trainerClassId); return (c && c.perk) || {}; };
 
 const OPPONENT_TRAINERS = [
   { name:'Rival Gary', accent:'#e3350d', hat:'cap' },
@@ -471,6 +501,8 @@ function trainerSilhouette(accent, hat) {
   if (hat === 'cap') extra = "%3Crect x='14' y='4' width='36' height='10' rx='4' fill='%23222'/%3E";
   if (hat === 'band') extra = "%3Crect x='12' y='10' width='40' height='6' fill='%23222'/%3E";
   if (hat === 'bow') extra = "%3Cpolygon points='24,8 32,14 24,20' fill='%23222'/%3E%3Cpolygon points='40,8 32,14 40,20' fill='%23222'/%3E";
+  if (hat === 'glass') extra = "%3Crect x='18' y='16' width='28' height='7' fill='%23222' opacity='.8'/%3E";
+  if (hat === 'star') extra = "%3Ctext x='32' y='25' font-size='16' text-anchor='middle' fill='%23222'%3E%E2%98%85%3C/text%3E";
   if (hat === 'r') extra = "%3Ctext x='32' y='24' font-size='14' text-anchor='middle' fill='%23fff' font-family='monospace'%3ER%3C/text%3E";
   return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='20' r='14' fill='" + c + "'/%3E%3Crect x='12' y='36' width='40' height='26' rx='10' fill='" + c + "'/%3E" + extra + "%3C/svg%3E";
 }
@@ -586,7 +618,7 @@ function saveCampaign(c) { if (c) localStorage.setItem('campaign', JSON.stringif
 function getInventory() { try { return JSON.parse(localStorage.getItem('inventory')) || { ...BAG_START }; } catch (e) { return { ...BAG_START }; } }
 function saveInventory(inv) { localStorage.setItem('inventory', JSON.stringify(inv)); }
 function getCoins() { const s = getStats(); return s.coins || 0; }
-function addCoins(n) { const s = getStats(); s.coins = (s.coins || 0) + n; saveStats(s); return s.coins; }
+function addCoins(n) { const s = getStats(); if (n > 0 && myPerk().coin) n = Math.round(n * myPerk().coin); s.coins = (s.coins || 0) + n; saveStats(s); return s.coins; }
 function spendCoins(n) { const s = getStats(); if ((s.coins || 0) < n) return false; s.coins -= n; saveStats(s); return true; }
 
 // ---------- named team presets ----------
@@ -613,13 +645,19 @@ const trainerGrid = document.getElementById('trainerGrid');
 if (trainerGrid) {
   const profile = getProfile();
   let selectedClass = profile.trainerClassId || null;
+  const winsNow = getStats().wins || 0, nameInput = document.getElementById('trainerName');
+  nameInput.value = profile.trainerName || '';
+  const showPreview = tc => { if (!tc) return; document.getElementById('trainerPreview').innerHTML =
+    `<img class="pixel-avatar" src="${trainerSilhouette(tc.accent, tc.hat)}" alt=""><div>${tc.name.toUpperCase()}<br><span style="color:var(--accent-yellow)">${tc.perkText}</span><br>RANK: ${rankOf(winsNow).toUpperCase()} (${winsNow} WINS)</div>`; };
 
   TRAINER_CLASSES.forEach(tc => {
     const btn = document.createElement('button');
     btn.className = 'trainer-option' + (tc.id === selectedClass ? ' selected' : '');
-    btn.innerHTML = `<img src="${trainerSilhouette(tc.accent, tc.hat)}" alt="${tc.name}"><span>${tc.name}</span>`;
+    const locked = (tc.unlock || 0) > winsNow;
+    btn.innerHTML = `<img src="${trainerSilhouette(tc.accent, tc.hat)}" alt="${tc.name}"><span>${locked ? '🔒 ' + tc.unlock + ' WINS' : tc.name}</span>`;
+    btn.disabled = locked; btn.style.opacity = locked ? .4 : 1;
     btn.addEventListener('click', () => {
-      selectedClass = tc.id;
+      selectedClass = tc.id; showPreview(tc);
       document.querySelectorAll('.trainer-option').forEach(el => el.classList.remove('selected'));
       btn.classList.add('selected');
       document.getElementById('profileContinueBtn').disabled = false;
@@ -628,6 +666,7 @@ if (trainerGrid) {
   });
 
   if (selectedClass) document.getElementById('profileContinueBtn').disabled = false;
+  showPreview(TRAINER_CLASSES.find(t => t.id === selectedClass && (t.unlock || 0) <= winsNow));
 
   const githubAvatar = document.getElementById('githubAvatar');
   const githubStatus = document.getElementById('githubStatus');
@@ -658,6 +697,7 @@ if (trainerGrid) {
   document.getElementById('profileContinueBtn').addEventListener('click', () => {
     const p = getProfile();
     p.trainerClassId = selectedClass;
+    p.trainerName = nameInput.value.trim().slice(0, 12);
     saveProfile(p);
     document.getElementById('profileScreen').hidden = true;
     document.getElementById('pokemonSelection').hidden = false;
@@ -856,9 +896,11 @@ if (trainerIntroEl) {
   trainerAvatarEl.addEventListener('error', () => handleSpriteError(trainerAvatarEl));
   const campTag = !camp ? '' : camp.endless ? ` [ENDLESS WAVE ${camp.stage + 1}]` : ` [GYM ${camp.stage + 1}/${GYM_LEADERS.length}]`;
   const shinyNote = [...playerTeam, ...oppTeam].filter(m => m.shiny).map(m => ` ★ Shiny ${m.name}!`).join('');
+  const _me = getProfile(), _mc = TRAINER_CLASSES.find(t => t.id === _me.trainerClassId) || TRAINER_CLASSES[0];
+  const flavor = VS ? '' : ` ${_mc.name} ${_me.trainerName || ''}: "${_mc.line}"`;
   document.getElementById('trainerText').textContent = VS
     ? `HOT-SEAT BATTLE! Player 1 picks a move, then hands the device to Player 2.${shinyNote}`
-    : `${trainer.name} wants to battle! They sent out ${opponent.name}!${campTag}${shinyNote}`;
+    : `${trainer.name} wants to battle! They sent out ${opponent.name}!${campTag}${shinyNote}${flavor}`;
 
   const playerBadge = document.getElementById('playerBadge');
   const playerClass = TRAINER_CLASSES.find(tc => tc.id === profile.trainerClassId) || TRAINER_CLASSES[0];
@@ -985,11 +1027,13 @@ function startBattle(playerTeam, oppTeam) {
   function calcHitDamage(move, attacker, defender) {
     const mt = moveType(move);
     const eff = typeEffectiveness(mt, defender.type);
-    const crit = Math.random() < 1 / 12;
+    const pk = !VS && playerTeam.includes(attacker) ? myPerk() : {};
+    const crit = Math.random() < (pk.crit || 1 / 12);
+    const perkMult = (pk.all || 1) * (pk.t && pk.t.includes(mt) ? pk.m : 1);
     const levelFactor = 0.6 + attacker.level / 100;
     const stab = mt === attacker.type ? 1.5 : 1;
     const stages = stageMult(attacker.stages.atk) / stageMult(defender.stages.def);
-    const dmg = eff === 0 ? 0 : Math.max(1, Math.round(move.power * levelFactor * eff * stab * stages * weatherMult(mt) * (crit ? 1.5 : 1) * (attacker.status === 'brn' ? 0.5 : 1)));
+    const dmg = eff === 0 ? 0 : Math.max(1, Math.round(move.power * levelFactor * eff * stab * perkMult * stages * weatherMult(mt) * (crit ? 1.5 : 1) * (attacker.status === 'brn' ? 0.5 : 1)));
     return { dmg, eff, crit };
   }
   // Misses (by move accuracy), then a single hit's damage. Returns { dmg, eff, crit, miss }.
@@ -1427,7 +1471,7 @@ if (totalWinsEl) {
     const cls = TRAINER_CLASSES.find(tc => tc.id === profile.trainerClassId);
     const img = profile.avatarUrl || (cls ? trainerSilhouette(cls.accent, cls.hat) : '');
     summary.innerHTML = `<img class="pixel-avatar round" style="width:48px;height:48px;" src="${img}" alt="Trainer" onerror="handleSpriteError(this)">
-      <span style="font-size:11px;">${profile.githubUsername || (cls ? cls.name : 'Trainer')}</span>`;
+      <div style="font-size:11px;line-height:1.9;text-align:left;">${profile.trainerName || profile.githubUsername || (cls ? cls.name : 'Trainer')}<br><span style="font-size:8px;color:var(--accent-yellow)">${cls ? cls.name.toUpperCase() + ' · ' : ''}${rankOf(getStats().wins || 0).toUpperCase()}</span></div>`;
   }
 
   totalWinsEl.textContent = stats.wins;
