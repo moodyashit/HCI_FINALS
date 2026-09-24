@@ -90,10 +90,12 @@ const WEATHER = {
 
 // ---------- shinies + export/import save ----------
 const getShinies = () => { try { return JSON.parse(localStorage.getItem('shinies')) || []; } catch (e) { return []; } };
+const getCaught = () => { try { const l = JSON.parse(localStorage.getItem('caught')); return Array.isArray(l) ? l : []; } catch (e) { return []; } };
+function markCaught(n) { const l = getCaught(); if (!l.includes(n)) { l.push(n); localStorage.setItem('caught', JSON.stringify(l)); } }
 function markShiny(n) { const l = getShinies(); if (!l.includes(n)) { l.push(n); localStorage.setItem('shinies', JSON.stringify(l)); } }
 
-const SAVE_KEYS = ['battleProfile','battleStats','pokeProgress','campaign','shinies','playerTeam','playerPokemon','difficulty','muted','teamSize','oppMode','campMode','seenTutorial','inventory','teamPresets','volume','battleSpeed','reduceMotion'];
-const SAVE_JSON_KEYS = ['battleProfile','battleStats','pokeProgress','campaign','shinies','playerTeam','inventory','teamPresets'];
+const SAVE_KEYS = ['battleProfile','battleStats','pokeProgress','campaign','shinies','caught','playerTeam','playerPokemon','difficulty','muted','teamSize','oppMode','campMode','seenTutorial','inventory','teamPresets','volume','battleSpeed','reduceMotion'];
+const SAVE_JSON_KEYS = ['battleProfile','battleStats','pokeProgress','campaign','shinies','caught','playerTeam','inventory','teamPresets'];
 function exportSave() {
   const data = {};
   SAVE_KEYS.forEach(k => { const v = localStorage.getItem(k); if (v !== null) data[k] = v; });
@@ -278,12 +280,17 @@ const GYM_LEADERS = [
   { name:'Gym Leader Giovanni',badge:'Earth',    accent:'#4a4a4a', hat:'r',    team:['Nidoking','Cubone','Sandshrew'] },
   { name:'Champion Lance',     badge:'Champion', accent:'#7038f8', hat:'cap',  team:['Dragonite','Dratini','Mewtwo'] }
 ];
-const BAG_START = { potion: 3, superpotion: 1, fullheal: 2 };
+const BAG_START = { potion: 3, superpotion: 1, fullheal: 2, pokeball: 3 };
 function getCampaign() { try { return JSON.parse(localStorage.getItem('campaign')); } catch (e) { return null; } }
 function saveCampaign(c) { if (c) localStorage.setItem('campaign', JSON.stringify(c)); else localStorage.removeItem('campaign'); }
 
 // ---------- item bag (persistent across every battle/mode) + coins ----------
-function getInventory() { try { return JSON.parse(localStorage.getItem('inventory')) || { ...BAG_START }; } catch (e) { return { ...BAG_START }; } }
+function getInventory() {
+  let inv = null; try { inv = JSON.parse(localStorage.getItem('inventory')); } catch (e) {}
+  inv = inv || { ...BAG_START };
+  if (inv.pokeball === undefined) inv.pokeball = BAG_START.pokeball;   // saves from before Poké Balls existed start with 3
+  return inv;
+}
 function saveInventory(inv) { localStorage.setItem('inventory', JSON.stringify(inv)); }
 function getCoins() { const s = getStats(); return s.coins || 0; }
 function addCoins(n) { const s = getStats(); if (n > 0 && myPerk().coin) n = Math.round(n * myPerk().coin); s.coins = (s.coins || 0) + n; saveStats(s); return s.coins; }
@@ -613,7 +620,7 @@ function startBattle(playerTeam, oppTeam) {
     oppSprite: document.getElementById('oppSprite'), oppHPBar: document.getElementById('oppHPBar'), oppHPText: document.getElementById('oppHPText'),
     playerName: document.getElementById('playerName'), playerLevel: document.getElementById('playerLevel'),
     playerSprite: document.getElementById('playerSprite'), playerHPBar: document.getElementById('playerHPBar'), playerHPText: document.getElementById('playerHPText'),
-    message: document.getElementById('message'), actions: document.getElementById('actions'), restartButton: document.getElementById('restartButton'),
+    message: document.getElementById('message'), actions: document.getElementById('actions'), restartButton: document.getElementById('restartButton'), recruitPanel: document.getElementById('recruitPanel'),
     switchBtn: document.getElementById('switchBtn'), itemBtn: document.getElementById('itemBtn'), switchPanel: document.getElementById('switchPanel'),
     oppDots: document.getElementById('oppDots'), playerDots: document.getElementById('playerDots'), handoffBtn: document.getElementById('handoffBtn')
   };
@@ -949,6 +956,50 @@ function startBattle(playerTeam, oppTeam) {
       if (won) SFX.win(); else SFX.faint();
     }, T(700));
     els.restartButton.hidden = false;
+    if (won && !VS) showRecruit();
+  }
+
+  // ---------- recruit: after a win, spend Poké Balls to try to recruit the Pokémon you beat ----------
+  const recruitChance = m => (POKEDEX[m.name].legend ? 0.15 : 0.5);
+  function showRecruit() {
+    const panel = els.recruitPanel; if (!panel) return;
+    const owned = new Set(getCaught());
+    panel.innerHTML = ''; panel.hidden = false;
+    els.actions.hidden = true; els.switchBtn.hidden = true; els.itemBtn.hidden = true;   // the spent move buttons only push the panel off screen
+    const head = document.createElement('p'), status = document.createElement('p');
+    status.className = 'recruit-status';
+    const refresh = () => { head.textContent = `RECRUIT? POKÉ BALLS: ${bag.pokeball || 0}`; };
+    refresh(); panel.appendChild(head);
+    const rows = [];
+    const sync = () => rows.forEach(b => { if (!b.dataset.done) b.disabled = (bag.pokeball || 0) <= 0; });
+    oppTeam.forEach(m => {
+      const b = document.createElement('button');
+      b.className = 'retro-btn'; b.style.setProperty('--tc', TYPE_COLORS[m.type] || '');
+      if (owned.has(m.name)) { b.textContent = `${m.name}: RECRUITED`; b.disabled = true; b.dataset.done = '1'; }
+      else b.textContent = `Throw at ${m.name} (${Math.round(recruitChance(m) * 100)}%)`;
+      b.addEventListener('click', () => {
+        if ((bag.pokeball || 0) <= 0 || b.dataset.done) return;
+        bag.pokeball--; saveInventory(bag); refresh();
+        b.dataset.done = '1'; b.disabled = true;
+        if (Math.random() < recruitChance(m)) {
+          markCaught(m.name);
+          const prog = getProgress();   // a recruit joins your roster at the level you beat it at
+          if (!prog[m.name] || prog[m.name].level < m.level) { prog[m.name] = { level: m.level, xp: 0 }; localStorage.setItem('pokeProgress', JSON.stringify(prog)); }
+          b.textContent = `${m.name}: RECRUITED`;
+          status.textContent = `Gotcha! ${m.name} was recruited at Lv ${prog[m.name].level}!`;
+          try { SFX.win(); } catch (e) {}
+        } else {
+          b.textContent = `${m.name}: BROKE FREE`;
+          status.textContent = `Oh no! ${m.name} broke free!`;
+          try { SFX.faint(); } catch (e) {}
+        }
+        if ((bag.pokeball || 0) <= 0 && rows.some(x => !x.dataset.done)) status.textContent += ' Out of Poké Balls - buy more in the Stats shop.';
+        sync();
+      });
+      rows.push(b); panel.appendChild(b);
+    });
+    sync(); panel.appendChild(status);
+    if ((bag.pokeball || 0) <= 0 && rows.some(x => !x.dataset.done)) status.textContent = 'Out of Poké Balls - buy more in the Stats shop.';
   }
 
   // ---------- team logic: fainting and switching ----------
@@ -1081,7 +1132,7 @@ function startBattle(playerTeam, oppTeam) {
 
   // ---------- Endless draft: pick 1 of 3 random Pokémon to swap into your team ----------
   function showDraft() {
-    els.restartButton.hidden = true;
+    els.restartButton.hidden = true; if (els.recruitPanel) els.recruitPanel.hidden = true;
     const pool = OPPONENT_POOL.filter(n => !playerTeam.some(p => p.name === n));
     const picks = pool.sort(() => Math.random() - 0.5).slice(0, 3);
     els.switchPanel.hidden = true; els.actions.hidden = false; els.actions.innerHTML = '';
@@ -1156,6 +1207,7 @@ if (totalWinsEl) {
     { key: 'fullheal', label: 'Full Heal', desc: 'Cures status in battle', cost: 30 },
     { key: 'revive', label: 'Revive', desc: 'Revives a fainted teammate at half HP', cost: 60 },
     { key: 'xattack', label: 'X Attack', desc: '+1 Attack in battle', cost: 25 },
+    { key: 'pokeball', label: 'Poké Balls x5', desc: 'try to recruit a beaten foe after a win', cost: 50, qty: 5 },
     { key: 'luckyegg', label: 'Lucky Egg', desc: '+50% XP for your next 5 wins; count = wins left', cost: 80, qty: 5 }
   ];
   const RARE_CANDY_COST = 100;
@@ -1268,13 +1320,13 @@ if (totalWinsEl) {
 // ---------- POKEDEX PAGE ----------
 const dexGrid = document.getElementById('dexGrid');
 if (dexGrid) {
-  const prog = getProgress(), byMon = getStats().byMon || {}, shinySet = new Set(getShinies());
+  const prog = getProgress(), byMon = getStats().byMon || {}, shinySet = new Set(getShinies()), caughtSet = new Set(getCaught());
   const $ = id => document.getElementById(id), search = $('dexSearch'), typeSel = $('dexType'), eraSel = $('dexEra'), legSel = $('dexLegend'), dlg = $('dexDlg');
   const all = Object.values(POKEDEX);
   typeSel.innerHTML = '<option value="">All types</option>' + [...new Set(all.flatMap(p => [p.type, p.type2].filter(Boolean)))].sort().map(t => `<option>${t}</option>`).join('');
   eraSel.innerHTML = '<option value="">All eras</option>' + [...new Set(all.map(p => p.era))].map(e => `<option>${e}</option>`).join('');
-  const seen = n => !!(prog[n] || byMon[n]), badges = p => typeBadge(p.type) + (p.type2 ? typeBadge(p.type2) : '');
-  const caught = Object.keys(POKEDEX).filter(seen).length;
+  const seen = n => !!(prog[n] || byMon[n] || caughtSet.has(n)), badges = p => typeBadge(p.type) + (p.type2 ? typeBadge(p.type2) : '');
+  const seenCount = Object.keys(POKEDEX).filter(seen).length, recruitedCount = Object.keys(POKEDEX).filter(n => caughtSet.has(n)).length;
   function renderDex() {
     const q = search.value.trim().toLowerCase();
     const list = Object.entries(POKEDEX).filter(([n, p]) => n.toLowerCase().includes(q) && (!typeSel.value || p.type === typeSel.value || p.type2 === typeSel.value)
@@ -1283,18 +1335,19 @@ if (dexGrid) {
       const s = seen(n), rec = byMon[n] || { wins: 0, losses: 0 }, tot = rec.wins + rec.losses;
       return `<div class="dex-card${s ? '' : ' unseen'}" data-name="${n}"><img src="${p.front}" alt="${s ? n : '???'}" loading="lazy" onerror="handleSpriteError(this)">
         <div class="dex-name">${s ? n : '???'}${shinySet.has(n) ? ' ★' : ''}${p.legend ? ' ✦' : ''}${s ? badges(p) : ''}</div>
-        <div>${s ? 'Lv ' + (prog[n] ? prog[n].level : '40 (base)') : 'Not caught yet'}</div>
+        <div>${s ? 'Lv ' + (prog[n] ? prog[n].level : '40 (base)') : 'Not seen yet'}</div>
+        ${caughtSet.has(n) ? '<div style="color:var(--hp-green)">RECRUITED</div>' : ''}
         <div>${s && tot ? `${rec.wins}W / ${rec.losses}L (${Math.round((rec.wins / tot) * 100)}%)` : ''}</div></div>`;
     }).join('') || '<p style="font-size:9px;">No Pokémon match.</p>';
-    $('dexCount').textContent = `${caught}/${all.length} CAUGHT · ${list.length} SHOWN · tap a card for details`;
+    $('dexCount').textContent = `${seenCount}/${all.length} SEEN · ${recruitedCount} RECRUITED · ${list.length} SHOWN · tap a card for details`;
   }
   const bar = (l, v) => `<div class="bs"><span>${l}</span><i style="width:${Math.min(100, v / 1.6)}%"></i><b>${v}</b></div>`;
   dexGrid.addEventListener('click', e => {
     const c = e.target.closest('.dex-card'); if (!c) return;
     const n = c.dataset.name, p = POKEDEX[n], rec = byMon[n] || { wins: 0, losses: 0 }, ev = EVOLVE[n], from = EVOLVES_FROM[n];
     dlg.querySelector('.dex-body').innerHTML = !seen(n)
-      ? `<img src="${p.front}" class="unseenimg" alt=""><p>???</p><p style="opacity:.7">Use this Pokémon in a battle to unlock its entry.</p>`
-      : `<img src="${p.front}" alt="${n}" onerror="handleSpriteError(this)"><h3>${n}${p.legend ? ' ✦' : ''}</h3><p>${badges(p)}<br>${p.era}${shinySet.has(n) ? ' · ★ shiny used' : ''}</p>
+      ? `<img src="${p.front}" class="unseenimg" alt=""><p>???</p><p style="opacity:.7">Use it in a battle, or recruit it with a Poké Ball, to unlock its entry.</p>`
+      : `<img src="${p.front}" alt="${n}" onerror="handleSpriteError(this)"><h3>${n}${p.legend ? ' ✦' : ''}</h3><p>${badges(p)}<br>${p.era}${shinySet.has(n) ? ' · ★ shiny used' : ''}${caughtSet.has(n) ? ' · RECRUITED' : ''}</p>
         ${bar('HP', p.bs.hp)}${bar('ATK', p.bs.atk)}${bar('DEF', p.bs.def)}${bar('SPD', p.bs.spe)}
         <p>${from ? `Evolves from ${from}. ` : ''}${ev ? `Evolves into ${ev.to} at Lv ${ev.at}.` : from ? '' : 'Does not evolve.'}</p>
         <p>Lv ${prog[n] ? prog[n].level : '40 (base)'} · ${rec.wins}W / ${rec.losses}L</p>

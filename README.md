@@ -10,6 +10,7 @@ A browser-based, retro-styled Pokémon battle game built for HCI Finals (FEU-A).
 - **Coins & shop** — every win earns coins (more from tougher fights, gyms and later Endless waves). Spend them on the Stats page shop for Potions, Super Potions, Full Heals, or a Rare Candy that instantly levels up any Pokémon you've used.
 - **Persistent item bag** — Potions/Super Potions/Full Heals bought in the shop (or earned from gyms) now carry over between every battle and mode, instead of resetting per campaign run.
 - **Endless draft** — after clearing an Endless wave, pick 1 of 3 random Pokémon to swap into your team, roguelike-style, or skip and keep your current team.
+- **Poké Balls & recruiting** — after a win, throw a Poké Ball at any Pokémon you beat (50% chance, 15% for legendaries). A recruit is marked RECRUITED in the Pokédex and joins your roster at the level you beat it at. You start with 3 balls; buy 5 more for 50 coins in the Stats shop.
 - **Team presets** — save your current pick as a named team from the selection screen, then load it back in with one click instead of repicking every run.
 
 
@@ -85,6 +86,7 @@ All progress is stored client-side in `localStorage`:
 - `pokeProgress`, `campaign`, `shinies` — XP/levels, current gym/endless run, shinies used
 - `playerTeam` / `playerPokemon` — the team (and lead) selected for the current run
 - `inventory` — your Potions/Super Potions/Full Heals, shared across every battle and mode
+- `caught` — Pokémon you've recruited with Poké Balls
 - `teamPresets` — named teams you've saved from the selection screen
 
 Reset your record anytime from the Stats page.
@@ -104,3 +106,5 @@ UPDATE (09/24/26) — +301 Gen 7–9 Pokémon (1,025 total) and the trainer over
 UPDATE (09/24/26) — split the roster into roster.js; added base stats, dual types, evolution, new shop items (Revive, X Attack, Lucky Egg), Pokédex silhouettes/filters/detail popup, a settings page, sprite fallbacks and mirrored HOME back sprites.
 
 UPDATE (09/24/26) — roster is now the full National Pokédex (1,025): checked against Serebii's list and added the stragglers (Nidoran♀/♂, Nidorina, Nidorino, Farfetch'd, Mr. Mime, Pidgeotto, Magby, Celebi, Barboach, Whiscash, Wynaut, Mime Jr., Chingling, Bonsly, Happiny, Gliscor, Wormadam, Slither Wing, Sandy Shocks, Roaring Moon, Walking Wake).
+
+UPDATE (09/24/26) — UI fixes (sticky back bar, picker layout, Pokédex move rows, battle clipping, mobile) and Poké Balls: recruit a beaten foe after a win, RECRUITED marker in the Pokédex, Poké Balls in the shop.

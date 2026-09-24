@@ -161,3 +161,8 @@ body > .trainer-intro, body > .battle-frame { margin: auto; }
 .weather:empty { display: none; }
 
 .flip { scale: -1 1; }
+
+/* ---------- recruit panel (after a win) ---------- */
+.recruit-panel { margin-top: 10px; }
+.recruit-panel > p { grid-column: 1 / -1; margin: 0; font-size: clamp(8px, 1.4vw, 11px); line-height: 1.7; }
+.recruit-status { color: var(--accent-yellow); min-height: 1.7em; }
