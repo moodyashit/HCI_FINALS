@@ -1,13 +1,14 @@
 .dex-tools { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 14px; }
 .dex-tools input, .dex-tools select { font-family: 'Press Start 2P', monospace; font-size: 9px; padding: 10px; border: 2px solid #000; border-radius: 6px; }
-.dex-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
+.dex-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr)); gap: 12px; }
 .dex-card { background: #2b2b3d; border: 3px solid #000; border-radius: 8px; padding: 10px; font-size: 8px; line-height: 1.8; }
 .dex-card img { width: 64px; height: 64px; object-fit: contain; image-rendering: pixelated; }
 .dex-name { font-size: 9px; margin: 6px 0; }
 .dex-moves { list-style: none; padding: 0; margin: 8px 0 0; text-align: left; }
-.dex-moves li { display: flex; justify-content: space-between; border-top: 1px solid #444; padding: 3px 0; }
-.dex-moves span { color: var(--accent-yellow); }
+.dex-moves li { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 6px; border-top: 1px solid #444; padding: 3px 0; }
+.dex-moves li > span:last-child { color: var(--accent-yellow); min-width: 1.6em; text-align: right; }   /* power only - was also recolouring the type badge text */
 .type-badge { font-size: .8em; padding: 2px 4px; border-radius: 3px; margin-left: 4px; color: #fff; text-transform: uppercase; vertical-align: middle; }
+.dex-moves .type-badge { margin-left: 0; }
 
 .dex-card { cursor: pointer; }
 .dex-card.unseen img, .unseenimg { filter: brightness(0); opacity: .55; }
@@ -18,3 +19,4 @@
 .bs { display: flex; align-items: center; gap: 8px; margin: 4px 0; text-align: left; }
 .bs span { width: 34px; } .bs b { width: 30px; text-align: right; }
 .bs i { display: block; height: 8px; background: var(--hp-green); border: 1px solid #000; border-radius: 4px; }
+.dex-dlg .retro-btn { margin-top: 12px; }

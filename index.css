@@ -1,9 +1,9 @@
 body {
   margin: 0;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   justify-content: center;
-  align-items: center;
   padding: 16px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9' shape-rendering='crispEdges'%3E%3Crect width='16' height='3' fill='%232b3a67'/%3E%3Crect y='3' width='16' height='2' fill='%233e5c8a'/%3E%3Crect x='12' y='1' width='2' height='2' fill='%23f4f0d8'/%3E%3Crect x='2' y='1' width='1' height='1' fill='%23fff'/%3E%3Crect x='5' width='1' height='1' fill='%23fff'/%3E%3Crect x='9' y='2' width='1' height='1' fill='%23fff'/%3E%3Crect y='5' width='16' height='1' fill='%23345c34'/%3E%3Crect y='6' width='16' height='3' fill='%234f7a4f'/%3E%3Crect x='3' y='7' width='1' height='1' fill='%23345c34'/%3E%3Crect x='8' y='8' width='1' height='1' fill='%23345c34'/%3E%3Crect x='12' y='7' width='1' height='1' fill='%23345c34'/%3E%3C/svg%3E");
   background-size: cover;
@@ -11,6 +11,8 @@ body {
   image-rendering: pixelated;
 }
 
+/* margin:auto centres like align-items:center but never pushes the top of a tall page out of reach */
+body > .panel { margin: auto; }
 .crt { position: relative; }
 .crt::before {
   content: "";
@@ -22,6 +24,10 @@ body {
 }
 
 .screen { text-align: center; position: relative; }
+.title-screen { padding-top: 24px; }   /* the title screen has no BACK bar, so it brings its own top space */
+
+/* START button and team presets share one row on wide screens (stack on phones) */
+.pick-footer { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 0 48px; }
 
 .poke-logo { margin: 0 0 32px; line-height: 1.6; }
 .logo-yellow {
@@ -55,7 +61,8 @@ body {
 
 .pokemon-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  align-content: start;          /* few results (search) must not stretch the rows */
   gap: 14px;
 }
 
@@ -99,11 +106,20 @@ body {
 
 @media (max-width: 480px) {
   .pokemon-card img { width: 46px; height: 46px; }
+  .pokemon-container { grid-template-columns: repeat(3, 1fr); gap: 8px; }   /* 3 per row on phones */
+  .pokemon-card span { font-size: 7px; overflow-wrap: anywhere; }
 }
 
 .pokemon-card.picked { border-color: var(--accent-yellow); box-shadow: 0 0 0 2px var(--accent-yellow), 0 4px 0 #000; }
-/* the grid scrolls on its own so the start bar never moves */
-.pokemon-container { max-height: calc(92vh - 450px); min-height: 180px; overflow-y: auto; padding: 8px; }
+/* Picker: the screen fills the panel, the grid takes whatever height is left and scrolls on its own,
+   so the START bar and presets stay put no matter how tall the window is. */
+#pokemonSelection:not([hidden]) {
+  display: flex; flex-direction: column;
+  height: calc(92vh - 12px - var(--padt) - var(--pad));
+  height: calc(92dvh - 12px - var(--padt) - var(--pad));
+}
+#pokemonSelection > * { flex-shrink: 0; }
+#pokemonSelection > .pokemon-container { flex: 1 1 0; min-height: 150px; overflow-y: auto; padding: 8px; }
 .team-bar { margin-top: 14px; text-align: center; }
 .mode-bar { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 14px; }
 button.retro-btn.mode-btn.selected, button.retro-btn.opp-btn.selected, button.retro-btn.camp-btn.selected { background: var(--accent-yellow); color: #000; }
@@ -116,9 +132,11 @@ button.retro-btn.mode-btn.selected, button.retro-btn.opp-btn.selected, button.re
 
 /* ---------- mobile ---------- */
 @media (max-width: 700px) {
-  .pokemon-container { max-height: 46vh; max-height: 46dvh; min-height: 0; }
-  .mode-bar { margin-bottom: 8px; }
+  .mode-bar { margin-bottom: 8px; gap: 6px; }
+  .mode-bar .retro-btn.small { font-size: 8px; padding: 7px 8px; }
   .section-title { margin-bottom: 10px; }
+  .team-bar { margin-top: 8px; }
+  .pick-input { max-width: 100%; }
 }
 @media (hover: none) { .pokemon-card:hover { transform: none; } }
 

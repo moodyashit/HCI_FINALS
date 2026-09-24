@@ -12,7 +12,8 @@
 }
 
 * { box-sizing: border-box; }
-html, body { height: 100%; }
+html { height: 100%; }
+body { min-height: 100%; }   /* not height:100% - tall pages must be able to grow and scroll */
 
 /* iOS Safari shows the <html> background when you rubber-band scroll past
    the top/bottom or swipe sideways. Without this, that flash is white. */
@@ -52,6 +53,8 @@ button.retro-btn.small { font-size: 9px; padding: 8px 10px; }
 
 /* ---- panel shell reused across screens ---- */
 .panel {
+  --pad: clamp(20px, 4vw, 48px);
+  --padt: 12px;                       /* top padding stays small: the BACK bar lives there */
   width: min(1100px, 94vw);
   max-height: 92vh;
   max-height: 92dvh;
@@ -60,8 +63,9 @@ button.retro-btn.small { font-size: 9px; padding: 8px 10px; }
   border: 6px solid #000;
   border-radius: 10px;
   box-shadow: 0 0 0 4px var(--accent-yellow), 0 10px 0 rgba(0, 0, 0, .3);
-  padding: clamp(20px, 4vw, 48px);
+  padding: var(--padt) var(--pad) var(--pad);
 }
+@media (max-height: 820px) { .panel { --pad: clamp(16px, 2.5vw, 28px); } }
 .panel.narrow { width: min(560px, 92vw); }
 
 /* ---- pixel avatar bust (trainer icon / github avatar frame) ---- */
@@ -152,7 +156,13 @@ button.retro-btn.small { font-size: 9px; padding: 8px 10px; }
 }
 
 /* ---- back bar (sticky on top of every screen) ---- */
-.back-bar { position: sticky; top: 0; z-index: 6; text-align: left; margin: 0 0 14px; padding: 2px 0 6px; background: var(--panel-bg); }
-.trainer-intro .back-bar { background: transparent; position: static; }
+/* The bar reaches up into the panel's top padding (negative margin + matching padding) and sticks at -padt,
+   so nothing scrolling underneath can show through the strip above it. */
+.back-bar { position: sticky; top: calc(-1 * var(--padt, 0px)); z-index: 6; text-align: left;
+  margin: calc(-1 * var(--padt, 0px)) 0 14px; padding: calc(var(--padt, 0px) + 8px) 0 8px; background: var(--panel-bg); }
+.trainer-intro .back-bar { background: transparent; position: static; margin: 0 0 14px; padding: 2px 0 6px; }
+
+/* badges never stretch, wrap or get squeezed, wherever they sit (flex rows, stat boxes, move lists) */
+.type-badge { flex: none; white-space: nowrap; align-self: center; }
 
 .reduce-motion *, .reduce-motion *::before { animation: none !important; transition: none !important; }
