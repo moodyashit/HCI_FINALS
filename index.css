@@ -36,7 +36,16 @@ body {
 .blink { animation: blink 1.2s steps(2, start) infinite; }
 @keyframes blink { to { visibility: hidden; } }
 
-.footnote { margin-top: 24px; font-size: 9px; }
+.footnote {
+  margin-top: 24px;
+  font-size: 9px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px 14px;
+}
+.footnote a { white-space: nowrap; }
 
 .section-title {
   font-size: clamp(12px, 2.5vw, 18px);

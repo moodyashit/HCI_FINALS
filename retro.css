@@ -14,9 +14,19 @@
 * { box-sizing: border-box; }
 html, body { height: 100%; }
 
+/* iOS Safari shows the <html> background when you rubber-band scroll past
+   the top/bottom or swipe sideways. Without this, that flash is white. */
+html {
+  background: var(--panel-bg);
+  overflow-x: hidden;
+  overscroll-behavior: none;
+}
+
 body {
   font-family: 'Press Start 2P', monospace;
   color: var(--text-cream);
+  overflow-x: hidden;
+  overscroll-behavior: none;
 }
 
 img { image-rendering: pixelated; }
