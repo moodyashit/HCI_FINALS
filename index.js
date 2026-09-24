@@ -91,6 +91,19 @@ const WEATHER = {
 // ---------- shinies + export/import save ----------
 const getShinies = () => { try { return JSON.parse(localStorage.getItem('shinies')) || []; } catch (e) { return []; } };
 const getCaught = () => { try { const l = JSON.parse(localStorage.getItem('caught')); return Array.isArray(l) ? l : []; } catch (e) { return []; } };
+// ---------- starters: a brand-new player owns only these 3; everything else has to be caught ----------
+// `caught` is the player's roster. It is seeded once (only while the key doesn't exist), so an imported save
+// that contains its own `caught` list is respected as-is. Older saves with no `caught` list keep the Pokémon
+// they already have progress on.
+const STARTERS = ['Bulbasaur', 'Charmander', 'Squirtle'];
+(function seedStarters() {
+  try {
+    if (localStorage.getItem('caught') !== null) return;
+    let prog = {}; try { prog = JSON.parse(localStorage.getItem('pokeProgress')) || {}; } catch (e) {}
+    const seed = [...new Set([...STARTERS, ...Object.keys(prog)])].filter(n => POKEDEX[n]);
+    localStorage.setItem('caught', JSON.stringify(seed));
+  } catch (e) {}
+})();
 function markCaught(n) { const l = getCaught(); if (!l.includes(n)) { l.push(n); localStorage.setItem('caught', JSON.stringify(l)); } }
 function markShiny(n) { const l = getShinies(); if (!l.includes(n)) { l.push(n); localStorage.setItem('shinies', JSON.stringify(l)); } }
 
@@ -260,7 +273,7 @@ function grantXP(mons, foesBeaten) {
     prog[m.name] = p;
     const ev = EVOLVE[m.name];
     if (ev && p.level >= ev.at) {   // evolution: progress and team slot move to the new form
-      prog[ev.to] = p; delete prog[m.name]; lines.push(`${m.name} evolved into ${ev.to}!`);
+      prog[ev.to] = p; delete prog[m.name]; markCaught(ev.to); if (getShinies().includes(m.name)) markShiny(ev.to); lines.push(`${m.name} evolved into ${ev.to}!`);
       try { localStorage.setItem('playerTeam', JSON.stringify(JSON.parse(localStorage.getItem('playerTeam') || '[]').map(x => (x === m.name ? ev.to : x))));
         if (localStorage.getItem('playerPokemon') === m.name) localStorage.setItem('playerPokemon', ev.to); } catch (e) {}
     }
@@ -395,6 +408,7 @@ if (pokemonContainer) {
   });
 }
 
+const ownedSet = new Set(getCaught());   // your picks are limited to caught Pokémon; the foe / Player 2 pick screen still lists everyone
 let teamSize = +localStorage.getItem('teamSize') || 3;
 let oppMode = localStorage.getItem('oppMode') || 'random';
 let campMode = localStorage.getItem('campMode') || 'single';
@@ -411,6 +425,7 @@ function refreshTeamUI() {
   document.querySelectorAll('.opp-btn').forEach(b => b.classList.toggle('selected', b.dataset.mode === oppMode));
   document.querySelectorAll('.pokemon-card').forEach(c => {
     c.classList.toggle('picked', picks.includes(c.dataset.name));
+    c.classList.toggle('locked', phase === 'player' && !ownedSet.has(c.dataset.name));
     c.disabled = phase === 'opp' && team.includes(c.dataset.name);
   });
   document.querySelectorAll('.camp-btn').forEach(b => b.classList.toggle('selected', b.dataset.camp === campMode));
@@ -473,7 +488,7 @@ if (teamBtn) {
         teamSize = presets[name].names.length;
         localStorage.setItem('teamSize', teamSize);
         team.length = 0;
-        presets[name].names.forEach(n => { if (POKEDEX[n]) team.push(n); });
+        presets[name].names.forEach(n => { if (POKEDEX[n] && ownedSet.has(n)) team.push(n); });
         refreshTeamUI();
       });
       const del = document.createElement('button');
@@ -521,7 +536,7 @@ if (teamBtn) {
   typeSel.addEventListener('change', applyFilter);
   $('randomTeamBtn').addEventListener('click', () => {
     const picks = phase === 'player' ? team : oppPick;
-    const pool = Object.keys(POKEDEX).filter(n => !picks.includes(n) && !(phase === 'opp' && team.includes(n)));
+    const pool = Object.keys(POKEDEX).filter(n => !picks.includes(n) && (phase === 'opp' ? !team.includes(n) : ownedSet.has(n)));
     while (picks.length < teamSize && pool.length) picks.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
     refreshTeamUI();
   });
@@ -544,15 +559,16 @@ if (trainerIntroEl) {
   const trainer = VS ? { name: 'Player 2', accent: '#e3350d', hat: 'cap' } : gym || OPPONENT_TRAINERS[Math.floor(Math.random() * OPPONENT_TRAINERS.length)];
 
   function levelToMaxHp(level) { return Math.round(80 + level * 1.6); }
-  function makeMon(name, level) {
+  function makeMon(name, level, mine) {
     const maxHp = Math.round(levelToMaxHp(level) * hpMult(name));
-    const d = POKEDEX[name], shiny = Math.random() < 1 / 64;   // 1-in-64 recolored sprite
+    // Your own Pokémon are shiny only if you recruited a shiny one (kept in `shinies`); foes and 2-player teams roll 1-in-64
+    const d = POKEDEX[name], shiny = mine && !VS ? getShinies().includes(name) : Math.random() < 1 / 64;
     return { name, level, hp: maxHp, maxHp, ...d, shiny, speed: SPEED[name] || 60, stages: freshStages(),
       front: shiny ? d.front.replace('/anim/normal/', '/anim/shiny/') : d.front,
       back:  shiny ? d.back.replace('/anim/back-normal/', '/anim/back-shiny/') : d.back };
   }
   const prog = getProgress();
-  const playerTeam = teamNames.map(n => makeMon(n, VS ? 50 : prog[n] ? prog[n].level : 40));
+  const playerTeam = teamNames.map(n => makeMon(n, VS ? 50 : prog[n] ? prog[n].level : 40, true));
   const avgLv = Math.round(playerTeam.reduce((a, p) => a + p.level, 0) / playerTeam.length);
   // gym leaders scale with the stage; other opponents track your team's level (±3)
   const foeLevel = () => (VS ? 50 : camp && camp.endless ? Math.min(100, Math.max(5, avgLv - 2 + camp.stage * 2)) : gym ? 40 + camp.stage * 2 : Math.max(5, avgLv + Math.floor(Math.random() * 7) - 3));
@@ -635,7 +651,6 @@ function startBattle(playerTeam, oppTeam) {
   }
   function showPlayer() {
     player.fought = true;
-    if (player.shiny && !VS) markShiny(player.name);
     els.playerName.innerHTML = player.name + typeBadge(player.type);
     els.playerLevel.textContent = player.level;
     els.playerSprite.classList.remove('anim-faint');
@@ -975,7 +990,7 @@ function startBattle(playerTeam, oppTeam) {
     oppTeam.forEach(m => {
       const b = document.createElement('button');
       b.className = 'retro-btn'; b.style.setProperty('--tc', TYPE_COLORS[m.type] || '');
-      if (owned.has(m.name)) { b.textContent = `${m.name}: RECRUITED`; b.disabled = true; b.dataset.done = '1'; }
+      if (owned.has(m.name)) { b.textContent = `${m.name}: ALREADY CAUGHT`; b.disabled = true; b.dataset.done = '1'; }
       else b.textContent = `Throw at ${m.name} (${Math.round(recruitChance(m) * 100)}%)`;
       b.addEventListener('click', () => {
         if ((bag.pokeball || 0) <= 0 || b.dataset.done) return;
@@ -983,10 +998,11 @@ function startBattle(playerTeam, oppTeam) {
         b.dataset.done = '1'; b.disabled = true;
         if (Math.random() < recruitChance(m)) {
           markCaught(m.name);
+          if (m.shiny) markShiny(m.name);   // a shiny recruit stays shiny
           const prog = getProgress();   // a recruit joins your roster at the level you beat it at
           if (!prog[m.name] || prog[m.name].level < m.level) { prog[m.name] = { level: m.level, xp: 0 }; localStorage.setItem('pokeProgress', JSON.stringify(prog)); }
           b.textContent = `${m.name}: RECRUITED`;
-          status.textContent = `Gotcha! ${m.name} was recruited at Lv ${prog[m.name].level}!`;
+          status.textContent = `Gotcha! ${m.shiny ? '★ Shiny ' : ''}${m.name} was recruited at Lv ${prog[m.name].level}!`;
           try { SFX.win(); } catch (e) {}
         } else {
           b.textContent = `${m.name}: BROKE FREE`;
@@ -1238,7 +1254,8 @@ if (totalWinsEl) {
     });
     // Rare Candy: pick any Pokémon you've used and bump it a level.
     const prog = getProgress();
-    const known = Object.keys(prog).length ? Object.keys(prog) : Object.keys(POKEDEX).slice(0, 1);
+    const ownedNow = getCaught();
+    const known = Object.keys(prog).filter(n => ownedNow.includes(n)).length ? Object.keys(prog).filter(n => ownedNow.includes(n)) : ownedNow.slice(0, 1);
     const row = document.createElement('div');
     row.className = 'stat-row';
     const sel = document.createElement('select');
@@ -1325,8 +1342,8 @@ if (dexGrid) {
   const all = Object.values(POKEDEX);
   typeSel.innerHTML = '<option value="">All types</option>' + [...new Set(all.flatMap(p => [p.type, p.type2].filter(Boolean)))].sort().map(t => `<option>${t}</option>`).join('');
   eraSel.innerHTML = '<option value="">All eras</option>' + [...new Set(all.map(p => p.era))].map(e => `<option>${e}</option>`).join('');
-  const seen = n => !!(prog[n] || byMon[n] || caughtSet.has(n)), badges = p => typeBadge(p.type) + (p.type2 ? typeBadge(p.type2) : '');
-  const seenCount = Object.keys(POKEDEX).filter(seen).length, recruitedCount = Object.keys(POKEDEX).filter(n => caughtSet.has(n)).length;
+  const seen = n => caughtSet.has(n), badges = p => typeBadge(p.type) + (p.type2 ? typeBadge(p.type2) : '');
+  const caughtCount = Object.keys(POKEDEX).filter(seen).length;
   function renderDex() {
     const q = search.value.trim().toLowerCase();
     const list = Object.entries(POKEDEX).filter(([n, p]) => n.toLowerCase().includes(q) && (!typeSel.value || p.type === typeSel.value || p.type2 === typeSel.value)
@@ -1335,19 +1352,19 @@ if (dexGrid) {
       const s = seen(n), rec = byMon[n] || { wins: 0, losses: 0 }, tot = rec.wins + rec.losses;
       return `<div class="dex-card${s ? '' : ' unseen'}" data-name="${n}"><img src="${p.front}" alt="${s ? n : '???'}" loading="lazy" onerror="handleSpriteError(this)">
         <div class="dex-name">${s ? n : '???'}${shinySet.has(n) ? ' ★' : ''}${p.legend ? ' ✦' : ''}${s ? badges(p) : ''}</div>
-        <div>${s ? 'Lv ' + (prog[n] ? prog[n].level : '40 (base)') : 'Not seen yet'}</div>
-        ${caughtSet.has(n) ? '<div style="color:var(--hp-green)">RECRUITED</div>' : ''}
+        <div>${s ? 'Lv ' + (prog[n] ? prog[n].level : '40 (base)') : 'Not caught yet'}</div>
+        ${caughtSet.has(n) ? '<div style="color:var(--hp-green)">CAUGHT</div>' : ''}
         <div>${s && tot ? `${rec.wins}W / ${rec.losses}L (${Math.round((rec.wins / tot) * 100)}%)` : ''}</div></div>`;
     }).join('') || '<p style="font-size:9px;">No Pokémon match.</p>';
-    $('dexCount').textContent = `${seenCount}/${all.length} SEEN · ${recruitedCount} RECRUITED · ${list.length} SHOWN · tap a card for details`;
+    $('dexCount').textContent = `${caughtCount}/${all.length} CAUGHT · ${list.length} SHOWN · tap a card for details`;
   }
   const bar = (l, v) => `<div class="bs"><span>${l}</span><i style="width:${Math.min(100, v / 1.6)}%"></i><b>${v}</b></div>`;
   dexGrid.addEventListener('click', e => {
     const c = e.target.closest('.dex-card'); if (!c) return;
     const n = c.dataset.name, p = POKEDEX[n], rec = byMon[n] || { wins: 0, losses: 0 }, ev = EVOLVE[n], from = EVOLVES_FROM[n];
     dlg.querySelector('.dex-body').innerHTML = !seen(n)
-      ? `<img src="${p.front}" class="unseenimg" alt=""><p>???</p><p style="opacity:.7">Use it in a battle, or recruit it with a Poké Ball, to unlock its entry.</p>`
-      : `<img src="${p.front}" alt="${n}" onerror="handleSpriteError(this)"><h3>${n}${p.legend ? ' ✦' : ''}</h3><p>${badges(p)}<br>${p.era}${shinySet.has(n) ? ' · ★ shiny used' : ''}${caughtSet.has(n) ? ' · RECRUITED' : ''}</p>
+      ? `<img src="${p.front}" class="unseenimg" alt=""><p>???</p><p style="opacity:.7">Win a battle, then catch it with a Poké Ball, to unlock its entry.</p>`
+      : `<img src="${p.front}" alt="${n}" onerror="handleSpriteError(this)"><h3>${n}${p.legend ? ' ✦' : ''}</h3><p>${badges(p)}<br>${p.era}${shinySet.has(n) ? ' · ★ shiny' : ''}${caughtSet.has(n) ? ' · CAUGHT' : ''}</p>
         ${bar('HP', p.bs.hp)}${bar('ATK', p.bs.atk)}${bar('DEF', p.bs.def)}${bar('SPD', p.bs.spe)}
         <p>${from ? `Evolves from ${from}. ` : ''}${ev ? `Evolves into ${ev.to} at Lv ${ev.at}.` : from ? '' : 'Does not evolve.'}</p>
         <p>Lv ${prog[n] ? prog[n].level : '40 (base)'} · ${rec.wins}W / ${rec.losses}L</p>

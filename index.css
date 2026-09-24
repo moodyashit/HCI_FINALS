@@ -146,7 +146,7 @@ button.retro-btn.mode-btn.selected, button.retro-btn.opp-btn.selected, button.re
 .tutorial b { color: var(--accent-yellow); }
 
 /* ---------- picker utilities + type chart ---------- */
-.pokemon-card[hidden] { display: none; }
+.pokemon-card[hidden], .pokemon-card.locked { display: none; }
 .pick-input { font-family: 'Press Start 2P', monospace; font-size: 9px; padding: 8px; border: 2px solid #000; border-radius: 6px; max-width: 45vw; }
 .chart-dlg { background: var(--panel-bg); color: var(--text-cream); border: 4px solid #000; border-radius: 10px; box-shadow: 0 0 0 3px var(--accent-yellow); width: min(640px, 92vw); max-height: 80vh; font-family: 'Press Start 2P', monospace; text-align: center; }
 .chart-dlg::backdrop { background: rgba(0,0,0,.7); }
