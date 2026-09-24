@@ -16,7 +16,7 @@ A browser-based, retro-styled Pokémon battle game built for HCI Finals (FEU-A).
 - **Title → Profile → Select → Battle → Stats** flow across four linked pages
 - **Trainer customization** — pick a trainer class (Youngster, Lass, Ace Trainer, Hiker, Swimmer, Rocket Grunt), each with a procedurally-drawn pixel silhouette avatar (no image assets needed)
 - **Optional GitHub avatar** — enter a GitHub username to pull in your real avatar via the public GitHub API; falls back gracefully if the username isn't found
-- **1,007 selectable Pokémon**, each with 4 unique moves and a type (18 types total, cards generated from the `POKEDEX` in `index.js`)
+- **1,025 selectable Pokémon**, each with 4 unique moves and a type (18 types total, cards generated from the `POKEDEX` in `index.js`)
 - **Type effectiveness system** — moves are boosted, weakened, or nullified depending on attacker/defender type (e.g. Water is super effective against Fire)
 - **Level-scaled stats** — each battle rolls a random level (40–55) for both Pokémon, which affects max HP and move damage
 - **Clean white arena** — the battlefield is a plain white box with soft ground shadows under each sprite and retro rounded corners
@@ -99,6 +99,8 @@ UPDATE (09/24/26) — added 100 more Pokémon (the rest of Gen 1 plus Gen 2 favo
 
 UPDATE (09/24/26) — +503 Gen 2–6 Pokémon, back buttons, picker tools.
 
-UPDATE (09/24/26) — +301 Gen 7–9 Pokémon (1,007 total) and the trainer overhaul (name, 12 classes, perks, ranks).
+UPDATE (09/24/26) — +301 Gen 7–9 Pokémon (1,025 total) and the trainer overhaul (name, 12 classes, perks, ranks).
 
 UPDATE (09/24/26) — split the roster into roster.js; added base stats, dual types, evolution, new shop items (Revive, X Attack, Lucky Egg), Pokédex silhouettes/filters/detail popup, a settings page, sprite fallbacks and mirrored HOME back sprites.
+
+UPDATE (09/24/26) — roster is now the full National Pokédex (1,025): checked against Serebii's list and added the stragglers (Nidoran♀/♂, Nidorina, Nidorino, Farfetch'd, Mr. Mime, Pidgeotto, Magby, Celebi, Barboach, Whiscash, Wynaut, Mime Jr., Chingling, Bonsly, Happiny, Gliscor, Wormadam, Slither Wing, Sandy Shocks, Roaring Moon, Walking Wake).
